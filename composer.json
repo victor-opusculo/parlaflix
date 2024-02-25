@@ -1,0 +1,51 @@
+{
+    "name": "victor-opusculo/parlaflix",
+    "description": "Plataforma EAD para a Associação Brasileira de Escolas do Legislativo e de Contas - ABEL",
+    "type": "project",
+	"config": {
+        "platform": {
+            "php": "8.1"
+        }
+    },
+    "require-dev": {
+        "robmorgan/phinx": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Victor Opusculo"
+        }
+    ],
+    "minimum-stability": "dev",
+	"prefer-stable": true,
+    "require": 
+	{
+	"victor-opusculo/p-comp": "@dev",
+        "phpmailer/phpmailer": "^6.9",
+        "setasign/tfpdf": "^1.33"
+    },
+	"autoload": {
+        "files":
+        [
+            "lib/Helpers/Data.php",
+            "lib/Helpers/QueryString.php",
+            "lib/Helpers/System.php",
+            "lib/Helpers/URLGenerator.php"
+        ],
+        "psr-4": {
+            "VOpus\\PhpOrm\\": "VOpusPhpOrm/",
+            "VictorOpusculo\\Parlaflix\\App\\": "app/",
+            "VictorOpusculo\\Parlaflix\\Api\\": "api/",
+            "VictorOpusculo\\Parlaflix\\Components\\": "components/",
+            "VictorOpusculo\\Parlaflix\\Lib\\": "lib/"
+        }
+    },
+	"repositories":
+	[
+		{
+			"type": "path",
+			"url": "./PComp",
+			"options": { "symlink": true }
+		}
+	]
+}
