@@ -1,0 +1,67 @@
+<script>
+    const state = 
+    {
+        id: 0,
+        title: '',
+        content: '',
+        html_enabled: 0,
+        is_published: 1
+    };
+
+    const methods = 
+    {
+        changeField(e)
+        {
+            this.render({ ...this.state, [ e.target.getAttribute('data-fieldname') ]: e.target.type !== 'checkbox' ? e.target.value : (e.target.checked ? 1 : 0) });
+        },
+
+        submit(e)
+        {
+            e.preventDefault();
+
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const data = {};
+
+            for (const prop in this.state)
+                data['pages:' + prop] = this.state[prop];
+
+            const body = JSON.stringify({ data });
+            const route = this.state.id ? 
+                    Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/pages/${this.state.id}`) :
+                    Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/pages/create`);
+
+            fetch(route, { headers, body, method: this.state.id ? 'PUT' : 'POST' })
+            .then(res => res.json())
+            .then(json =>
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json);
+
+                if (json.success && json.data?.newId)
+                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/pages/${json.data.newId}/edit`);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+        }
+    };
+
+
+</script>
+
+<template>
+    <form @submit="submit">
+        <ext-label label="Título">
+            <input type="text" maxlength="140" class="w-full" data-fieldname="title" value="${state.title}" @input="changeField"/>
+        </ext-label>
+        <ext-label label="Conteúdo" linebreak="1">
+            <textarea rows="20" class="w-full" data-fieldname="content" @input="changeField">${state.content}</textarea>
+        </ext-label>
+        <ext-label label="Habilitar HTML" reverse="1">
+            <input type="checkbox" value="1" data-fieldname="html_enabled" @change="changeField" :checked="Boolean(Number(state.html_enabled)) ? true : false" />
+        </ext-label>
+        <ext-label label="Publicada" reverse="1">
+            <input type="checkbox" value="1" data-fieldname="is_published" @change="changeField" :checked="Boolean(Number(state.is_published)) ? true : false" />
+        </ext-label>
+        <div class="text-center mt-2">
+            <button type="submit" class="btn">Salvar</button>
+        </div>
+    </form>
+</template>

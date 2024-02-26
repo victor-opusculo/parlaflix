@@ -6,7 +6,7 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 
 function adminLoginCheck()
 {
-    session_name('eadpi_admin_user');
+    session_name('parlaflix_admin_user');
     session_start();
 
     if (($_SESSION['user_type'] ?? '') !== UserTypes::administrator)

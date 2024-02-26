@@ -21,7 +21,7 @@ final class BaseLayout extends Component
         [
             tag('div', class: 'min-h-[calc(100vh-150px)]', children:
             [
-                tag('header', class: 'bg-black mb-4 py-4 text-white font-bold flex flex-col md:flex-row justify-between md:px-8 items-center', children: 
+                tag('header', class: 'bg-black py-4 text-white font-bold flex flex-col md:flex-row justify-between md:px-8 items-center', children: 
                 [
                     scTag('img', width: 128, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.svg')),
                     component(NavBar::class),

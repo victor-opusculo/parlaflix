@@ -20,4 +20,9 @@ final class System
     {
         return "Parlaflix: EAD da Associação Brasileira de Escolas do Legislativo e de Contas - ABEL";
     }
+
+    public static function baseDir() : string
+    {
+        return __DIR__ . '/../../';
+    }
 }

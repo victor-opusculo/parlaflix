@@ -6,7 +6,7 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 
 function studentLoginCheck()
 {
-    session_name('eadpi_student_user');
+    session_name('parlaflix_student_user');
     session_start();
 
     if (($_SESSION['user_type'] ?? '') !== UserTypes::student)
