@@ -9,6 +9,7 @@ return
         [
             '/media' => fn() =>
             [
+                '/' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Media\Home::class,
                 '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Media\Create::class,
                 '/[mediaId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Media\MediaId::class
             ],
@@ -16,6 +17,10 @@ return
             [
                 '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Pages\Create::class,
                 '/[pageId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Pages\PageId::class
+            ],
+            '/categories' => fn() =>
+            [
+                '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Categories\Create::class
             ]
         ]
     ]

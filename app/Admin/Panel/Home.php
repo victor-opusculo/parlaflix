@@ -38,6 +38,13 @@ final class Home extends Component
                     iconUrl: URLGenerator::generateFileUrl('assets/pics/page.png'),
                     additionalClasses: 'bg-violet-700/50',
                     invertIconColorsOnDark: true
+                ),
+                component(FeatureButton::class,
+                    url: URLGenerator::generatePageUrl('/admin/panel/categories'),
+                    label: 'Categorias',
+                    iconUrl: URLGenerator::generateFileUrl('assets/pics/category.svg'),
+                    additionalClasses: 'bg-violet-700/50',
+                    invertIconColorsOnDark: true
                 )
             ])
         ];

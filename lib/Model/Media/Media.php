@@ -2,7 +2,10 @@
 
 namespace VictorOpusculo\Parlaflix\Lib\Model\Media;
 
+use Exception;
 use mysqli;
+use VictorOpusculo\Parlaflix\Lib\Helpers\System;
+use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\FileUploadUtils;
 use VictorOpusculo\Parlaflix\Lib\Model\Media\Upload\MediaUpload;
 use VOpus\PhpOrm\DataEntity;
@@ -125,5 +128,27 @@ final class Media extends DataEntity
             $deleteResult['affectedRows']++;
 
         return $deleteResult;
+    }
+
+    public function fullFileName() : string
+    {
+        $id = $this->properties->id->getValue()->unwrapOr(0);
+        $ext = $this->properties->file_extension->getValue()->unwrapOr('');
+
+        if ($id && $ext)
+            return System::baseDir() + "/uploads/media/$id.$ext";
+
+        throw new Exception("Erro de entidade de mídia não carregada ao obter localização do arquivo.");
+    }
+
+    public function fileNameFromBaseDir() : string
+    {
+        $id = $this->properties->id->getValue()->unwrapOr(0);
+        $ext = $this->properties->file_extension->getValue()->unwrapOr('');
+
+        if ($id && $ext)
+            return "uploads/media/$id.$ext";
+
+        throw new Exception("Erro de entidade de mídia não carregada ao obter URL do arquivo.");
     }
 }

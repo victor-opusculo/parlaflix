@@ -874,12 +874,12 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
   margin-right: 1rem;
 }
 
-.mt-4 {
-  margin-top: 1rem;
-}
-
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .block {
@@ -914,16 +914,16 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
   height: 132px;
 }
 
+.h-\[1em\] {
+  height: 1em;
+}
+
 .h-\[2px\] {
   height: 2px;
 }
 
 .h-\[2rem\] {
   height: 2rem;
-}
-
-.h-\[1em\] {
-  height: 1em;
 }
 
 .min-h-\[calc\(100vh-150px\)\] {
@@ -936,6 +936,10 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
 
 .w-5 {
   width: 1.25rem;
+}
+
+.w-\[1em\] {
+  width: 1em;
 }
 
 .w-\[2rem\] {
@@ -954,12 +958,20 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
   width: 100%;
 }
 
-.w-\[1em\] {
-  width: 1em;
+.w-\[64px\] {
+  width: 64px;
 }
 
 .min-w-0 {
   min-width: 0px;
+}
+
+.min-w-\[64px\] {
+  min-width: 64px;
+}
+
+.min-w-\[32px\] {
+  min-width: 32px;
 }
 
 .max-w-\[500px\] {

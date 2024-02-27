@@ -49,7 +49,7 @@
 <template>
     <form @submit="submit">
         <ext-label label="Título">
-            <input type="text" maxlength="140" class="w-full" data-fieldname="title" value="${state.title}" @input="changeField"/>
+            <input type="text" maxlength="140" class="w-full" data-fieldname="title" required value="${state.title}" @input="changeField"/>
         </ext-label>
         <ext-label label="Conteúdo" linebreak="1">
             <textarea rows="20" class="w-full" data-fieldname="content" @input="changeField">${state.content}</textarea>

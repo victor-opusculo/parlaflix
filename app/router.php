@@ -38,6 +38,11 @@ return
                     '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Pages\PageId\Edit::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Pages\PageId\Delete::class
                 ]
+            ],
+            '/categories' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\Home::class,
+                '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\Create::class
             ]
         ]
     ],

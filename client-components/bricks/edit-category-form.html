@@ -1,0 +1,110 @@
+<script>
+    const state =
+    {
+        id: null,
+        title: '',
+        icon_media_id: null,
+        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+    };
+
+    const methods =
+    {
+        changeField(e)
+        {
+            this.render({ ...this.state, [e.target.name]: e.target.value });
+        },
+
+        searchBtnClicked(e)
+        {
+            this.fetchMedias();
+            this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
+        },
+
+        fetchMedias(page = 1, query = '')
+        {
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/administrator/panel/media", { page_num: page, results_on_page: this.state.searchMedia.resultsOnPage, q: query }))
+            .then(res => res.json())
+            .then(json =>
+            {
+                if (json.success && json.data && json.data.dataRows && typeof json.data.allCount === "number")
+                {
+                    const transformed = json.data.dataRows.map( m => (
+                        {
+                            'ID': m.id,
+                            'Nome': m.name,
+                            'Descrição': m.description?.substring(0, 80) ?? '',
+                            'Extensão': m.file_extension,
+                            'Prévia': { type: 'image', src: Parlaflix.Helpers.URLGenerator.generateFileUrl(`uploads/media/${m.id}.${m.file_extension}`), width: 64 }
+                        })
+                    );
+                    this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, pageNum: page, dataRows: transformed, allCount: json.data.allCount, q: query } });
+                }
+            });
+
+        },
+
+        mediaPageChange(page = 1)
+        {
+            this.fetchMedias(page, this.state.searchMedia.q);
+        },
+
+        searchKeyword(query = '')
+        {
+            this.fetchMedias(this.state.searchMedia.pageNum, query);
+        },
+
+        setMediaId(id)
+        {
+            this.render({ ...this.state, icon_media_id: Number(id) });
+        },
+
+        submit(e)
+        {
+            e.preventDefault();
+
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const body = JSON.stringify({ data: { 'categories:title': this.state.title, 'categories:icon_media_id': this.state.icon_media_id || null }});
+
+            const route = this.state.id ? 
+                    Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/categories/${this.state.id}`) :
+                    Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/categories/create`);
+
+            fetch(route, { headers, body, method: this.state.id ? 'PUT' : 'POST' })
+            .then(res => res.json())
+            .then(json =>
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json);
+
+                if (json.success && json.data?.newId)
+                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/categories/${json.data.newId}/edit`);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+
+        }
+    };
+</script>
+
+<template>
+    <form @submit="submit">
+        <ext-label label="Título">
+            <input type="text" maxlength="260" class="w-full" name="title" required :value="state.title" @input="changeField" />
+        </ext-label>
+        <ext-label label="Ícone (Mídia ID)">
+            <input type="number" min="1" step="1" name="icon_media_id" :value="state.icon_media_id" @input="changeField" />
+            <button type="button" class="btn ml-2" @click="searchBtnClicked">Procurar</button>
+        </ext-label>
+        <div :if="state.searchMedia.enabled">
+            <basic-search-field :searchkeywords="state.searchMedia.q" :searchcallback="this.searchKeyword.bind(this)"></basic-search-field>
+            <data-grid :datarows="state.searchMedia.dataRows" :returnidcallback="this.setMediaId.bind(this)" selectlinkparamname="ID"></data-grid>
+            <client-paginator 
+                :totalitems="state.searchMedia.allCount"
+                :resultsonpage="state.searchMedia.resultsOnPage"
+                :changepagecallback="this.mediaPageChange.bind(this)"
+                :pagenum="state.searchMedia.pageNum"
+            ></client-paginator>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn">Salvar</button>
+        </div>
+    </form>
+</template>

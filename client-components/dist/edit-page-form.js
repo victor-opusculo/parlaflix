@@ -78,7 +78,7 @@
     return [  
     h("form", {"onsubmit": this.submit.bind(this)}, [
       h("ext-label", {"label": `Título`}, [
-        h("input", {"type": `text`, "maxlength": `140`, "class": `w-full`, "data-fieldname": `title`, "value": `${state.title}`, "oninput": this.changeField.bind(this)}, "")
+        h("input", {"type": `text`, "maxlength": `140`, "class": `w-full`, "data-fieldname": `title`, "required": ``, "value": `${state.title}`, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("ext-label", {"label": `Conteúdo`, "linebreak": `1`}, [
         h("textarea", {"rows": `20`, "class": `w-full`, "data-fieldname": `content`, "oninput": this.changeField.bind(this)}, `${state.content}`)
