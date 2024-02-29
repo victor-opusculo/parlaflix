@@ -1,0 +1,177 @@
+
+<script>
+    const state =
+    {
+        id: null,
+        name: '',
+        presentation_html: '',
+        cover_image_media_id: null,
+        hours: 0,
+        certificate_text: '',
+        min_points_required: 1,
+        is_visible: 1,
+        
+        lessons_json: '[]',
+        categories_ids_json: '[]',
+        
+        lessons: [],
+        deleted_lessons_ids: [],
+        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+    };
+
+    const methods =
+    {
+        changeField(e)
+        {
+            if (e.target.type === 'checkbox')
+                this.render({ ...this.state, [e.target.name]: Number(e.target.checked) });
+            else
+                this.render({ ...this.state, [e.target.name]: e.target.value });
+        },
+
+        searchBtnClicked(e)
+        {
+            this.fetchMedias();
+            this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
+        },
+
+        fetchMedias(page = 1, query = '')
+        {
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/administrator/panel/media", { page_num: page, results_on_page: this.state.searchMedia.resultsOnPage, q: query }))
+            .then(res => res.json())
+            .then(json =>
+            {
+                if (json.success && json.data && json.data.dataRows && typeof json.data.allCount === "number")
+                {
+                    const transformed = json.data.dataRows.map( m => (
+                        {
+                            'ID': String(m.id),
+                            'Nome': m.name,
+                            'Descrição': m.description?.substring(0, 80) ?? '',
+                            'Extensão': m.file_extension,
+                            'Prévia': { type: 'image', src: Parlaflix.Helpers.URLGenerator.generateFileUrl(`uploads/media/${m.id}.${m.file_extension}`), width: 64 }
+                        })
+                    );
+                    this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, pageNum: page, dataRows: transformed, allCount: json.data.allCount, q: query } });
+                }
+            });
+
+        },
+
+        mediaPageChange(page = 1)
+        {
+            this.fetchMedias(page, this.state.searchMedia.q);
+        },
+
+        searchKeyword(query = '')
+        {
+            this.fetchMedias(this.state.searchMedia.pageNum, query);
+        },
+
+        setMediaId(id)
+        {
+            this.render({ ...this.state, cover_image_media_id: Number(id) });
+        },
+
+        addLesson(e)
+        {
+            this.render({ ...this.state, lessons: [...this.state.lessons, 
+                { 
+                    id: null, 
+                    course_id: this.state.id,
+                    index: this.state.lessons?.length + 1,
+                    title: '',
+                    presentation_html: '',
+                    video_host: 'youtube',
+                    video_url: '',
+                    completion_password: '',
+                    completion_points: 1
+                }
+            ]});
+        },
+
+        removeLesson(index)
+        {
+            const newLessons = this.state.lessons
+                .filter( l => l.index != index )
+                .map( (l, newIndex) => ({...l, index: newIndex + 1 }) );
+            
+            this.render({ ...this.state, lessons: newLessons });
+        },
+
+        mutateLesson(index, field, value)
+        {
+            const lessons = this.state.lessons;
+            const found = lessons.find( l => l.index == index );
+            found[field] = value;
+
+            this.render({ ...this.state, lessons: lessons });
+        },
+
+        submit(e)
+        {
+            e.preventDefault();
+            console.log(this.state);
+        }
+    };
+
+    function setup()
+    {
+        this.state.lessons = JSON.parse(this.state.lessons_json || '[]');
+    }
+</script>
+
+<template>
+    <form @submit="submit">
+        <ext-label label="Visível (publicado)" reverse="1">
+            <input type="checkbox" name="is_visible" value="1" @change="changeField" :checked="Boolean(Number(state.is_visible))" />
+        </ext-label>
+        <ext-label label="Nome">
+            <input type="text" class="w-full" name="name" :value="state.name" @input="changeField"/>
+        </ext-label>
+        <ext-label label="Mais informações (HTML permitido)" linebreak="1">
+            <textarea class="w-full" name="presentation_html" rows="8" @input="changeField">${state.presentation_html}</textarea>
+        </ext-label>
+        <ext-label label="Imagem ilustrativa (Mídia ID)">
+            <input type="number" min="1" step="1" name="cover_image_media_id" :value="state.cover_image_media_id" @input="changeField" />
+            <button type="button" class="btn ml-2" @click="searchBtnClicked">Procurar</button>
+        </ext-label>
+        <div :if="state.searchMedia.enabled">
+            <basic-search-field :searchkeywords="state.searchMedia.q" :searchcallback="this.searchKeyword.bind(this)"></basic-search-field>
+            <data-grid :datarows="state.searchMedia.dataRows" :returnidcallback="this.setMediaId.bind(this)" selectlinkparamname="ID"></data-grid>
+            <client-paginator 
+                :totalitems="state.searchMedia.allCount"
+                :resultsonpage="state.searchMedia.resultsOnPage"
+                :changepagecallback="this.mediaPageChange.bind(this)"
+                :pagenum="state.searchMedia.pageNum"
+            ></client-paginator>
+        </div>
+        <ext-label label="Carga horária">
+            <input type="number" min="1" step="1" name="hours" :value="state.hours" @input="changeField" />
+        </ext-label>
+        <ext-label label="Texto para o certificado" linebreak="1">
+            <textarea class="w-full" name="certificate_text" rows="4" maxlength="300" @input="changeField">${state.certificate_text}</textarea>
+        </ext-label>
+        <ext-label label="Mínimo de pontos necessário para aprovação">
+            <input type="number" min="1" step="1" name="min_points_required" :value="state.min_points_required" @input="changeField" />
+        </ext-label>
+
+        <h2>Aulas</h2>
+        <edit-single-lesson :for="lesson in state.lessons"
+            :id="lesson.id"
+            :index="lesson.index"
+            :title="lesson.title"
+            :presentation_html="lesson.presentation_html"
+            :video_host="lesson.video_host"
+            :video_url="lesson.video_url"
+            :completion_password="lesson.completion_password"
+            :completion_points="lesson.completion_points"
+            :removelessoncallback="this.removeLesson.bind(this)"
+            :changefieldcallback="this.mutateLesson.bind(this)"
+        ></edit-single-lesson>
+        <button type="button" class="btn" @click="addLesson">Adicionar aula</button>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn">Salvar</button>
+        </div>
+    </form>
+</template>

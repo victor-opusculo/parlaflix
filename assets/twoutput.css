@@ -958,20 +958,16 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
   width: 100%;
 }
 
-.w-\[64px\] {
-  width: 64px;
-}
-
 .min-w-0 {
   min-width: 0px;
 }
 
-.min-w-\[64px\] {
-  min-width: 64px;
-}
-
 .min-w-\[32px\] {
   min-width: 32px;
+}
+
+.min-w-\[64px\] {
+  min-width: 64px;
 }
 
 .max-w-\[500px\] {
@@ -1144,6 +1140,10 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
 
 .invert {
   --tw-invert: invert(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 

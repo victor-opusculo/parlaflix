@@ -46,7 +46,7 @@ final class Delete extends Component
         [
             tag('h1', children: text('Excluir mídia')),
             tag('delete-entity-form', 
-                deletescripturl: URLGenerator::generateApiUrl("/administrator/panel/media/{$this->media->id->unwrapOr(0)}/delete"),
+                deletescripturl: URLGenerator::generateApiUrl("/administrator/panel/media/{$this->media->id->unwrapOr(0)}"),
                 gobacktourl: URLGenerator::generatePageUrl('/admin/panel/media'),
                 children:
                 [

@@ -61,7 +61,7 @@ final class Home extends Component
             tag('div', class: 'my-2', children: tag('a', href: URLGenerator::generatePageUrl('/admin/panel/categories/create'), class: 'btn', children: text('Nova'))),
             component(DataGrid::class, 
                 dataRows: $this->categories,
-                detailsButtonURL: URLGenerator::generatePageUrl('/admin/panel/categories/{param}'),
+                //detailsButtonURL: URLGenerator::generatePageUrl('/admin/panel/categories/{param}'),
                 editButtonURL: URLGenerator::generatePageUrl('/admin/panel/categories/{param}/edit'),
                 deleteButtonURL: URLGenerator::generatePageUrl('/admin/panel/categories/{param}/delete'),
                 rudButtonsFunctionParamName: 'ID'

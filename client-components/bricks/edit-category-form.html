@@ -30,7 +30,7 @@
                 {
                     const transformed = json.data.dataRows.map( m => (
                         {
-                            'ID': m.id,
+                            'ID': String(m.id),
                             'Nome': m.name,
                             'Descrição': m.description?.substring(0, 80) ?? '',
                             'Extensão': m.file_extension,

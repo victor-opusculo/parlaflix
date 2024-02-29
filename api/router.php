@@ -20,7 +20,8 @@ return
             ],
             '/categories' => fn() =>
             [
-                '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Categories\Create::class
+                '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Categories\Create::class,
+                '/[categoryId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Categories\CatId::class
             ]
         ]
     ]

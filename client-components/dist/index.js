@@ -22,8 +22,14 @@ customElements.define('delete-entity-form', DeleteEntityForm)
 import EditCategoryForm from './edit-category-form.js'
 customElements.define('edit-category-form', EditCategoryForm)
 
+import EditCourseForm from './edit-course-form.js'
+customElements.define('edit-course-form', EditCourseForm)
+
 import EditPageForm from './edit-page-form.js'
 customElements.define('edit-page-form', EditPageForm)
+
+import EditSingleLesson from './edit-single-lesson.js'
+customElements.define('edit-single-lesson', EditSingleLesson)
 
 import ExtLabel from './ext-label.js'
 customElements.define('ext-label', ExtLabel)

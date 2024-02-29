@@ -1,0 +1,58 @@
+<script>
+    const state =
+    {
+        id: 0,
+        course_id: 0,
+        index: 1,
+        title: '',
+        presentation_html: '',
+        video_host: 'youtube',
+        video_url: '',
+        completion_password: Math.floor(Math.random() * 8999) + 1000,
+        completion_points: 1,
+
+        removelessoncallback: () => void 0,
+        changefieldcallback: (index, field, value) => void 0
+    };
+
+    const methods = 
+    {
+        changeField(e)
+        {
+            this.state.changefieldcallback(this.state.index, e.target.getAttribute('data-fieldname'), e.target.value);
+        },
+
+        deleteClicked(e)
+        {
+            this.state.removelessoncallback(e.target.getAttribute('data-lesson-index'));
+        }
+    };
+</script>
+
+<template>
+    <fieldset class="fieldset">
+        <legend>Aula nº ${state.index}</legend>
+        <ext-label label="Título">
+            <input type="text" class="w-full" maxlength="280" data-fieldname="title" required ="title" :value="state.title" @input="changeField" />
+        </ext-label>
+        <ext-label label="Mais informações (HTML permitido)" linebreak="1">
+            <textarea data-fieldname="presentation_html" class="w-full" rows="4" maxlength="1000" @input="changeField" :value="state.presentation_html"></textarea>
+        </ext-label>
+        <div class="ml-2">
+            Hospedagem do vídeo: 
+            <label><input type="radio" data-fieldname="video_host" name="video_host_idx${state.index}" value="youtube" required :checked="state.video_host === 'youtube'" @change="changeField" /> Youtube</label>
+        </div>
+        <ext-label label="Código do vídeo">
+            <input type="text" data-fieldname="video_url" :value="state.video_url" required @input="changeField" class="w-full" />
+        </ext-label>
+        <ext-label label="Senha para atestar visualização da aula">
+            <input type="text" data-fieldname="completion_password" :value="state.completion_password" required @input="changeField" class="w-full" />
+        </ext-label>
+        <ext-label label="Pontos pela visualização da aula">
+            <input type="number" min="1" step="1" data-fieldname="completion_points" :value="state.completion_points" required @input="changeField" />
+        </ext-label>
+        <div class="text-right">
+            <button type="button" class="btn min-w-[64px]" @click="deleteClicked" data-lesson-index="${state.index}">&times;</button>
+        </div>
+    </fieldset>
+</template>

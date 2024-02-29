@@ -31,16 +31,53 @@ class Course extends DataEntity
     protected string $formFieldPrefixName = 'courses';
     protected array $primaryKeys = ['id'];
     
-    public function getQuestionsTotalCount(mysqli $conn) : int
+    public function getCount(mysqli $conn, string $searchKeywords) : int
     {
         $selector = (new SqlSelector)
-        ->addSelectColumn('COUNT(test_questions.id)')
-        ->setTable('course_tests')
-        ->addJoin("LEFT JOIN test_questions ON test_questions.test_id = course_tests.id")
-        ->addWhereClause("course_tests.course_id = ?")
-        ->addValue('i', $this->properties->id->getValue()->unwrapOr(0));
+        ->addSelectColumn('COUNT(*)')
+        ->setTable($this->databaseTable);
 
-        return (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        if (mb_strlen($searchKeywords) > 3)
+        {
+            $selector = $selector
+            ->addWhereClause("MATCH (name) AGAINST (?) ")
+            ->addValue('s', $searchKeywords);
+        }
+
+        $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return $count;
+    }
+
+    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearWhereClauses()
+        ->clearValues();
+
+        if (mb_strlen($searchKeywords) > 3)
+        {
+            $selector = $selector
+            ->addWhereClause("MATCH (name) AGAINST (?) ")
+            ->addValue('s', $searchKeywords);
+        }
+
+        $selector = $selector
+        ->setOrderBy(match ($orderBy)
+        {
+            'name' => 'name ASC',
+            'hours' => 'hours ASC',
+            'created_at' => 'created_at DESC',
+            'id' => 'id DESC',
+            default => 'id DESC'
+        });
+
+        $calcPage = ($page - 1) * $numResultsOnPage;
+        $selector = $selector
+        ->setLimit('?,?')
+        ->addValues('ii', [ $calcPage, $numResultsOnPage ]);
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
     public function exists(mysqli $conn) : bool

@@ -91,7 +91,8 @@ class Category extends DataEntity
     {
         try
         {
-            (new Media([ 'id' => $this->properties->icon_media_id->getValue()->unwrapOr(0) ]))->getSingle($conn);
+            if ($this->properties->icon_media_id->getValue()->unwrapOr(0))
+                (new Media([ 'id' => $this->properties->icon_media_id->getValue()->unwrapOr(0) ]))->getSingle($conn);
         }
         catch (DatabaseEntityNotFound $e)
         {

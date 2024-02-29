@@ -40,6 +40,13 @@ final class Home extends Component
                     invertIconColorsOnDark: true
                 ),
                 component(FeatureButton::class,
+                    url: URLGenerator::generatePageUrl('/admin/panel/courses'),
+                    label: 'Cursos',
+                    iconUrl: URLGenerator::generateFileUrl('assets/pics/course.png'),
+                    additionalClasses: 'bg-violet-700/50',
+                    invertIconColorsOnDark: true
+                ),
+                component(FeatureButton::class,
                     url: URLGenerator::generatePageUrl('/admin/panel/categories'),
                     label: 'Categorias',
                     iconUrl: URLGenerator::generateFileUrl('assets/pics/category.svg'),

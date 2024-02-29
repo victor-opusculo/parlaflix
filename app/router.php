@@ -42,7 +42,17 @@ return
             '/categories' => fn() =>
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\Home::class,
-                '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\Create::class
+                '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\Create::class,
+                '/[categoryId]' => fn() =>
+                [
+                    '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\CatId\Edit::class,
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Categories\CatId\Delete::class
+                ]
+            ],
+            '/courses' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\Home::class,
+                '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\Create::class
             ]
         ]
     ],
