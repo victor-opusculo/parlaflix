@@ -78,6 +78,16 @@ class Category extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
+    public function getAll(mysqli $conn) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearValues()
+        ->clearWhereClauses();
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
+    }
+
     public function fetchIcon(mysqli $conn) : self
     {
         if (!$this->properties->icon_media_id->getValue()->unwrapOr(0)) 

@@ -12,7 +12,8 @@
         completion_points: 1,
 
         removelessoncallback: () => void 0,
-        changefieldcallback: (index, field, value) => void 0
+        changefieldcallback: (index, field, value) => void 0,
+        movelessoncallback: (index, direction) => void 0
     };
 
     const methods = 
@@ -25,6 +26,16 @@
         deleteClicked(e)
         {
             this.state.removelessoncallback(e.target.getAttribute('data-lesson-index'));
+        },
+
+        moveUpClicked(e)
+        {
+            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'up');
+        },
+
+        moveDownClicked(e)
+        {
+            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'down');
         }
     };
 </script>
@@ -52,6 +63,8 @@
             <input type="number" min="1" step="1" data-fieldname="completion_points" :value="state.completion_points" required @input="changeField" />
         </ext-label>
         <div class="text-right">
+            <button type="button" class="btn min-w-[64px] mr-2" @click="moveUpClicked" data-lesson-index="${state.index}">&uarr;</button>
+            <button type="button" class="btn min-w-[64px] mr-2" @click="moveDownClicked" data-lesson-index="${state.index}">&darr;</button>
             <button type="button" class="btn min-w-[64px]" @click="deleteClicked" data-lesson-index="${state.index}">&times;</button>
         </div>
     </fieldset>

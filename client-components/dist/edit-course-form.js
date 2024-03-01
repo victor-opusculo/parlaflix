@@ -38,10 +38,13 @@
         min_points_required: 1,
         is_visible: 1,
         
+        categoriesAvailable: [],
+
         lessons_json: '[]',
         categories_ids_json: '[]',
         
         lessons: [],
+        categories_ids: [],
         deleted_lessons_ids: [],
         searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
     };
@@ -126,6 +129,28 @@
             this.render({ ...this.state, lessons: newLessons });
         },
 
+        moveLesson(index, direction)
+        {
+            if (direction === 'up' && index > 1)
+            {
+                let moved = this.state.lessons[index - 1];
+                let replaced = this.state.lessons[index - 2];
+                this.state.lessons[index - 2] = moved;
+                this.state.lessons[index - 1] = replaced;
+            }
+            else if (direction === 'down' && index < this.state.lessons.length)
+            {
+                let moved = this.state.lessons[index - 1];
+                let replaced = this.state.lessons[index];
+                this.state.lessons[index] = moved;
+                this.state.lessons[index - 1] = replaced;
+            }
+
+            const newLessons = this.state.lessons.map( (l, newIndex) => ({ ...l, index: newIndex + 1 }) );
+
+            this.render({ ...this.state, lessons: newLessons });
+        },
+
         mutateLesson(index, field, value)
         {
             const lessons = this.state.lessons;
@@ -138,13 +163,28 @@
         submit(e)
         {
             e.preventDefault();
-            console.log(this.state);
+
+            const data = {...this.state};
+            delete data.categoriesAvailable;
+            delete data.lessons;
+            delete data.categories_ids;
+            delete data.searchMedia;
+
+            const { deleted_lessons_ids, lessons_json, categories_ids_json, ...data2 } = data;
+
+            const outputData = {};
+            for (const prop in data2)
+                outputData['courses:' + prop] = data2[prop];
+
+            Object.assign(outputData, { deleted_lessons_ids, lessons_json, categories_ids_json });
+
+            console.log(outputData);
         }
     };
 
     function setup()
     {
-        this.state.lessons = JSON.parse(this.state.lessons_json || '[]');
+        this.render({ ...this.state, lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'), categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]') });
     }
 
 
@@ -179,8 +219,18 @@
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("h2", {}, `Aulas`),
-      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points, "removelessoncallback": this.removeLesson.bind(this), "changefieldcallback": this.mutateLesson.bind(this)}, "")))),
+      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points, "removelessoncallback": this.removeLesson.bind(this), "changefieldcallback": this.mutateLesson.bind(this), "movelessoncallback": this.moveLesson.bind(this)}, "")))),
       h("button", {"type": `button`, "class": `btn`, "onclick": this.addLesson.bind(this)}, `Adicionar aula`),
+      h("h2", {}, `Categorias`),
+      h("ul", {"class": `list-disc pl-4`}, [
+        ((state.categoriesAvailable).map((cat) => (h("li", {}, [
+          h("label", {}, [
+            h("input", {"type": `checkbox`, "value": `${cat.id}`}, ""),
+` ${cat.title}
+                `
+          ])
+        ]))))
+      ]),
       h("div", {"class": `text-center mt-4`}, [
         h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
       ])

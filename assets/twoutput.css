@@ -1000,6 +1000,10 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
   cursor: pointer;
 }
 
+.list-disc {
+  list-style-type: disc;
+}
+
 .flex-row {
   flex-direction: row;
 }
@@ -1096,6 +1100,10 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
 }
 
 .text-left {

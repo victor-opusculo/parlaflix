@@ -40,7 +40,8 @@
         completion_points: 1,
 
         removelessoncallback: () => void 0,
-        changefieldcallback: (index, field, value) => void 0
+        changefieldcallback: (index, field, value) => void 0,
+        movelessoncallback: (index, direction) => void 0
     };
 
     const methods = 
@@ -53,6 +54,16 @@
         deleteClicked(e)
         {
             this.state.removelessoncallback(e.target.getAttribute('data-lesson-index'));
+        },
+
+        moveUpClicked(e)
+        {
+            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'up');
+        },
+
+        moveDownClicked(e)
+        {
+            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'down');
         }
     };
 
@@ -86,6 +97,8 @@
         h("input", {"type": `number`, "min": `1`, "step": `1`, "data-fieldname": `completion_points`, "value": state.completion_points, "required": ``, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("div", {"class": `text-right`}, [
+        h("button", {"type": `button`, "class": `btn min-w-[64px] mr-2`, "onclick": this.moveUpClicked.bind(this), "data-lesson-index": `${state.index}`}, `↑`),
+        h("button", {"type": `button`, "class": `btn min-w-[64px] mr-2`, "onclick": this.moveDownClicked.bind(this), "data-lesson-index": `${state.index}`}, `↓`),
         h("button", {"type": `button`, "class": `btn min-w-[64px]`, "onclick": this.deleteClicked.bind(this), "data-lesson-index": `${state.index}`}, `×`)
       ])
     ])
