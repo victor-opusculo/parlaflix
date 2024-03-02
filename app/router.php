@@ -52,7 +52,11 @@ return
             '/courses' => fn() =>
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\Home::class,
-                '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\Create::class
+                '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\Create::class,
+                '/[courseId]' => fn() =>
+                [
+                    '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Edit::class
+                ]
             ]
         ]
     ],

@@ -12,14 +12,13 @@
         is_visible: 1,
         
         categoriesAvailable: [],
+        lessons: [],
+        categoriesIds: [],
+        lessonsChangesReport: { create: [], update: [], delete: [] },
+        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
 
         lessons_json: '[]',
-        categories_ids_json: '[]',
-        
-        lessons: [],
-        categories_ids: [],
-        deleted_lessons_ids: [],
-        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+        categories_ids_json: '[]'
     };
 
     const methods =
@@ -30,6 +29,17 @@
                 this.render({ ...this.state, [e.target.name]: Number(e.target.checked) });
             else
                 this.render({ ...this.state, [e.target.name]: e.target.value });
+        },
+
+        changeCategory(e)
+        {
+            let categoriesIdUpdated = [...this.state.categoriesIds];
+            if (!categoriesIdUpdated.includes(e.target.value) && e.target.checked)
+                categoriesIdUpdated.push(Number(e.target.value));
+            else
+                categoriesIdUpdated = categoriesIdUpdated.filter( id => id == e.target.value ? e.target.checked : true );
+
+            this.render({ ...this.state, categoriesIds: categoriesIdUpdated });
         },
 
         searchBtnClicked(e)
@@ -95,11 +105,16 @@
 
         removeLesson(index)
         {
+            const lessonsChangesReportUpdated = { ...this.state.lessonsChangesReport };
+            const id = this.state.lessons.find(l => l.index == index)?.id;
+            if (id)
+                lessonsChangesReportUpdated.delete.push(id);
+
             const newLessons = this.state.lessons
                 .filter( l => l.index != index )
                 .map( (l, newIndex) => ({...l, index: newIndex + 1 }) );
             
-            this.render({ ...this.state, lessons: newLessons });
+            this.render({ ...this.state, lessons: newLessons, lessonsChangesReport: lessonsChangesReportUpdated });
         },
 
         moveLesson(index, direction)
@@ -138,26 +153,69 @@
             e.preventDefault();
 
             const data = {...this.state};
+
+            if (data.lessons.length < 1)
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "Ao menos uma aula é necessária!");
+                return;
+            }
+
+            data.categories_ids_json = JSON.stringify(data.categoriesIds);
+
+            data.lessonsChangesReport.create = [];
+            data.lessonsChangesReport.update = [];
+            for (const less of data.lessons)
+            {
+                if (less.id)
+                    data.lessonsChangesReport.update.push(less);
+                else
+                    data.lessonsChangesReport.create.push(less);
+            }
+
             delete data.categoriesAvailable;
             delete data.lessons;
-            delete data.categories_ids;
             delete data.searchMedia;
+            delete data.lessons_json;
+            delete data.categories_available_json;
+            delete data.categories_ids_json;
 
-            const { deleted_lessons_ids, lessons_json, categories_ids_json, ...data2 } = data;
+            const { lessonsChangesReport, categoriesIds, ...data2 } = data;
 
             const outputData = {};
             for (const prop in data2)
                 outputData['courses:' + prop] = data2[prop];
 
-            Object.assign(outputData, { deleted_lessons_ids, lessons_json, categories_ids_json });
+            Object.assign(outputData, { lessonsChangesReport, categoriesIds });
 
-            console.log(outputData);
+            const headers = { 'Content-Type': 'application/json' };
+            const body = JSON.stringify({ data: outputData });
+            
+            const route = this.state.id ? 
+                Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/courses/${this.state.id}`) :
+                Parlaflix.Helpers.URLGenerator.generateApiUrl('/administrator/panel/courses/create');
+
+            fetch(route, { headers, body, method: this.state.id ? 'PUT' : 'POST' } )
+            .then(res => res.json())
+            .then(json =>
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json);
+
+                if (json.success && json.data?.newId)
+                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/courses/${json.data.newId}/edit`);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
     };
 
     function setup()
     {
-        this.render({ ...this.state, lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'), categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]') });
+        this.render(
+            { ...this.state, 
+                lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'), 
+                categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]'),
+                categoriesIds: JSON.parse(this.getAttribute('categories_ids_json') || '[]')
+            }
+        );
     }
 </script>
 
@@ -216,7 +274,7 @@
         <ul class="list-disc pl-4">
             <li :for="cat in state.categoriesAvailable">
                 <label>
-                    <input type="checkbox" value="${cat.id}"> ${cat.title}
+                    <input type="checkbox" value="${cat.id}" @change="changeCategory" :checked="state.categoriesIds.includes(cat.id)"> ${cat.title}
                 </label>
             </li>
         </ul>

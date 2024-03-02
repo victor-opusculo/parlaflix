@@ -5,6 +5,7 @@ namespace VictorOpusculo\Parlaflix\Lib\Model\Courses;
 use mysqli;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
+use VOpus\PhpOrm\EntitiesChangesReport;
 use VOpus\PhpOrm\SqlSelector;
 
 class Course extends DataEntity
@@ -15,13 +16,13 @@ class Course extends DataEntity
         [
             'id' => new DataProperty(null, fn() => null, DataProperty::MYSQL_INT),
             'name' => new DataProperty('name', fn() => 'Sem nome definido', DataProperty::MYSQL_STRING),
-            'presentation_html' => new DataProperty('presentationHtml', fn() => null, DataProperty::MYSQL_STRING),
-            'cover_image_media_id' => new DataProperty('coverImageMediaId', fn() => null, DataProperty::MYSQL_INT),
+            'presentation_html' => new DataProperty('presentation_html', fn() => null, DataProperty::MYSQL_STRING),
+            'cover_image_media_id' => new DataProperty('cover_image_media_id', fn() => null, DataProperty::MYSQL_INT),
             'hours' => new DataProperty('hours', fn() => 0, DataProperty::MYSQL_DOUBLE),
-            'certificate_text' => new DataProperty('certificateText', fn() => null, DataProperty::MYSQL_STRING),
-            'min_points_required' => new DataProperty('numRequiredPoints', fn() => 0, DataProperty::MYSQL_INT),
-            'is_visible' => new DataProperty('isVisible', fn() => 0, DataProperty::MYSQL_INT),
-            'created_at' => new DataProperty('createdAt', fn() => gmdate('Y-m-d H:i:s'), DataProperty::MYSQL_STRING)
+            'certificate_text' => new DataProperty('certificate_text', fn() => null, DataProperty::MYSQL_STRING),
+            'min_points_required' => new DataProperty('min_points_required', fn() => 0, DataProperty::MYSQL_INT),
+            'is_visible' => new DataProperty('is_visible', fn() => 0, DataProperty::MYSQL_INT),
+            'created_at' => new DataProperty('created_at', fn() => gmdate('Y-m-d H:i:s'), DataProperty::MYSQL_STRING)
         ];
 
         parent::__construct($initialValues);
@@ -31,6 +32,9 @@ class Course extends DataEntity
     protected string $formFieldPrefixName = 'courses';
     protected array $primaryKeys = ['id'];
     
+    public array $lessons = [];
+    public array $categoriesJoints = [];
+
     public function getCount(mysqli $conn, string $searchKeywords) : int
     {
         $selector = (new SqlSelector)
@@ -80,6 +84,18 @@ class Course extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
+    public function fetchLessons(mysqli $conn) : self
+    {
+        $this->lessons = (new Lesson([ 'course_id' => $this->properties->id->getValue()->unwrapOr(0) ]))->getAllFromCourse($conn);
+        return $this;
+    }
+
+    public function fetchCategoriesJoints(mysqli $conn) : self
+    {
+        $this->categoriesJoints = (new CourseCategoryJoin([ 'course_id' => $this->properties->id->getValue()->unwrapOr(0) ]))->getAllFromCourse($conn);
+        return $this;
+    }
+
     public function exists(mysqli $conn) : bool
     {
         $selector = (new SqlSelector)
@@ -102,23 +118,37 @@ class Course extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
-    public function getInfos(mysqli $conn) : array
+    public function beforeDatabaseInsert(mysqli $conn): int
     {
-        $selector = (new SqlSelector)
-        ->addSelectColumn('courses.hours')
-        ->addSelectColumn('COUNT(DISTINCT course_modules.id) AS modules')
-        ->addSelectColumn('COUNT(DISTINCT course_lessons.id) AS lessons')
-        ->addSelectColumn('COUNT(DISTINCT course_tests.id) as tests')
-        ->addSelectColumn('COUNT(DISTINCT course_lesson_block.id) AS blocks')
-        ->setTable($this->databaseTable)
-        ->addJoin("LEFT JOIN course_modules ON course_modules.course_id = courses.id")
-        ->addJoin("LEFT JOIN course_lessons ON course_lessons.module_id = course_modules.id")
-        ->addJoin("LEFT JOIN course_tests ON course_tests.course_id = courses.id")
-        ->addJoin("LEFT JOIN course_lesson_block ON course_lesson_block.lesson_id = course_lessons.id")
-        ->addWhereClause("{$this->getWhereQueryColumnName('id')} = ?")
-        ->addValue('i', $this->properties->id->getValue()->unwrapOr(0));
+        $this->properties->created_at->setValue(gmdate('Y-m-d H:i:s'));
+        return 0;
+    }
 
-        $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
-        return $dr;
+    public function afterDatabaseInsert(mysqli $conn, $insertResult)
+    {
+        $creportData = $this->otherProperties->lessonsChangesReport ?? [ 'create' => [], 'update' => [], 'delete' => [] ];
+        $creport = new EntitiesChangesReport($creportData, Lesson::class);
+
+        $creport->setPropertyValueForAll('course_id', $insertResult['newId']);
+        $insertResult['affectedRows'] += $creport->applyToDatabase($conn);
+
+        $categoriesIds = $this->otherProperties->categoriesIds ?? [];
+        $insertResult['affectedRows'] += (new CourseCategoryJoin)->saveCategoriesOfCourseId($conn, $insertResult['newId'], $categoriesIds);
+
+        return $insertResult;
+    }
+
+    public function afterDatabaseUpdate(mysqli $conn, $updateResult)
+    {
+        $creportData = $this->otherProperties->lessonsChangesReport ?? [ 'create' => [], 'update' => [], 'delete' => [] ];
+        $creport = new EntitiesChangesReport($creportData, Lesson::class);
+
+        $creport->setPropertyValueForAll('course_id', $this->properties->id->getValue()->unwrap() );
+        $updateResult['affectedRows'] += $creport->applyToDatabase($conn);
+
+        $categoriesIds = $this->otherProperties->categoriesIds ?? [];
+        $updateResult['affectedRows'] += (new CourseCategoryJoin)->saveCategoriesOfCourseId($conn, $this->properties->id->getValue()->unwrap(), $categoriesIds);
+
+        return $updateResult;
     }
 }

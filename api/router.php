@@ -22,6 +22,10 @@ return
             [
                 '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Categories\Create::class,
                 '/[categoryId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Categories\CatId::class
+            ],
+            '/courses' => fn() =>
+            [
+                '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Courses\Create::class
             ]
         ]
     ]

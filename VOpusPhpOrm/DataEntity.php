@@ -289,7 +289,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 			if ($propObject->getValue() instanceof None)
 				continue;
 
-			$columns[] = $propName;
+			$columns[] = "`$propName`";
 			$fields[] = $this->getQueryField($propObject);
 			$values[] = $propObject->getValueForDatabase();
 			$bindParamTypes .= $propObject->getBindParamType();
@@ -314,7 +314,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 			if ($propObject->getValue() instanceof None)
 				continue;
 
-			$columnsAndFields[] = $propName . '=' . $this->getQueryField($propObject);
+			$columnsAndFields[] = "`$propName`" . '=' . $this->getQueryField($propObject);
 			$values[] = $propObject->getValueForDatabase();
 			$bindParamTypes .= $propObject->getBindParamType();
 		
@@ -347,7 +347,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 
 			if (array_search($propName, $this->primaryKeys) !== false)
 			{
-				$whereClauseColsAndFields[] = $propName . '=' . $this->getQueryField($propObject);
+				$whereClauseColsAndFields[] = "`$propName`" . '=' . $this->getQueryField($propObject);
 				$values[] = $propObject->getValueForDatabase();
 				$bindParamTypes .= $propObject->getBindParamType();
 			}
@@ -366,7 +366,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 	protected function getSelectQueryColumnName(string $propName) : string
 	{
 		if (isset($this->properties->$propName))
-			return $this->properties->$propName->getEncrypt() ? "aes_decrypt({$this->databaseTable}.{$propName}, '{$this->encryptionKey}') AS $propName " : "{$this->databaseTable}.{$propName}";
+			return $this->properties->$propName->getEncrypt() ? "aes_decrypt(`{$this->databaseTable}`.`{$propName}`, '{$this->encryptionKey}') AS `$propName` " : "`{$this->databaseTable}`.`{$propName}`";
 		else
 			return null;
 	}
@@ -374,7 +374,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 	protected function getWhereQueryColumnName(string $propName) : string
 	{
 		if (isset($this->properties->$propName))
-			return $this->properties->$propName->getEncrypt() ? "aes_decrypt({$this->databaseTable}.{$propName}, '{$this->encryptionKey}')" : "{$this->databaseTable}.{$propName}";
+			return $this->properties->$propName->getEncrypt() ? "aes_decrypt(`{$this->databaseTable}`.`{$propName}`, '{$this->encryptionKey}')" : "`{$this->databaseTable}`.`{$propName}`";
 		else
 			return null;
 	}
