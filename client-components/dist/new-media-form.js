@@ -71,12 +71,14 @@
             .then(res => res.json())
             .then(json => 
             {
-                Parlaflix.Alerts.pushFromJsonResult(json);
-
-                if (json.success && json.data?.newId)
-                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl('/admin/panel/media/' + json.data.newId);
-                else
-                    this.render({ ...this.state, waiting: false });
+                Parlaflix.Alerts.pushFromJsonResult(json)
+                .then(([ ret, json ]) =>
+                {
+                    if (json.success && json.data?.newId)
+                        window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl('/admin/panel/media/' + json.data.newId);
+                    else
+                        this.render({ ...this.state, waiting: false });
+                });
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }

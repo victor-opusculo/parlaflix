@@ -43,5 +43,14 @@ Parlaflix.Helpers.URLGenerator =
     generateQueryString(queryData)
     {
         return Object.entries(queryData).reduce( (prev, [ currKey, currVal ]) => (prev ? prev + '&' : '') + `${currKey}=${encodeURI(currVal)}`, '');
+    },
+
+    goToPageOnSuccess(page, query = {})
+    {
+        return (([ msgBoxReturnValue, jsonResult ]) => 
+        {
+            if (msgBoxReturnValue === 'ok' && jsonResult?.success)
+                window.location.href = this.generatePageUrl(page, query);
+        });
     }
 };

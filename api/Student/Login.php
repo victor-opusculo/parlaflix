@@ -5,7 +5,6 @@ namespace VictorOpusculo\Parlaflix\Api\Student;
 use Exception;
 use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
-use VictorOpusculo\Parlaflix\Lib\Model\Administrators\Administrator;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\PComp\RouteHandler;
@@ -27,7 +26,7 @@ final class Login extends RouteHandler
             session_name("parlaflix_student_user");
             session_start();
 
-            $studentGetter = new Student([ 'email' => $_POST['data']['email'] ?? 'n@d' ]);
+            $studentGetter = (new Student([ 'email' => $_POST['data']['email'] ?? 'n@d' ]))->setCryptKey(Connection::getCryptoKey());
             $student = $studentGetter->getByEmail($conn);
 
             if ($student->checkPassword($_POST['data']['password'] ?? '***'))

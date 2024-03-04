@@ -2,6 +2,7 @@
 
 namespace VictorOpusculo\Parlaflix\App\Student;
 
+use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\HeadManager;
 
@@ -20,7 +21,11 @@ final class Login extends Component
         return
         [
             tag('h1', children: text('Log-in de estudante')),
-            tag('student-login-form')
+            tag('student-login-form'),
+            tag('div', class: 'text-center', children:
+            [
+                tag('a', class: 'link', href: URLGenerator::generatePageUrl('/student/register'), children: text('Não sou cadastrado. Registrar-me!'))
+            ])
         ];
     }
 }

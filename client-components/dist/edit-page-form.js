@@ -62,10 +62,12 @@
             .then(res => res.json())
             .then(json =>
             {
-                Parlaflix.Alerts.pushFromJsonResult(json);
-
-                if (json.success && json.data?.newId)
-                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/pages/${json.data.newId}/edit`);
+                Parlaflix.Alerts.pushFromJsonResult(json)
+                .then(([ ret, json ]) =>
+                {
+                    if (json.success && json.data?.newId)
+                        window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/pages/${json.data.newId}/edit`);
+                });
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }

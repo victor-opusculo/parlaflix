@@ -8,27 +8,72 @@ Parlaflix.Alerts ??=
         success: 'success'
     },
 
+    prepareButton(btnValue)
+    {
+        const ok = document.querySelector("#messageBox button[value='ok']");
+        const cancel = document.querySelector("#messageBox button[value='cancel']");
+        const yes = document.querySelector("#messageBox button[value='yes']");
+        const no = document.querySelector("#messageBox button[value='no']");
+
+        const btns = [ ok, cancel, yes, no ];
+        
+        for (const btn of btns)
+        {
+            if (btn.value === btnValue)
+            {
+                btn.className = 'btn';
+                btn.focus();
+            }
+            else
+                btn.className = 'hidden btn';
+        }
+    },
+
     push(type, message)
     {
-        switch (type)
+        return new Promise(resolve =>
         {
-            case this.types.error: alert('Erro: ' + message); break;
-            case this.types.info: alert('Info: ' + message); break;
-            case this.types.success: alert('Sucesso: ' + message); break;
-        }
+            const title = document.getElementById('messageBox_title');
+            const messageEl = document.getElementById('messageBox_message');
+            const msgBox = document.getElementById('messageBox');
+
+            switch (type)
+            {
+                case this.types.error:
+                    title.innerText = "Erro";
+                    messageEl.innerText = message;
+                    this.prepareButton('ok');
+                    break;
+                case this.types.info: 
+                    title.innerText = "Informação";
+                    messageEl.innerText = message;
+                    this.prepareButton('ok');
+                    break;
+                case this.types.success: 
+                    title.innerText = "Sucesso!";
+                    messageEl.innerText = message;
+                    this.prepareButton('ok');
+                    break;
+            }
+
+            msgBox.onclose = ev => resolve(ev.target.returnValue);
+            msgBox.showModal();
+        });
     },
 
     pushFromJsonResult(jsonDecoded)
     {
         if (jsonDecoded.error)
-            this.push(this.types.error, jsonDecoded.error);
+            return this.push(this.types.error, jsonDecoded.error).then(ret => [ret, jsonDecoded ]);
 
         if (jsonDecoded.info)
-            this.push(this.types.info, jsonDecoded.info);
+            return this.push(this.types.info, jsonDecoded.info).then(ret => [ret, jsonDecoded ]);
 
         if (jsonDecoded.success)
-            this.push(this.types.success, jsonDecoded.success);
+            return this.push(this.types.success, jsonDecoded.success).then(ret => [ret, jsonDecoded ]);
     }
 };
 
+Parlaflix.Alerts.prepareButton = Parlaflix.Alerts.prepareButton.bind(Parlaflix.Alerts);
+Parlaflix.Alerts.pushFromJsonResult = Parlaflix.Alerts.pushFromJsonResult.bind(Parlaflix.Alerts);
 Object.freeze(Parlaflix.Alerts.types);

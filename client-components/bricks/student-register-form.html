@@ -1,0 +1,110 @@
+
+<script>
+    const state =
+    {
+        fullname: '',
+        email: '',
+        telephone: '',
+        institution: '',
+        instRole: '',
+        password: '',
+        password2: '',
+        timezone: 'America/Sao_Paulo',
+        lgpdConsentCheck: false,
+        lgpdtermversion: 0,
+        lgpdTermText: '',
+        slotId: ''
+    };
+
+    const methods =
+    {
+        fieldChanged(e)
+        {
+            this.render({ ...this.state, [ e.target.name ]: e.target.value });
+        },
+
+        consentChecked(e)
+        {
+            this.render({ ...this.state, lgpdConsentCheck: e.target.checked });
+        },
+
+        showLgpd()
+        {
+            document.getElementById('lgpdTermDialog')?.showModal();
+        },
+
+        submit(e)
+        {
+            this.render({...this.state, lgpdTermText: document.getElementById('lgpdTermForm')?.elements['lgpdTerm']?.value ?? '***'});
+            e.preventDefault();
+
+            if (this.state.password !== this.state.password2)
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.info, "As senhas não coincidem!");
+                return;
+            }
+
+            const data = {};
+            for (const prop in this.state)
+                data['students:' + prop] = this.state[prop];
+
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const body = JSON.stringify({ data });
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/student/register'), { method: 'POST', headers, body })
+            .then(res => res.json())
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('/student/login'))
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+            
+        }
+    };
+</script>
+
+<template>
+    <form class="mx-auto max-w-[700px]" @submit="submit">
+        <ext-label label="Nome completo">
+            <input type="text" required class="w-full" maxlength="140" name="fullname" :value="state.fullname" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="E-mail">
+            <input type="email" required class="w-full" maxlength="140" name="email" :value="state.email" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="Número de telefone">
+            <input type="text" class="w-full" maxlength="140" name="telephone" :value="state.telephone" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="Instituição">
+            <input type="text" class="w-full" maxlength="140" name="institution" :value="state.institution" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="Cargo">
+            <input type="text" class="w-full" maxlength="140" name="instRole" :value="state.instRole" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="Senha">
+            <input type="password" required class="w-full" maxlength="140" name="password" :value="state.password" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="Confirme a senha">
+            <input type="password" required class="w-full" maxlength="140" name="password2" :value="state.password2" @input="fieldChanged"/>
+        </ext-label>
+        <ext-label label="Seu fuso horário">
+            <select @change="fieldChanged" name="timezone">
+                <option :for="dtz in Parlaflix.Time.TimeZones" :value="dtz" :selected="dtz === 'America/Sao_Paulo'">${dtz}</option>
+            </select>
+        </ext-label>
+        <div class="mt-4">
+            Concorda com o termo de consentimento para uso dos seus dados pessoais?
+            <button type="button" class="btn" @click="showLgpd">Ler</button>
+        </div>
+        <ext-label reverse="1" label="Concordo">
+            <input type="checkbox" required value="${state.lgpdTermVersion}" :checked="state.lgpdConsentCheck" @change="consentChecked"/>
+        </ext-label>
+        <div class="text-center mt-4">
+            <button class="btn" type="submit">Cadastrar-me</button>
+        </div>
+    </form>
+    <dialog id="lgpdTermDialog" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800">
+        <form id="lgpdTermForm" method="dialog">
+            <slot id="${state.slotId}"></slot>
+            <div class="text-center my-4">
+                <button class="btn" type="submit">Fechar</button>
+            </div>
+        </form>
+    </dialog>
+</template>

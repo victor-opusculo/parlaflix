@@ -30,6 +30,20 @@ final class BaseLayout extends Component
                 component(PageMessages::class),
                 tag('main', children: $this->children)
             ]),
+
+            tag('dialog', id: 'messageBox', class: 'backdrop:backdrop-blur', children:
+            [
+                    tag('form', method: 'dialog', class: 'text-center min-w-[350px] p-4 dark:text-white dark:bg-zinc-800', children:
+                    [
+                        tag('h3', class: 'font-bold text-[1.2rem]', id: 'messageBox_title'),
+                        tag('p', class: 'my-4', id: 'messageBox_message'),
+                        tag('button', value: 'ok', class: 'hidden btn mr-2', children: text('Ok')),
+                        tag('button', value: 'cancel', class: 'hidden btn mr-2', children: text('Cancelar')),
+                        tag('button', value: 'yes', class: 'hidden btn mr-2', children: text('Sim')),
+                        tag('button', value: 'no', class: 'hidden btn', children: text('Não')),
+                    ])
+            ]),
+
             tag('footer', class: 'flex flex-col md:flex-row justify-center items-center h-[132px] mt-4 bg-black py-4 md:px-8 px-4 text-white', children: 
             [
                 scTag('img', class: 'inline-block mr-4', width: 64, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.svg')),

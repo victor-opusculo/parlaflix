@@ -4,7 +4,8 @@ return
     '/student' => fn() =>
     [
         '/login' => \VictorOpusculo\Parlaflix\Api\Student\Login::class,
-        '/logout' => \VictorOpusculo\Parlaflix\Api\Student\Logout::class
+        '/logout' => \VictorOpusculo\Parlaflix\Api\Student\Logout::class,
+        '/register' => \VictorOpusculo\Parlaflix\Api\Student\Register::class
     ],
     '/administrator' => fn() =>
     [

@@ -13,6 +13,7 @@ return
     [
         '/' => \VictorOpusculo\Parlaflix\App\Student\Login::class,
         '/login' => \VictorOpusculo\Parlaflix\App\Student\Login::class,
+        '/register' => \VictorOpusculo\Parlaflix\App\Student\Register::class,
         '/panel' => fn() =>
         [
             '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Home::class,

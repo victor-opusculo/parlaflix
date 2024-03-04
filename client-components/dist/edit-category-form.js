@@ -99,12 +99,15 @@
 
             fetch(route, { headers, body, method: this.state.id ? 'PUT' : 'POST' })
             .then(res => res.json())
+            .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess(this.state.gobacktourl, {}))
             .then(json =>
             {
-                Parlaflix.Alerts.pushFromJsonResult(json);
-
-                if (json.success && json.data?.newId)
+                Parlaflix.Alerts.pushFromJsonResult(json)
+                .then(([ ret, json ]) =>
+                {
+                    if (json.success && json.data?.newId)
                     window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/categories/${json.data.newId}/edit`);
+                });
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 

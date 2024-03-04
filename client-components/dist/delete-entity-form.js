@@ -42,13 +42,8 @@
 
             fetch(this.state.deletescripturl, { method: 'DELETE' })
             .then(res => res.json())
-            .then(json => 
-            {
-                Parlaflix.Alerts.pushFromJsonResult(json);
-
-                if (json.success)
-                    window.location.href = this.state.gobacktourl;
-            })
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess(this.state.gobacktourl, {}))
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         },
 

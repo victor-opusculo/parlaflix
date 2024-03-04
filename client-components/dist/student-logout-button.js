@@ -33,12 +33,8 @@
         {
             fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/student/logout'))
             .then(res => res.json())
-            .then(json => 
-            {
-                Parlaflix.Alerts.pushFromJsonResult(json);
-                if (json.success)
-                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl('/students/login');
-            })
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('/student/login', {}))
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
     };

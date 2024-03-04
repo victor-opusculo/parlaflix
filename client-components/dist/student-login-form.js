@@ -42,7 +42,8 @@
             const body = JSON.stringify({ data: { email: this.state.email, password: this.state.password } });
             fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/student/login'), { method: 'POST', headers, body })
             .then(res => res.json())
-            .then(json => { Parlaflix.Alerts.pushFromJsonResult(json); if (json.success) window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl('/students/panel'); })
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('/student/panel', {}))
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
             return true;
