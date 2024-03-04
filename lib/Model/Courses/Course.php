@@ -3,6 +3,7 @@
 namespace VictorOpusculo\Parlaflix\Lib\Model\Courses;
 
 use mysqli;
+use VictorOpusculo\Parlaflix\Lib\Model\Media\Media;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\EntitiesChangesReport;
@@ -34,6 +35,7 @@ class Course extends DataEntity
     
     public array $lessons = [];
     public array $categoriesJoints = [];
+    public ?Media $coverMedia = null;
 
     public function getCount(mysqli $conn, string $searchKeywords) : int
     {
@@ -93,6 +95,15 @@ class Course extends DataEntity
     public function fetchCategoriesJoints(mysqli $conn) : self
     {
         $this->categoriesJoints = (new CourseCategoryJoin([ 'course_id' => $this->properties->id->getValue()->unwrapOr(0) ]))->getAllFromCourse($conn);
+        return $this;
+    }
+
+    public function fetchCoverMedia(mysqli $conn) : self
+    {
+        if (!$this->properties->cover_image_media_id->getValue()->unwrapOr(false))
+            return $this;
+
+        $this->coverMedia = (new Media([ 'id' => $this->properties->cover_image_media_id->getValue()->unwrap() ]))->getSingle($conn);
         return $this;
     }
 

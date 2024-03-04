@@ -39,3 +39,9 @@ customElements.define('loading-spinner', LoadingSpinner)
 
 import NewMediaForm from './new-media-form.js'
 customElements.define('new-media-form', NewMediaForm)
+
+import StudentLoginForm from './student-login-form.js'
+customElements.define('student-login-form', StudentLoginForm)
+
+import StudentLogoutButton from './student-logout-button.js'
+customElements.define('student-logout-button', StudentLogoutButton)

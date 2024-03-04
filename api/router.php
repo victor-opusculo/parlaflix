@@ -1,6 +1,11 @@
 <?php
 return 
 [
+    '/student' => fn() =>
+    [
+        '/login' => \VictorOpusculo\Parlaflix\Api\Student\Login::class,
+        '/logout' => \VictorOpusculo\Parlaflix\Api\Student\Logout::class
+    ],
     '/administrator' => fn() =>
     [
         '/login' => \VictorOpusculo\Parlaflix\Api\Administrator\Login::class,
@@ -25,7 +30,8 @@ return
             ],
             '/courses' => fn() =>
             [
-                '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Courses\Create::class
+                '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Courses\Create::class,
+                '/[courseId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Courses\CourseId::class
             ]
         ]
     ]

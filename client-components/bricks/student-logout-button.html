@@ -1,0 +1,22 @@
+
+<script>
+    const methods =
+    {
+        logout()
+        {
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/student/logout'))
+            .then(res => res.json())
+            .then(json => 
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json);
+                if (json.success)
+                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl('/students/login');
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+        }
+    };
+
+</script>
+<template>
+    <button class="btn" @click="logout" type="button">Sair</button>
+</template>

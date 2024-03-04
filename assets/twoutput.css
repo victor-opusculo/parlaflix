@@ -882,6 +882,10 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
   margin-top: 1rem;
 }
 
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .block {
   display: block;
 }
@@ -976,6 +980,14 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
 
 .max-w-\[700px\] {
   max-width: 700px;
+}
+
+.max-w-\[600px\] {
+  max-width: 600px;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
 }
 
 .shrink {

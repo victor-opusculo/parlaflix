@@ -9,6 +9,16 @@ return
     [
         '/[pageId]' => \VictorOpusculo\Parlaflix\App\Page\PageId::class
     ],
+    '/student' => fn() =>
+    [
+        '/' => \VictorOpusculo\Parlaflix\App\Student\Login::class,
+        '/login' => \VictorOpusculo\Parlaflix\App\Student\Login::class,
+        '/panel' => fn() =>
+        [
+            '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Home::class,
+            '__layout' => \VictorOpusculo\Parlaflix\App\Student\Panel\PanelLayout::class
+        ]
+    ],
     '/admin' => fn() =>
     [
         '/' => \VictorOpusculo\Parlaflix\App\Admin\Login::class,
@@ -55,7 +65,9 @@ return
                 '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\Create::class,
                 '/[courseId]' => fn() =>
                 [
-                    '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Edit::class
+                    '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Edit::class,
+                    '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\View::class,
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class
                 ]
             ]
         ]
