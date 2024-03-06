@@ -9,6 +9,14 @@ return
     [
         '/[pageId]' => \VictorOpusculo\Parlaflix\App\Page\PageId::class
     ],
+    '/info' => fn() =>
+    [
+        '/course' => fn() =>
+        [
+            '/' => \VictorOpusculo\Parlaflix\App\Info\Course\Home::class,
+            '/[courseId]' => \VictorOpusculo\Parlaflix\App\Info\Course\CourseId::class
+        ]
+    ],
     '/student' => fn() =>
     [
         '/' => \VictorOpusculo\Parlaflix\App\Student\Login::class,

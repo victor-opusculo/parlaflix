@@ -7,6 +7,7 @@ use VictorOpusculo\Parlaflix\Lib\Model\Media\Media;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\EntitiesChangesReport;
+use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\SqlSelector;
 
 class Course extends DataEntity
@@ -37,7 +38,7 @@ class Course extends DataEntity
     public array $categoriesJoints = [];
     public ?Media $coverMedia = null;
 
-    public function getCount(mysqli $conn, string $searchKeywords) : int
+    public function getCount(mysqli $conn, string $searchKeywords, bool $includeNonVisible = true) : int
     {
         $selector = (new SqlSelector)
         ->addSelectColumn('COUNT(*)')
@@ -50,11 +51,19 @@ class Course extends DataEntity
             ->addValue('s', $searchKeywords);
         }
 
+        if (!$includeNonVisible)
+        {
+            $selector = 
+            $selector->hasWhereClauses() ? 
+                $selector->addWhereClause("AND {$this->getWhereQueryColumnName('is_visible')} = 1") :
+                $selector->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1");
+        }
+
         $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
         return $count;
     }
 
-    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage) : array
+    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, bool $includeNonVisible = true) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->clearWhereClauses()
@@ -65,6 +74,14 @@ class Course extends DataEntity
             $selector = $selector
             ->addWhereClause("MATCH (name) AGAINST (?) ")
             ->addValue('s', $searchKeywords);
+        }
+
+        if (!$includeNonVisible)
+        {
+            $selector = 
+            $selector->hasWhereClauses() ? 
+                $selector->addWhereClause("AND {$this->getWhereQueryColumnName('is_visible')} = 1") :
+                $selector->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1");
         }
 
         $selector = $selector
@@ -84,6 +101,19 @@ class Course extends DataEntity
 
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
+    }
+
+    public function getSingleVisibleOnly(mysqli $conn) : self
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->addWhereClause("AND {$this->getWhereQueryColumnName('is_visible')} = 1");
+
+        $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
+
+        if (isset($dr))
+            return $this->newInstanceFromDataRow($dr);
+        else
+            throw new DatabaseEntityNotFound("Curso não encontrado!", $this->databaseTable);
     }
 
     public function fetchLessons(mysqli $conn) : self

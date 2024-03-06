@@ -37,33 +37,43 @@
         video_host: 'youtube',
         video_url: '',
         completion_password: Math.floor(Math.random() * 8999) + 1000,
-        completion_points: 1,
-
-        removelessoncallback: () => void 0,
-        changefieldcallback: (index, field, value) => void 0,
-        movelessoncallback: (index, direction) => void 0
+        completion_points: 1
     };
 
     const methods = 
     {
         changeField(e)
         {
-            this.state.changefieldcallback(this.state.index, e.target.getAttribute('data-fieldname'), e.target.value);
+            document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), e.target.value);
+        },
+
+        pasteVideoCode(e)
+        {
+            window.navigator.clipboard.readText()
+            .then(str => new URL(str))
+            .then(url => 
+            {
+                const host = 'youtube';
+                const videoCode = url.searchParams?.get('v') ?? '';
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, 'video_host', host);
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, 'video_url', videoCode);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, reason instanceof TypeError ? 'O texto na sua área de transferência não é uma URL válida!' : String(reason)));
         },
 
         deleteClicked(e)
         {
-            this.state.removelessoncallback(e.target.getAttribute('data-lesson-index'));
+            document.querySelector('edit-course-form').removeLesson(e.target.getAttribute('data-lesson-index'));
         },
 
         moveUpClicked(e)
         {
-            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'up');
+            document.querySelector('edit-course-form').moveLesson(e.target.getAttribute('data-lesson-index'), 'up');
         },
 
         moveDownClicked(e)
         {
-            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'down');
+            document.querySelector('edit-course-form').moveLesson(e.target.getAttribute('data-lesson-index'), 'down');
         }
     };
 
@@ -88,7 +98,8 @@
         ])
       ]),
       h("ext-label", {"label": `Código do vídeo`}, [
-        h("input", {"type": `text`, "data-fieldname": `video_url`, "value": state.video_url, "required": ``, "oninput": this.changeField.bind(this), "class": `w-full`}, "")
+        h("input", {"type": `text`, "data-fieldname": `video_url`, "value": state.video_url, "required": ``, "oninput": this.changeField.bind(this), "class": `w-[calc(100%-130px)]`}, ""),
+        h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.pasteVideoCode.bind(this)}, `Colar`)
       ]),
       h("ext-label", {"label": `Senha para atestar visualização da aula`}, [
         h("input", {"type": `text`, "data-fieldname": `completion_password`, "value": state.completion_password, "required": ``, "oninput": this.changeField.bind(this), "class": `w-full`}, "")

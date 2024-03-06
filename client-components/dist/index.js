@@ -13,6 +13,9 @@ customElements.define('basic-search-field', BasicSearchField)
 import ClientPaginator from './client-paginator.js'
 customElements.define('client-paginator', ClientPaginator)
 
+import CourseSubscribeButton from './course-subscribe-button.js'
+customElements.define('course-subscribe-button', CourseSubscribeButton)
+
 import DataGrid from './data-grid.js'
 customElements.define('data-grid', DataGrid)
 

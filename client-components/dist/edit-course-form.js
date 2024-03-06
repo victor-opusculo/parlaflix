@@ -135,7 +135,7 @@
             const lessonsChangesReportUpdated = { ...this.state.lessonsChangesReport };
             const id = this.state.lessons.find(l => l.index == index)?.id;
             if (id)
-                lessonsChangesReportUpdated.delete.push(id);
+                lessonsChangesReportUpdated.delete.push({ id: Number(id) });
 
             const newLessons = this.state.lessons
                 .filter( l => l.index != index )
@@ -238,13 +238,9 @@
 
     function setup()
     {
-        this.render(
-            { ...this.state, 
-                lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'), 
-                categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]'),
-                categoriesIds: JSON.parse(this.getAttribute('categories_ids_json') || '[]')
-            }
-        );
+        this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
+        this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
+        this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
     }
 
 
@@ -279,7 +275,7 @@
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("h2", {}, `Aulas`),
-      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points, "removelessoncallback": this.removeLesson.bind(this), "changefieldcallback": this.mutateLesson.bind(this), "movelessoncallback": this.moveLesson.bind(this)}, "")))),
+      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points}, "")))),
       h("button", {"type": `button`, "class": `btn`, "onclick": this.addLesson.bind(this)}, `Adicionar aula`),
       h("h2", {}, `Categorias`),
       h("ul", {"class": `list-disc pl-4`}, [

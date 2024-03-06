@@ -5,7 +5,11 @@ return
     [
         '/login' => \VictorOpusculo\Parlaflix\Api\Student\Login::class,
         '/logout' => \VictorOpusculo\Parlaflix\Api\Student\Logout::class,
-        '/register' => \VictorOpusculo\Parlaflix\Api\Student\Register::class
+        '/register' => \VictorOpusculo\Parlaflix\Api\Student\Register::class,
+        '/subscribe' => fn() =>
+        [
+            '/[courseId]' => \VictorOpusculo\Parlaflix\Api\Student\Subscribe\CourseId::class
+        ]
     ],
     '/administrator' => fn() =>
     [

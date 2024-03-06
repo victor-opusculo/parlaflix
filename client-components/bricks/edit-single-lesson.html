@@ -9,33 +9,43 @@
         video_host: 'youtube',
         video_url: '',
         completion_password: Math.floor(Math.random() * 8999) + 1000,
-        completion_points: 1,
-
-        removelessoncallback: () => void 0,
-        changefieldcallback: (index, field, value) => void 0,
-        movelessoncallback: (index, direction) => void 0
+        completion_points: 1
     };
 
     const methods = 
     {
         changeField(e)
         {
-            this.state.changefieldcallback(this.state.index, e.target.getAttribute('data-fieldname'), e.target.value);
+            document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), e.target.value);
+        },
+
+        pasteVideoCode(e)
+        {
+            window.navigator.clipboard.readText()
+            .then(str => new URL(str))
+            .then(url => 
+            {
+                const host = 'youtube';
+                const videoCode = url.searchParams?.get('v') ?? '';
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, 'video_host', host);
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, 'video_url', videoCode);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, reason instanceof TypeError ? 'O texto na sua área de transferência não é uma URL válida!' : String(reason)));
         },
 
         deleteClicked(e)
         {
-            this.state.removelessoncallback(e.target.getAttribute('data-lesson-index'));
+            document.querySelector('edit-course-form').removeLesson(e.target.getAttribute('data-lesson-index'));
         },
 
         moveUpClicked(e)
         {
-            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'up');
+            document.querySelector('edit-course-form').moveLesson(e.target.getAttribute('data-lesson-index'), 'up');
         },
 
         moveDownClicked(e)
         {
-            this.state.movelessoncallback(e.target.getAttribute('data-lesson-index'), 'down');
+            document.querySelector('edit-course-form').moveLesson(e.target.getAttribute('data-lesson-index'), 'down');
         }
     };
 </script>
@@ -54,7 +64,8 @@
             <label><input type="radio" data-fieldname="video_host" name="video_host_idx${state.index}" value="youtube" required :checked="state.video_host === 'youtube'" @change="changeField" /> Youtube</label>
         </div>
         <ext-label label="Código do vídeo">
-            <input type="text" data-fieldname="video_url" :value="state.video_url" required @input="changeField" class="w-full" />
+            <input type="text" data-fieldname="video_url" :value="state.video_url" required @input="changeField" class="w-[calc(100%-130px)]" />
+            <button type="button" class="btn ml-2" @click="pasteVideoCode">Colar</button>
         </ext-label>
         <ext-label label="Senha para atestar visualização da aula">
             <input type="text" data-fieldname="completion_password" :value="state.completion_password" required @input="changeField" class="w-full" />

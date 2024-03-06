@@ -19,8 +19,8 @@ class NavBar extends Component
         return tag('div', children: 
         [
             component(NavBarItem::class, url: URLGenerator::generatePageUrl('/'), label: 'Início'),
-            component(NavBarItem::class, url: URLGenerator::generatePageUrl('/infos/courses'), label: 'Cursos'),
-            component(NavBarItem::class, url: URLGenerator::generatePageUrl('/student/panel'), label: 'Meu aprendizado'),
+            component(NavBarItem::class, url: URLGenerator::generatePageUrl('/info/course'), label: 'Cursos'),
+            component(NavBarItem::class, url: URLGenerator::generatePageUrl('/student/panel'), label: 'Área do estudante'),
             component(NavBarItem::class, url: URLGenerator::generatePageUrl('/certificate/auth'), label: 'Verificar certificado')
         ]);
     }
