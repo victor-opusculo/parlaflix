@@ -98,7 +98,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 		$dataRow = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
 
 		if (isset($dataRow)) 
-			return $this->newInstanceFromDataRow($dataRow);
+			return $this->newInstanceFromDataRowFromDatabase($dataRow);
 		else
 			throw new Exceptions\DatabaseEntityNotFound('Dados não localizados!', $this->databaseTable);
 	}
@@ -210,6 +210,21 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 		return $this;
 	}
 
+	public function fillPropertiesFromDataRowFromDatabase($dataRow) : static
+	{
+		$this->otherProperties = new OtherProperties();
+
+		foreach ($dataRow as $col => $val)
+		{
+			if (!isset($this->properties->$col))
+				$this->otherProperties->$col = $val;
+			else
+				$this->properties->$col->setValueFromDatabase($val);
+		}
+
+		return $this;
+	}
+
 	public function fillPropertiesFromFormInput($post, $files = null) : static
 	{
 		$this->postFiles = $files;
@@ -243,6 +258,13 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 	protected function newInstanceFromDataRow($dataRow) : static
 	{
 		return new static($dataRow);
+	}
+
+	protected function newInstanceFromDataRowFromDatabase($dataRow) : static
+	{
+		$new = new static();
+		$new->fillPropertiesFromDataRowFromDatabase($dataRow);
+		return $new;
 	}
 	
 	protected function getGetSingleSqlSelector() : SqlSelector

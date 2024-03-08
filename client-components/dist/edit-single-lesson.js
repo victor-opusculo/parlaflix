@@ -34,10 +34,15 @@
         index: 1,
         title: '',
         presentation_html: '',
+        live_meeting_url: '',
+        live_meeting_datetime: '',
+        liveMeetingDate: '',
+        liveMeetingTime: '',
         video_host: 'youtube',
         video_url: '',
-        completion_password: Math.floor(Math.random() * 8999) + 1000,
-        completion_points: 1
+        completion_password: '',
+        completion_points: 1,
+        timezone: ''
     };
 
     const methods = 
@@ -45,6 +50,32 @@
         changeField(e)
         {
             document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), e.target.value);
+        },
+
+        dateFieldChanged(e)
+        {
+            const dat = e.target.value;
+            this.render({ ...this.state, liveMeetingDate: dat });
+
+            if (!isNaN(new Date(`${dat} ${this.state.liveMeetingTime}`).valueOf()))
+            {
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), `${dat} ${this.state.liveMeetingTime}`);
+            }
+            else if (!this.state.liveMeetingTime && !this.state.liveMeetingDate)
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), null);
+        },
+
+        timeFieldChanged(e)
+        {
+            const tim = e.target.value;
+            this.render({ ...this.state, liveMeetingTime: tim });
+
+            if (!isNaN(new Date(`${this.state.liveMeetingDate} ${tim}`).valueOf()))
+            {
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), `${this.state.liveMeetingDate} ${tim}`);
+            }
+            else if (!this.state.liveMeetingTime && !this.state.liveMeetingDate)
+                document.querySelector('edit-course-form').mutateLesson(this.state.index, e.target.getAttribute('data-fieldname'), null);
         },
 
         pasteVideoCode(e)
@@ -77,6 +108,16 @@
         }
     };
 
+    function setup()
+    {
+        const date = this.getAttribute('live_meeting_datetime') ? new Date(this.getAttribute('live_meeting_datetime')) : new Date();
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, 0)}-${String(date.getDate()).padStart(2, 0)}`;
+        const timeStr = `${String(date.getHours()).padStart(2, 0)}:${String(date.getMinutes()).padStart(2, 0)}:${String(date.getSeconds()).padStart(2, 0)}`;
+
+        this.state.liveMeetingDate = dateStr;
+        this.state.liveMeetingTime = timeStr;
+    }
+
 
   const __template = function({ state }) {
     return [  
@@ -87,6 +128,16 @@
       ]),
       h("ext-label", {"label": `Mais informações (HTML permitido)`, "linebreak": `1`}, [
         h("textarea", {"data-fieldname": `presentation_html`, "class": `w-full`, "rows": `4`, "maxlength": `1000`, "oninput": this.changeField.bind(this), "value": state.presentation_html}, "")
+      ]),
+      h("ext-label", {"label": `Link da sala (aula ao vivo)`}, [
+        h("input", {"type": `text`, "data-fieldname": `live_meeting_url`, "class": `w-full`, "maxlength": `140`, "oninput": this.changeField.bind(this), "value": state.live_meeting_url}, "")
+      ]),
+      h("ext-label", {"label": `Data e hora da aula ao vivo`}, [
+        h("input", {"type": `date`, "data-fieldname": `live_meeting_datetime`, "value": state.liveMeetingDate, "onchange": this.dateFieldChanged.bind(this)}, ""),
+        h("input", {"type": `time`, "step": `1`, "data-fieldname": `live_meeting_datetime`, "value": state.liveMeetingTime, "onchange": this.timeFieldChanged.bind(this)}, ""),
+`
+            (${state.timezone})
+        `
       ]),
       h("div", {"class": `ml-2`}, [
 `

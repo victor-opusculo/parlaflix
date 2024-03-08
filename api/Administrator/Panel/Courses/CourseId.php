@@ -30,7 +30,9 @@ final class CourseId extends RouteHandler
             if (!Connection::isId($this->courseId))
                 throw new Exception('ID inválido!');
 
-            $course = (new Course([ 'id' => $this->courseId ]))->getSingle($conn);
+            $course = (new Course([ 'id' => $this->courseId ]))
+            ->getSingle($conn)
+            ->informDateTimeZone($_SESSION['user_timezone']);
             $course->fillPropertiesFromFormInput($_POST['data'] ?? []);
 
             $result = $course->save($conn);

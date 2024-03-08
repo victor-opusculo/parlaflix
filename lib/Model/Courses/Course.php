@@ -38,6 +38,14 @@ class Course extends DataEntity
     public array $categoriesJoints = [];
     public ?Media $coverMedia = null;
 
+    protected ?string $dateTimeZone = null;
+
+    public function informDateTimeZone(string $dtz) : self
+    {
+        $this->dateTimeZone = $dtz;
+        return $this;
+    }
+
     public function getCount(mysqli $conn, string $searchKeywords, bool $includeNonVisible = true) : int
     {
         $selector = (new SqlSelector)
@@ -119,6 +127,9 @@ class Course extends DataEntity
     public function fetchLessons(mysqli $conn) : self
     {
         $this->lessons = (new Lesson([ 'course_id' => $this->properties->id->getValue()->unwrapOr(0) ]))->getAllFromCourse($conn);
+        foreach ($this->lessons as $less)
+            $less->informDateTimeZone($this->dateTimeZone);
+
         return $this;
     }
 
@@ -171,6 +182,7 @@ class Course extends DataEntity
         $creport = new EntitiesChangesReport($creportData, Lesson::class);
 
         $creport->setPropertyValueForAll('course_id', $insertResult['newId']);
+        $creport->callMethodForAll('informDateTimeZone', $_SESSION['user_timezone']);
         $insertResult['affectedRows'] += $creport->applyToDatabase($conn);
 
         $categoriesIds = $this->otherProperties->categoriesIds ?? [];
@@ -185,6 +197,7 @@ class Course extends DataEntity
         $creport = new EntitiesChangesReport($creportData, Lesson::class);
 
         $creport->setPropertyValueForAll('course_id', $this->properties->id->getValue()->unwrap() );
+        $creport->callMethodForAll('informDateTimeZone', $_SESSION['user_timezone']);
         $updateResult['affectedRows'] += $creport->applyToDatabase($conn);
 
         $categoriesIds = $this->otherProperties->categoriesIds ?? [];

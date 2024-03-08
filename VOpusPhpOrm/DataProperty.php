@@ -39,6 +39,9 @@ class DataProperty implements \JsonSerializable
 	private Option $value;
 	
 	public $valueTransformer;  
+	public $setValueTransformer;
+	public $valueTransformerForDatabase;
+	public $setValueTransformerFromDatabase;
 
 	public function __construct(?string $formFieldIdentifierName, ?callable $defaultValueClosure, string $databaseType = self::MYSQL_STRING, bool $encrypt = false)
 	{
@@ -62,12 +65,20 @@ class DataProperty implements \JsonSerializable
 	
 	public function setValue(mixed $value)
 	{
-		$this->value = Option::some($value);
+		$this->value = isset($this->setValueTransformer) ? Option::some(($this->setValueTransformer)($value)) : Option::some($value);
+	}
+
+	public function setValueFromDatabase(mixed $value)
+	{
+		if (isset($this->setValueTransformerFromDatabase))
+			$this->value = Option::some(($this->setValueTransformerFromDatabase)($value));
+		else
+			$this->setValue($value);
 	}
 	
 	public function getValueForDatabase() : mixed
 	{
-		return $this->getValue()->unwrapOrElse($this->defaultValueClosure); 
+		return isset($this->valueTransformerForDatabase) ? ($this->valueTransformerForDatabase)($this->value)->unwrapOrElse($this->defaultValueClosure) : $this->getValue()->unwrapOrElse($this->defaultValueClosure); 
 	}
 	
 	public function setEncrypt($value)

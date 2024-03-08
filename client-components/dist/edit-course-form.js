@@ -122,6 +122,8 @@
                     index: this.state.lessons?.length + 1,
                     title: '',
                     presentation_html: '',
+                    live_meeting_url: '',
+                    live_meeting_datetime: '',
                     video_host: 'youtube',
                     video_url: '',
                     completion_password: '',
@@ -170,7 +172,9 @@
         {
             const lessons = this.state.lessons;
             const found = lessons.find( l => l.index == index );
-            found[field] = value;
+
+            if (found)
+                found[field] = value;
 
             this.render({ ...this.state, lessons: lessons });
         },
@@ -275,7 +279,7 @@
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("h2", {}, `Aulas`),
-      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points}, "")))),
+      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "live_meeting_url": lesson.live_meeting_url, "live_meeting_datetime": lesson.live_meeting_datetime, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points, "timezone": state.timezone}, "")))),
       h("button", {"type": `button`, "class": `btn`, "onclick": this.addLesson.bind(this)}, `Adicionar aula`),
       h("h2", {}, `Categorias`),
       h("ul", {"class": `list-disc pl-4`}, [

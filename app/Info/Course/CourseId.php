@@ -1,6 +1,7 @@
 <?php
 namespace VictorOpusculo\Parlaflix\App\Info\Course;
 
+use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
 use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
@@ -30,16 +31,19 @@ final class CourseId extends Component
             if (!Connection::isId($this->courseId))
                 throw new \Exception("ID inválido!");
 
+            session_name('parlaflix_student_user');
+            session_start();
+
             $this->course = (new Course([ 'id' => $this->courseId ]))
             ->getSingleVisibleOnly($conn)
+            ->informDateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo')
             ->fetchLessons($conn)
             ->fetchCategoriesJoints($conn)
             ->fetchCoverMedia($conn);
 
             HeadManager::$title = $this->course->name->unwrapOr('Curso');
 
-            session_name('parlaflix_student_user');
-            session_start();
+            
             $this->studentLoggedIn = (($_SESSION['user_type'] ?? '') === UserTypes::student) && (!empty($_SESSION['user_id']));
 
             if ($this->studentLoggedIn)
@@ -81,7 +85,14 @@ final class CourseId extends Component
             ]),
             tag('h2', children: text('Aulas')),
             tag('ol', class: 'list-decimal pl-8', children:
-                array_map( fn($less) => tag('li', children: text($less->title->unwrapOr('***'))), $this->course->lessons)
+                array_map( fn($less) => tag('li', children: 
+                [
+                    text($less->title->unwrapOr('***')),
+                    ($less->live_meeting_datetime->unwrapOr(false) 
+                    ?   [ text(' | Ao vivo em: '), component(DateTimeTranslator::class, isoDateTime: $less->live_meeting_datetime->unwrap()) ]
+                    :   null
+                    )
+                ]), $this->course->lessons)
             )
         ])
         : null;

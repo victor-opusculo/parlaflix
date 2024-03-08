@@ -25,6 +25,7 @@ final class Edit extends Component
         {
             $this->course = (new Course([ 'id' => $this->courseId ]))
             ->getSingle($conn)
+            ->informDateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo')
             ->fetchLessons($conn)
             ->fetchCategoriesJoints($conn);
 
@@ -52,6 +53,7 @@ final class Edit extends Component
             tag('edit-course-form',
                 ...json_decode(json_encode($this->course), true),
 
+                timezone: $_SESSION['user_timezone'] ?? 'America/Sao_Paulo',
                 categories_available_json: Data::hscq(json_encode($this->categoriesAvailable)),
                 categories_ids_json: Data::hscq(json_encode($this->courseCategoryIds)),
                 lessons_json: Data::hscq(json_encode($this->courseLessons))

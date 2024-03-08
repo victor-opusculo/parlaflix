@@ -24,6 +24,7 @@ final class Create extends RouteHandler
         try
         {
             $course = new Course;
+            $course->informDateTimeZone($_SESSION['user_timezone']);
             $course->fillPropertiesFromFormInput($_POST['data'] ?? []);
 
             //$this->json([ 'info' => print_r($_POST['data'], true) ]);
