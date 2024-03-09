@@ -149,7 +149,7 @@
         ])
       ]),
       h("ext-label", {"label": `Código do vídeo`}, [
-        h("input", {"type": `text`, "data-fieldname": `video_url`, "value": state.video_url, "required": ``, "oninput": this.changeField.bind(this), "class": `w-[calc(100%-130px)]`}, ""),
+        h("input", {"type": `text`, "data-fieldname": `video_url`, "value": state.video_url, "oninput": this.changeField.bind(this), "class": `w-[calc(100%-130px)]`}, ""),
         h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.pasteVideoCode.bind(this)}, `Colar`)
       ]),
       h("ext-label", {"label": `Senha para atestar visualização da aula`}, [

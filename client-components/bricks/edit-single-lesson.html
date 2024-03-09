@@ -113,7 +113,7 @@
             <label><input type="radio" data-fieldname="video_host" name="video_host_idx${state.index}" value="youtube" required :checked="state.video_host === 'youtube'" @change="changeField" /> Youtube</label>
         </div>
         <ext-label label="Código do vídeo">
-            <input type="text" data-fieldname="video_url" :value="state.video_url" required @input="changeField" class="w-[calc(100%-130px)]" />
+            <input type="text" data-fieldname="video_url" :value="state.video_url" @input="changeField" class="w-[calc(100%-130px)]" />
             <button type="button" class="btn ml-2" @click="pasteVideoCode">Colar</button>
         </ext-label>
         <ext-label label="Senha para atestar visualização da aula">

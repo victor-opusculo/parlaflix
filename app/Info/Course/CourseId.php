@@ -75,6 +75,7 @@ final class CourseId extends Component
                 [
                     component(Label::class, label: 'Descrição', labelBold: true, lineBreak: true, children: rawText(nl2br(Data::hsc($this->course->presentation_html->unwrapOr('Sem descrição'))))),
                     component(Label::class, label: 'Carga horária', labelBold: true, children: text($this->course->hours->unwrapOr('Indefinido'))),
+                    component(Label::class, label: 'Categoria(s)', labelBold: true, children: text(array_reduce($this->course->categoriesJoints, fn($carry, $j) => ($carry ? ', ' : '') . $j->getOtherProperties()->title, null))),
 
                     $this->studentLoggedIn
                         ? ($this->studentAlreadySubscribed

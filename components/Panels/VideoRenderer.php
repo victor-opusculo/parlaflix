@@ -13,7 +13,7 @@ class VideoRenderer extends Component
 
     protected function markup(): Component|array|null
     {
-        return tag('div', class: 'mb-4', children:
+        return tag('div', class: 'mb-4 w-full', children:
         [   
             ($this->videoHost === 'youtube' && $this->videoCode ?
                 tag('div', class: 'flex mx-auto max-w-[600px]', children:

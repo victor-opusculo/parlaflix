@@ -25,7 +25,12 @@ return
         '/panel' => fn() =>
         [
             '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Home::class,
-            '__layout' => \VictorOpusculo\Parlaflix\App\Student\Panel\PanelLayout::class
+            '__layout' => \VictorOpusculo\Parlaflix\App\Student\Panel\PanelLayout::class,
+            '/subscription' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\Home::class,
+                '/[subscriptionId]' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\SubscriptionId::class
+            ]
         ]
     ],
     '/admin' => fn() =>
