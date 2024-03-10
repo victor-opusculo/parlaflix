@@ -54,7 +54,11 @@ final class Home extends Component
             tag('h1', children: text('Páginas')),
             component(BasicSearchInput::class),
             component(OrderByLinks::class, linksDefinitions: [ 'ID' => 'id', 'Título' => 'title', 'Publicada' => 'is_published' ]),
-            tag('div', class: 'my-2', children: tag('a', href: URLGenerator::generatePageUrl('/admin/panel/pages/create'), class: 'btn', children: text('Nova'))),
+            tag('div', class: 'my-2', children:
+            [
+                tag('a', href: URLGenerator::generatePageUrl('/admin/panel/pages/create'), class: 'btn mr-2', children: text('Nova')),
+                tag('a', href: URLGenerator::generatePageUrl('/admin/panel/pages/set_homepage'), class: 'btn', children: text('Definir página inicial'))
+            ]),
             component(DataGrid::class, 
                 dataRows: $this->pages,
                 detailsButtonURL: URLGenerator::generatePageUrl('/admin/panel/pages/{param}'),

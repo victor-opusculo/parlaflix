@@ -82,4 +82,16 @@ final class Page extends DataEntity
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
+
+    public function exists(mysqli $conn) : bool
+    {
+        $selector = (new SqlSelector)
+        ->addSelectColumn('Count(*)')
+        ->setTable($this->databaseTable)
+        ->addWhereClause("{$this->getWhereQueryColumnName('id')} = ?")
+        ->addValue('i', $this->properties->id->getValue()->unwrapOr(null));
+
+        $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return $count > 0;
+    } 
 }

@@ -15,6 +15,10 @@ return
         [
             '/' => \VictorOpusculo\Parlaflix\App\Info\Course\Home::class,
             '/[courseId]' => \VictorOpusculo\Parlaflix\App\Info\Course\CourseId::class
+        ],
+        '/category' => fn() =>
+        [
+            '/' => \VictorOpusculo\Parlaflix\App\Info\Category\Home::class
         ]
     ],
     '/student' => fn() =>
@@ -56,6 +60,7 @@ return
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Pages\Home::class,
                 '/create' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Pages\Create::class,
+                '/set_homepage' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Pages\SetHomePage::class,
                 '/[pageId]' => fn() =>
                 [
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Pages\PageId\View::class,
@@ -83,6 +88,11 @@ return
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\View::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class
                 ]
+            ],
+            '/certificates' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Certificates\Home::class,
+                '/set_bg_image' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Certificates\SetBgImage::class
             ]
         ]
     ],

@@ -30,6 +30,7 @@ final class Delete extends Component
 
             $this->course = (new Course([ 'id' => $this->courseId ]))
             ->getSingle($conn)
+            ->informDateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo')
             ->fetchLessons($conn);
         }
         catch (\Exception $e)
@@ -49,7 +50,7 @@ final class Delete extends Component
 
             tag('delete-entity-form', 
                 deletescripturl: URLGenerator::generateApiUrl("/administrator/panel/courses/{$this->course->id->unwrapOr(0)}"),
-                gobacktourl: URLGenerator::generatePageUrl('/admin/panel/courses'),
+                gobacktourl: '/admin/panel/courses',
                 children:
                 [
                     component(Label::class, label: 'ID', labelBold: true, children: text($this->course->id->unwrapOr(0))),

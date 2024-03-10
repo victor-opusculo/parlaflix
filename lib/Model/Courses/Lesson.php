@@ -73,4 +73,24 @@ class Lesson extends DataEntity
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRowFromDatabase'], $drs);
     }
+
+    public function isPasswordCorrect(string $givenPassword) : bool
+    {
+        if (!$givenPassword)
+            throw new \Exception("Senha não informada!");
+
+        $lessPassword = $this->properties->completion_password->getValue()->unwrapOr('');
+        return $lessPassword === $givenPassword;
+    }
+
+    public function passedLiveMeetingDate() : bool
+    {
+        if (!$this->properties->live_meeting_datetime->getValue()->unwrapOr(false))
+            return true;
+
+        $liveMeetDt = new DateTime($this->properties->live_meeting_datetime->getValue()->unwrap());
+        $currentDt = new DateTime('now', new DateTimeZone($this->dateTimeZone));
+
+        return $currentDt >= $liveMeetDt;
+    }
 }

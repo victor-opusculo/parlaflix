@@ -25,4 +25,11 @@ final class System
     {
         return __DIR__ . '/../../';
     }
+
+    public static function getHttpProtocolName()
+    {
+        $isHttps = $_SERVER['HTTPS'] ?? $_SERVER['REQUEST_SCHEME'] ?? $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null;
+        $isHttps = $isHttps && (strcasecmp('on', $isHttps) == 0 || strcasecmp('https', $isHttps) == 0);
+        return $isHttps ? 'https' : 'http';
+    }
 }

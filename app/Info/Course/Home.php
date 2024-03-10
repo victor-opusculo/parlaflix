@@ -6,11 +6,14 @@ use VictorOpusculo\Parlaflix\Components\Data\OrderByLinks;
 use VictorOpusculo\Parlaflix\Components\Data\Paginator;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
 use VictorOpusculo\Parlaflix\Components\Site\CourseGrid;
+use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
+use VictorOpusculo\Parlaflix\Lib\Model\Courses\Category;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
 use VictorOpusculo\PComp\HeadManager;
+use VictorOpusculo\PComp\ScriptManager;
 
 use function VictorOpusculo\PComp\Prelude\component;
 use function VictorOpusculo\PComp\Prelude\tag;
@@ -26,10 +29,13 @@ final class Home extends Component
         {
             $getter = new Course();
             $this->courseCount = $getter->getCount($conn, $_GET['q'] ?? '', false);
-            $this->courses = $getter->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? 'name', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, false);
+            $this->courses = $getter->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? 'name', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, false, $_GET['category_id'] ?? null);
             
             foreach ($this->courses as $c)
                 $c->fetchCoverMedia($conn);
+
+            $this->categories = (new Category)->getAll($conn);
+            ScriptManager::registerScript('courseCategorySelectScript', '', URLGenerator::generateFileUrl('assets/script/CourseCategorySelect.js'));
         }
         catch (\Exception $e)
         {
@@ -41,6 +47,7 @@ final class Home extends Component
 
     private array $courses = [];
     private int $courseCount = 0;
+    private array $categories = [];
 
     protected function markup(): Component|array|null
     {
@@ -48,6 +55,22 @@ final class Home extends Component
         [
             tag('h1', children: text('Cursos')),
             component(BasicSearchInput::class),
+            tag('div', class: 'text-right', children:
+            [
+                tag('label', children:
+                [
+                    text('Categoria: '),
+                    tag('select', 
+                        name: 'category_id', 
+                        id: 'courseCategorySelect',
+                        children:
+                        [
+                            tag('option', value: 0, children: text('-- Qualquer --')),
+                            ...array_map(fn($cat) => tag('option', value: $cat->id->unwrapOr(0), children: text($cat->title->unwrapOr('')), selected: ($_GET['category_id'] ?? -1) == $cat->id->unwrapOr(0) ), $this->categories)
+                        ]
+                      )
+                ])
+            ]),
             component(OrderByLinks::class, linksDefinitions:
             [
                 'Nome' => 'name',

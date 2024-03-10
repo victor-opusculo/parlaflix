@@ -16,13 +16,14 @@ class PageViewer extends Component
     }
 
     public Page $page;
+    public bool $showTitle = true;
 
     protected function markup(): Component|array|null
     {
         return 
         [
-            tag('h2', children: text($this->page->title->unwrapOr(''))),
-            tag('div', class: 'mt-4', children: 
+            $this->showTitle ? tag('h2', class: 'mb-4', children: text($this->page->title->unwrapOr(''))) : null,
+            tag('div', children: 
                 $this->page->html_enabled->unwrapOr(0) ? 
                 rawText($this->page->content->unwrapOr('')) :
                 rawText(nl2br(Data::hsc($this->page->content->unwrapOr(''))))

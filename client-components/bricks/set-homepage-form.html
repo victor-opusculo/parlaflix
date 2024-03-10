@@ -1,0 +1,112 @@
+<script>
+    const state =
+    {
+        page_id: null,
+        remove: false,
+        searchPages: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+    };
+
+    const methods =
+    {
+        changeField(e)
+        {
+            if (e.target.type == 'checkbox')
+                this.render({ ...this.state, [ e.target.name ]: e.target.checked });
+            else
+                this.render({ ...this.state, [e.target.name]: e.target.value });
+        },
+
+        searchBtnClicked(e)
+        {
+            this.fetchPages();
+            this.render({ ...this.state, searchPages: { ...this.state.searchPages, enabled: !this.state.searchPages.enabled } });
+        },
+
+        fetchPages(page = 1, query = '')
+        {
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/administrator/panel/pages", { page_num: page, results_on_page: this.state.searchPages.resultsOnPage, q: query }))
+            .then(res => res.json())
+            .then(json =>
+            {
+                if (json.success && json.data && json.data.dataRows && typeof json.data.allCount === "number")
+                {
+                    const transformed = json.data.dataRows.map( p => (
+                        {
+                            'ID': String(p.id),
+                            'Título': p.title,
+                            'Início do Conteúdo': p.content?.substring(0, 80) ?? '',
+                            'Publicada?': Number(p.is_published) ? 'Sim' : 'Não' 
+                        })
+                    );
+                    this.render({ ...this.state, searchPages: { ...this.state.searchPages, pageNum: page, dataRows: transformed, allCount: json.data.allCount, q: query } });
+                }
+            });
+
+        },
+
+        pagePageChange(page = 1)
+        {
+            this.fetchPages(page, this.state.searchPages.q);
+        },
+
+        searchKeyword(query = '')
+        {
+            this.fetchPages(this.state.searchPages.pageNum, query);
+        },
+
+        setPageId(id)
+        {
+            this.render({ ...this.state, page_id: Number(id) });
+        },
+
+        submit(e)
+        {
+            e.preventDefault();
+
+            if (!this.state.page_id && !this.state.remove)
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "Especifique uma página ou marque a opção de remover.");
+                return;
+            }
+
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const body = JSON.stringify({ data: { 'page_id': this.state.page_id, 'remove': this.state.remove }});
+
+            const route = Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/pages/set_homepage`);
+
+            fetch(route, { headers, body, method: 'PUT' })
+            .then(res => res.json())
+            .then(json =>
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+
+        }
+    };
+</script>
+
+<template>
+    <form @submit="submit">
+        <ext-label label="Página ID">
+            <input type="number" min="1" step="1" name="page_id" :value="state.page_id" @input="changeField" />
+            <button type="button" class="btn ml-2" @click="searchBtnClicked">Procurar</button>
+        </ext-label>
+        <ext-label label="Remover" reverse="1">
+            <input type="checkbox" name="remove" value="1" @change="changeField"/>
+        </ext-label>
+        <div :if="state.searchPages.enabled">
+            <basic-search-field :searchkeywords="state.searchPages.q" :searchcallback="this.searchKeyword.bind(this)"></basic-search-field>
+            <data-grid :datarows="state.searchPages.dataRows" :returnidcallback="this.setPageId.bind(this)" selectlinkparamname="ID"></data-grid>
+            <client-paginator 
+                :totalitems="state.searchPages.allCount"
+                :resultsonpage="state.searchPages.resultsOnPage"
+                :changepagecallback="this.pagePageChange.bind(this)"
+                :pagenum="state.searchPages.pageNum"
+            ></client-paginator>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn">Salvar</button>
+        </div>
+    </form>
+</template>

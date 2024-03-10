@@ -83,6 +83,18 @@ final class Media extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
+    public function exists(mysqli $conn) : bool
+    {
+        $selector = (new SqlSelector)
+        ->addSelectColumn("COUNT(*)")
+        ->setTable($this->databaseTable)
+        ->addWhereClause("{$this->getWhereQueryColumnName('id')} = ?")
+        ->addValue('i', $this->properties->id->getValue()->unwrapOr(0));
+
+        $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return $count > 0;
+    }
+
     public function beforeDatabaseInsert(mysqli $conn): int
     {
         MediaUpload::checkForUploadError($this->postFiles, $this->fileUploadFieldName);
@@ -136,7 +148,7 @@ final class Media extends DataEntity
         $ext = $this->properties->file_extension->getValue()->unwrapOr('');
 
         if ($id && $ext)
-            return System::baseDir() + "/uploads/media/$id.$ext";
+            return System::baseDir() . "/uploads/media/$id.$ext";
 
         throw new Exception("Erro de entidade de mídia não carregada ao obter localização do arquivo.");
     }

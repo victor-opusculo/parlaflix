@@ -51,7 +51,7 @@ class Subscription extends DataEntity
         return (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
     }
 
-    public function getMultipleFromStudent(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage) : array
+    public function getMultipleFromStudent(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, ?int $categoryId = null) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
@@ -61,6 +61,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.course_id = {$this->databaseTable}.course_id")
         ->addWhereClause("{$this->getWhereQueryColumnName('student_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0));
 
@@ -69,6 +70,13 @@ class Subscription extends DataEntity
             $selector = $selector
             ->addWhereClause(" AND MATCH (courses.name) AGAINST (?)")
             ->addValue('s', $searchKeywords);
+        }
+
+        if ($categoryId)
+        {
+            $selector = $selector
+            ->addWhereClause(" AND courses_categories_join.category_id = ?")
+            ->addValue('i', $categoryId);
         }
 
         $selector = $selector->setOrderBy(match($orderBy)

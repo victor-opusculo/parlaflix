@@ -13,10 +13,15 @@ class HomePageId extends DataEntity
             'name' => new DataProperty(null, fn() => 'HOME_PAGE_ID', DataProperty::MYSQL_STRING),
             'value' => new DataProperty(null, fn() => '', DataProperty::MYSQL_STRING)
         ];
+
         parent::__construct($initialValues);
+
+        $this->properties->name->setValue('HOME_PAGE_ID');
+
     }
 
     protected string $databaseTable = 'settings';
     protected string $formFieldPrefixName = 'homePageId';
     protected array $primaryKeys = ['name'];
+    protected array $setPrimaryKeysValue = ['name'];
 }

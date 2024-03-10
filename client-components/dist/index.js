@@ -43,6 +43,15 @@ customElements.define('loading-spinner', LoadingSpinner)
 import NewMediaForm from './new-media-form.js'
 customElements.define('new-media-form', NewMediaForm)
 
+import SetCertificateBgForm from './set-certificate-bg-form.js'
+customElements.define('set-certificate-bg-form', SetCertificateBgForm)
+
+import SetHomepageForm from './set-homepage-form.js'
+customElements.define('set-homepage-form', SetHomepageForm)
+
+import StudentLessonPasswordSubmitter from './student-lesson-password-submitter.js'
+customElements.define('student-lesson-password-submitter', StudentLessonPasswordSubmitter)
+
 import StudentLoginForm from './student-login-form.js'
 customElements.define('student-login-form', StudentLoginForm)
 

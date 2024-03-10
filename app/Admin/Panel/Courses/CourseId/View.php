@@ -35,6 +35,7 @@ final class View extends Component
 
             $this->course = (new Course([ 'id' => $this->courseId ]))
             ->getSingle($conn)
+            ->informDateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo')
             ->fetchLessons($conn)
             ->fetchCategoriesJoints($conn)
             ->fetchCoverMedia($conn);

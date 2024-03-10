@@ -52,6 +52,13 @@ final class Home extends Component
                     iconUrl: URLGenerator::generateFileUrl('assets/pics/category.svg'),
                     additionalClasses: 'bg-violet-700/50',
                     invertIconColorsOnDark: true
+                ),
+                component(FeatureButton::class,
+                    url: URLGenerator::generatePageUrl('/admin/panel/certificates'),
+                    label: 'Certificados',
+                    iconUrl: URLGenerator::generateFileUrl('assets/pics/certificate.svg'),
+                    additionalClasses: 'bg-violet-700/50',
+                    invertIconColorsOnDark: true
                 )
             ])
         ];

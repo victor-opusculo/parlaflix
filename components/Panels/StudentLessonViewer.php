@@ -15,6 +15,7 @@ use function VictorOpusculo\PComp\Prelude\text;
 class StudentLessonViewer extends Component
 {
     protected Lesson $lesson;
+    protected bool $isPasswordCorrect = false;
 
     protected function markup(): Component|array|null
     {
@@ -36,10 +37,24 @@ class StudentLessonViewer extends Component
             
             component(Label::class, label: 'Vídeo', labelBold: true, lineBreak: true, children:
                 $this->lesson->video_url->unwrapOr(false)
-                    ? component(VideoRenderer::class, videoHost: $this->lesson->video_host->unwrapOr(''), videoCode: $this->lesson->video_url->unwrapOr(''))
+                    ? component(VideoRenderer::class, 
+                            videoHost: $this->lesson->video_host->unwrapOr(''), 
+                            videoCode: $this->lesson->video_url->unwrapOr(''),
+                            width: 774,
+                            height: 473
+                      )
                     : text("Esta aula ainda não tem gravação disponível.")
             ),
-            component(Label::class, label: 'Pontos de presença marcada', labelBold: true, children: text($this->lesson->completion_points->unwrapOr('')))
+            
+            $this->lesson->passedLiveMeetingDate()
+                ?   tag('fieldset', class: 'fieldset', children:
+                    [
+                        tag('legend', children: text("Marcar presença/visualização")),
+                        component(Label::class, label: 'Pontuação da aula', labelBold: true, children: text($this->lesson->completion_points->unwrapOr(''))),
+                        tag('student-lesson-password-submitter', student_id: $_SESSION['user_id'] ?? 0, lesson_id: $this->lesson->id->unwrapOr(0), iscorrect: $this->isPasswordCorrect ? 1 : 0)
+                    ])
+                : null
+            
         ];
     }
 }

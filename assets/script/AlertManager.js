@@ -8,7 +8,7 @@ Parlaflix.Alerts ??=
         success: 'success'
     },
 
-    prepareButton(btnValue)
+    prepareButton(...btnValue)
     {
         const ok = document.querySelector("#messageBox button[value='ok']");
         const cancel = document.querySelector("#messageBox button[value='cancel']");
@@ -19,7 +19,7 @@ Parlaflix.Alerts ??=
         
         for (const btn of btns)
         {
-            if (btn.value === btnValue)
+            if (btnValue.includes(btn.value))
             {
                 btn.className = 'btn';
                 btn.focus();

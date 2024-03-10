@@ -71,9 +71,10 @@ class Course extends DataEntity
         return $count;
     }
 
-    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, bool $includeNonVisible = true) : array
+    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, bool $includeNonVisible = true, ?int $categoryId = null) : array
     {
         $selector = $this->getGetSingleSqlSelector()
+        ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.course_id = {$this->databaseTable}.id")
         ->clearWhereClauses()
         ->clearValues();
 
@@ -92,6 +93,13 @@ class Course extends DataEntity
                 $selector->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1");
         }
 
+        if ($categoryId)
+        {
+            $selector = $selector->hasWhereClauses()
+                ? $selector->addWhereClause("AND courses_categories_join.category_id = ?")->addValue('i', $categoryId)
+                : $selector->addWhereClause("courses_categories_join.category_id = ?")->addValue('i', $categoryId);
+        }
+
         $selector = $selector
         ->setOrderBy(match ($orderBy)
         {
@@ -105,7 +113,8 @@ class Course extends DataEntity
         $calcPage = ($page - 1) * $numResultsOnPage;
         $selector = $selector
         ->setLimit('?,?')
-        ->addValues('ii', [ $calcPage, $numResultsOnPage ]);
+        ->addValues('ii', [ $calcPage, $numResultsOnPage ])
+        ->setGroupBy("{$this->databaseTable}.id");
 
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);

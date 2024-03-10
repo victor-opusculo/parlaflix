@@ -18,13 +18,13 @@ class CourseCard extends Component
 
     protected function markup() : Component|array|null
     {
-        return tag('a', class: 'block overflow-auto relative p-2 mx-4 h-[300px] min-w-[300px] max-w-[400px] rounded border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
+        return tag('a', class: 'block overflow-clip relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
         href: $this->detailsUrl,
         children:
         [
-            tag('div', class: 'relative left-0 right-0 bottom-0 top-0 w-full', children:
+            tag('div', class: 'absolute left-0 right-0 bottom-0 top-0 w-full', children:
                 $this->course->cover_image_media_id->unwrapOr(false) ?
-                    scTag('img', class: 'absolute w-auto h-auto left-0 right-0 top-0 bottom-0', src: URLGenerator::generateFileUrl($this->course->coverMedia->fileNameFromBaseDir()))
+                    scTag('img', class: 'absolute m-auto left-0 right-0 top-0 bottom-0', src: URLGenerator::generateFileUrl($this->course->coverMedia->fileNameFromBaseDir()))
                 :
                     text('Sem imagem!')
             ),

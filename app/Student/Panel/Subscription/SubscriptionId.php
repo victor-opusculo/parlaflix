@@ -8,6 +8,7 @@ use VictorOpusculo\Parlaflix\Components\Panels\StudentLessonViewer;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Students\StudentLessonPassword;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
@@ -44,9 +45,18 @@ final class SubscriptionId extends Component
 
             $this->approved = ($this->subscription->getOtherProperties()->studentPoints ?? 0) >= ($this->subscription->course->min_points_required->unwrapOr(INF));
 
-            $currLess = array_filter($this->subscription->course->lessons, fn($less) => $less->index->unwrapOr(0) == $_GET['lesson_index'] ?? INF);
+            $currLess = array_filter($this->subscription->course->lessons, fn($less) => $less->index->unwrapOr(0) == ($_GET['lesson_index'] ?? INF));
             if (count($currLess) > 0)
+            {
                 $this->loadedLesson = array_pop($currLess);
+
+                $studentLessPass = (new StudentLessonPassword([ 'student_id' => $_SESSION['user_id'] ?? 0, 'lesson_id' => $this->loadedLesson->id->unwrapOr(0) ]));
+                if ($studentLessPass->existsByStudentAndLessonId($conn))
+                {
+                    $slp = $studentLessPass->getSingleByStudentAndLessonId($conn);
+                    $this->isPasswordCorrect = (bool)$slp->is_correct->unwrapOr(0);
+                }
+            }
 
             ScriptManager::registerScript("subscriptionLessonsListScript", 
                 "window.addEventListener('load', function()
@@ -85,6 +95,7 @@ final class SubscriptionId extends Component
     private bool $approved = false;
     private ?Subscription $subscription = null;
     private ?Lesson $loadedLesson = null;
+    private bool $isPasswordCorrect = false;
 
     protected function markup(): Component|array|null
     {
@@ -123,7 +134,7 @@ final class SubscriptionId extends Component
                         ]),
                         component(Label::class, labelBold: true, label: "Pontuação marcada", children:
                         [
-                            text(($this->subscription->getOtherProperties()->studentPoints ?? 0) . ' de ' . ($this->subscription->getOtherProperties()->maxPoints ?? 0) . ' requerido')
+                            text(($this->subscription->getOtherProperties()->studentPoints ?? 0) . ' de ' . ($this->subscription->course->min_points_required->unwrapOr(0)) . ' requerido (máximo de ' . ($this->subscription->getOtherProperties()->maxPoints ?? 0) . ')')
                         ]),
                         component(Label::class, labelBold: true, label: "Resultado", children:
                         [
@@ -166,7 +177,7 @@ final class SubscriptionId extends Component
                             isset($this->loadedLesson) 
                                 ? [
                                     tag('h2', children: text("{$this->loadedLesson->index->unwrapOr(0)}. {$this->loadedLesson->title->unwrapOr('Aula')}")),
-                                    component(StudentLessonViewer::class, lesson: $this->loadedLesson)
+                                    component(StudentLessonViewer::class, lesson: $this->loadedLesson, isPasswordCorrect: $this->isPasswordCorrect)
                                 ]
                                 : text('Selecione uma aula')
                         ]

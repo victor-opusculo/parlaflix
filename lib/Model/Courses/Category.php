@@ -88,6 +88,21 @@ class Category extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
+    public function getAllWithCourseCount(mysqli $conn) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearValues()
+        ->clearWhereClauses()
+        ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.category_id = {$this->databaseTable}.id")
+        ->addJoin("left join courses on courses.id = courses_categories_join.course_id")
+        ->addSelectColumn("Count(courses_categories_join.course_id) AS coursesNumber")
+        ->addWhereClause("courses.is_visible = 1")
+        ->setGroupBy("{$this->databaseTable}.id");
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
+    }
+
     public function fetchIcon(mysqli $conn) : self
     {
         if (!$this->properties->icon_media_id->getValue()->unwrapOr(0)) 

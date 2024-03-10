@@ -45,7 +45,7 @@ final class Delete extends Component
             tag('h1', children: text('Excluir categoria')),
             tag('delete-entity-form', 
                 deletescripturl: URLGenerator::generateApiUrl("/administrator/panel/categories/{$this->category->id->unwrapOr(0)}"),
-                gobacktourl: URLGenerator::generatePageUrl('/admin/panel/categories'),
+                gobacktourl: '/admin/panel/categories',
                 children:
                 [
                     component(Label::class, label: 'ID', labelBold: true, children: text($this->category->id->unwrapOr(0))),

@@ -8,8 +8,16 @@ use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\RouteHandler;
 
+require_once __DIR__ . '/../../../lib/Middlewares/StudentLoginCheck.php';
+
 final class CourseId extends RouteHandler
 {
+
+    public function __construct()
+    {
+        $this->middlewares[] = '\VictorOpusculo\Parlaflix\Lib\Middlewares\studentLoginCheck';
+    }
+
     protected $courseId;
 
     protected function POST(): void
