@@ -71,7 +71,7 @@
 
             if ((this.state.password || this.state.password2) && (this.state.password !== this.state.password2))
             {
-                EADPI.Alerts.push(EADPI.Alerts.types.info, "As senhas não coincidem!");
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.info, "As senhas não coincidem!");
                 return;
             }
 
@@ -81,13 +81,13 @@
 
             const headers = new Headers({ 'Content-Type': 'application/json' });
             const body = JSON.stringify({ data });
-            fetch(EADPI.Helpers.URLGenerator.generateApiUrl('/administrator/' + this.state.adminid), { method: 'PUT', headers, body })
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/administrator/' + this.state.adminid), { method: 'PUT', headers, body })
             .then(res => res.json())
             .then(json =>
             {
-                EADPI.Alerts.pushFromJsonResult(json);
+                Parlaflix.Alerts.pushFromJsonResult(json);
             })
-            .catch(reason => EADPI.Alerts.push(EADPI.Alerts.types.error, String(reason)));
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
     };
 

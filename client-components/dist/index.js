@@ -34,6 +34,9 @@ customElements.define('edit-page-form', EditPageForm)
 import EditSingleLesson from './edit-single-lesson.js'
 customElements.define('edit-single-lesson', EditSingleLesson)
 
+import EditStudentForm from './edit-student-form.js'
+customElements.define('edit-student-form', EditStudentForm)
+
 import ExtLabel from './ext-label.js'
 customElements.define('ext-label', ExtLabel)
 

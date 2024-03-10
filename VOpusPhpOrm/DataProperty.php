@@ -57,6 +57,14 @@ class DataProperty implements \JsonSerializable
 	{
 		return print_r($this->value, true);
 	}
+
+	public function getValuesForHtmlForm(array $skip = []) : array
+	{
+		if ($this->formFieldIdentifierName && array_search($this->formFieldIdentifierName, $skip) === false)
+			return [ $this->formFieldIdentifierName => htmlspecialchars($this->getValue()->unwrapOr(''), ENT_QUOTES) ];
+		else
+			return [];
+	}
 	
 	public function getValue() : Option
 	{
@@ -150,6 +158,14 @@ class DataObjectProperty extends DataProperty implements \IteratorAggregate
 			throw new \Exception("Erro ao definir valor de propriedade inexistente \"$name\" em instância da classe " . self::class . '.');
 		
 		$this->properties->$name->setValue(Option::some($value));
+	}
+
+	public function getValuesForHtmlForm(array $skip = []) : array
+	{
+		$output = [];
+		foreach ($this->properties as $prop)
+			$output = [ ...$output, ...$prop->getValuesForHtmlForm($skip) ];
+		return $output;
 	}
 
 	public function resetValue()

@@ -1,0 +1,68 @@
+<script>
+    const state =
+    {
+        id: null,
+        fullname: null,
+        email: null,
+        telephone: null,
+        institution: null,
+        instrole: null,
+        timezone: null
+    };
+
+    const methods = 
+    {
+        changeField(e)
+        {
+            this.render({ ...this.state, [ e.target.name ]: e.target.value });
+        },
+
+        submit(e)
+        {
+            e.preventDefault();
+
+            if (!this.state.id) return;
+
+            const data = {};
+            for (const field in this.state)
+                data['students:' + field] = this.state[field];
+
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const body = JSON.stringify({ data });
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/students/${this.state.id}`), { headers, body, method: 'PUT' })
+            .then(res => res.json())
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+
+        }
+    };
+</script>
+
+<template>
+    <form @submit="submit">
+        <ext-label label="ID" labelbold="1">${state.id}</ext-label>
+        <ext-label label="Nome completo">
+            <input type="text" required maxlength="280" class="w-full" name="fullname" :value="state.fullname" @input="changeField" />
+        </ext-label>
+        <ext-label label="E-mail">
+            <input type="email" required maxlength="280" class="w-full" name="email" :value="state.email" @input="changeField" />
+        </ext-label>
+        <ext-label label="Telefone">
+            <input type="text" required maxlength="140" class="w-full" name="telephone" :value="state.telephone" @input="changeField" />
+        </ext-label>
+        <ext-label label="Instituição">
+            <input type="text" required maxlength="140" class="w-full" name="institution" :value="state.institution" @input="changeField" />
+        </ext-label>
+        <ext-label label="Cargo">
+            <input type="text" required maxlength="140" class="w-full" name="instrole" :value="state.instrole" @input="changeField" />
+        </ext-label>
+        <ext-label label="Fuso horário">
+            <select @change="changeField" name="timezone">
+                <option :for="dtz in Parlaflix.Time.TimeZones" :value="dtz" :selected="dtz === state.timezone">${dtz}</option>
+            </select>
+        </ext-label>
+        <div class="text-center">
+            <button type="submit" class="btn">Salvar</button>
+        </div>
+    </form>
+</template>

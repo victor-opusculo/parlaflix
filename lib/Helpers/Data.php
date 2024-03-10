@@ -1,6 +1,7 @@
 <?php
 namespace VictorOpusculo\Parlaflix\Lib\Helpers;
 
+use DateTimeZone;
 use VOpus\PhpOrm\Option;
 use VOpus\PhpOrm\Some;
 
@@ -66,5 +67,13 @@ final class Data
     {
         $checked = $val->unwrapOr(0) ? 1 : 0;
         return Option::some($checked);
+    }
+
+    public static function getTimeZonesToJavascript() : string
+    {
+        return "
+            Parlaflix.Time ??= {};
+            Parlaflix.Time.TimeZones = [" . array_reduce(DateTimeZone::listIdentifiers(), fn($prev, $dtz) => ($prev ? $prev . ',' : '') . "\"$dtz\"" ) . "];
+        ";
     }
 } 

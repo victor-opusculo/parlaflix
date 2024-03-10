@@ -16,6 +16,7 @@ return
     [
         '/login' => \VictorOpusculo\Parlaflix\Api\Administrator\Login::class,
         '/logout' => \VictorOpusculo\Parlaflix\Api\Administrator\Logout::class,
+        '/[id]' => \VictorOpusculo\Parlaflix\Api\Administrator\AdminId::class,
         '/panel' => fn() =>
         [
             '/media' => fn() =>
@@ -44,6 +45,10 @@ return
             '/certificates' => fn() =>
             [
                 '/set_bg_image' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Certificates\SetBgImage::class
+            ],
+            '/students' => fn() =>
+            [
+                '/[studentId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Students\StudentId::class
             ]
         ]
     ]

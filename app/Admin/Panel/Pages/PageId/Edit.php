@@ -43,7 +43,7 @@ final class Edit extends Component
             tag('h1', children: text('Editar página')),
             tag('edit-page-form',
                 id: $this->page->id->unwrapOr(0),
-                title: $this->page->title->unwrapOr(''),
+                title: Data::hscq($this->page->title->unwrapOr('')),
                 content: Data::hscq($this->page->content->unwrapOr('')),
                 html_enabled: $this->page->html_enabled->unwrapOr(0),
                 is_published: $this->page->is_published->unwrapOr(0)    

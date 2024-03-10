@@ -77,7 +77,7 @@ final class View extends Component
             ),
             component(Label::class, label: 'Pontuação mínima requerida para aprovação', labelBold: true, children: text($this->course->min_points_required->unwrapOr('Indefinido'))),
 
-            component(Label::class, label: 'Categorias', labelBold: true, children: text(array_reduce($this->course->categoriesJoints, fn($carry, $cj) => ($carry ? ', ' : '') . $cj->getOtherProperties()->title ?? '', null))),
+            component(Label::class, label: 'Categorias', labelBold: true, children: text(array_reduce($this->course->categoriesJoints, fn($carry, $cj) => ($carry ? $carry . ', ' : '') . $cj->getOtherProperties()->title ?? '', null))),
 
             tag('h2', children: text('Aulas')),
 

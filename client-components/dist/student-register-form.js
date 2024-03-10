@@ -33,7 +33,7 @@
         email: '',
         telephone: '',
         institution: '',
-        instRole: '',
+        instrole: '',
         password: '',
         password2: '',
         timezone: 'America/Sao_Paulo',
@@ -103,7 +103,7 @@
         h("input", {"type": `text`, "class": `w-full`, "maxlength": `140`, "name": `institution`, "value": state.institution, "oninput": this.fieldChanged.bind(this)}, "")
       ]),
       h("ext-label", {"label": `Cargo`}, [
-        h("input", {"type": `text`, "class": `w-full`, "maxlength": `140`, "name": `instRole`, "value": state.instRole, "oninput": this.fieldChanged.bind(this)}, "")
+        h("input", {"type": `text`, "class": `w-full`, "maxlength": `140`, "name": `instrole`, "value": state.instrole, "oninput": this.fieldChanged.bind(this)}, "")
       ]),
       h("ext-label", {"label": `Senha`}, [
         h("input", {"type": `password`, "required": ``, "class": `w-full`, "maxlength": `140`, "name": `password`, "value": state.password, "oninput": this.fieldChanged.bind(this)}, "")

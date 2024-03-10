@@ -59,6 +59,20 @@ final class Home extends Component
                     iconUrl: URLGenerator::generateFileUrl('assets/pics/certificate.svg'),
                     additionalClasses: 'bg-violet-700/50',
                     invertIconColorsOnDark: true
+                ),
+                component(FeatureButton::class,
+                    url: URLGenerator::generatePageUrl('/admin/panel/students'),
+                    label: 'Estudantes',
+                    iconUrl: URLGenerator::generateFileUrl('assets/pics/student.png'),
+                    additionalClasses: 'bg-violet-700/50',
+                    invertIconColorsOnDark: true
+                ),
+                component(FeatureButton::class,
+                    url: URLGenerator::generatePageUrl('/admin/panel/subscriptions'),
+                    label: 'Inscrições',
+                    iconUrl: URLGenerator::generateFileUrl('assets/pics/subscription.svg'),
+                    additionalClasses: 'bg-violet-700/50',
+                    invertIconColorsOnDark: true
                 )
             ])
         ];

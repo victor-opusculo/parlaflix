@@ -27,6 +27,8 @@ class GeneratedCertificate extends DataEntity
     protected string $formFieldPrefixName = 'generated_certificates';
     protected array $primaryKeys = ['id'];
 
+    
+
     public function existsByCourseAndStudent(mysqli $conn) : bool
     {
         $selector = (new SqlSelector)

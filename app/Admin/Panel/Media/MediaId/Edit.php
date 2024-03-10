@@ -4,6 +4,7 @@ namespace VictorOpusculo\Parlaflix\App\Admin\Panel\Media\MediaId;
 use Exception;
 use Symfony\Component\Console\Descriptor\Descriptor;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
+use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Media\Media;
 use VictorOpusculo\PComp\Component;
@@ -43,8 +44,8 @@ final class Edit extends Component
         [
             tag('h1', children: text('Editar mídia')),
             tag('new-media-form', 
-                name: $this->media->name->unwrapOr(''),
-                description: $this->media->description->unwrapOr(''),
+                name: Data::hscq($this->media->name->unwrapOr('')),
+                description: Data::hscq($this->media->description->unwrapOr('')),
                 id: $this->media->id->unwrapOr(0)
             )
         ]) : null;

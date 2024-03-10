@@ -51,7 +51,7 @@ final class Edit extends Component
         [
             tag('h1', children: text('Editar curso')),
             tag('edit-course-form',
-                ...json_decode(json_encode($this->course), true),
+                ...$this->course->getValuesForHtmlForm(),
 
                 timezone: $_SESSION['user_timezone'] ?? 'America/Sao_Paulo',
                 categories_available_json: Data::hscq(json_encode($this->categoriesAvailable)),

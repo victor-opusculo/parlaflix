@@ -187,6 +187,16 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 		$this->properties->$propertyName->resetValue();
 		return $this;
 	}
+
+	public function getValuesForHtmlForm(array $skip = []) : array
+	{
+		$output = [];
+		foreach ($this->properties as $prop)
+		{
+			$output = [ ...$output, ...$prop->getValuesForHtmlForm($skip) ];
+		}
+		return $output;
+	}
 	
 	public function fillPropertiesWithDefaultValues() : static
 	{

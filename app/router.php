@@ -44,6 +44,7 @@ return
         '/panel' => fn() =>
         [
             '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Home::class,
+            '/edit_profile' => \VictorOpusculo\Parlaflix\App\Admin\Panel\EditProfile::class,
             '__layout' => \VictorOpusculo\Parlaflix\App\Admin\Panel\PanelLayout::class,
             '/media' => fn() =>
             [
@@ -93,6 +94,20 @@ return
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Certificates\Home::class,
                 '/set_bg_image' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Certificates\SetBgImage::class
+            ],
+            '/students' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Students\Home::class,
+                '/[studentId]' => fn() =>
+                [
+                    '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Students\StudentId\View::class,
+                    '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Students\StudentId\Edit::class,
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Students\StudentId\Delete::class
+                ]
+            ],
+            '/subscriptions' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\Home::class
             ]
         ]
     ],

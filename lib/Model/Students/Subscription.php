@@ -32,6 +32,66 @@ class Subscription extends DataEntity
 
     public ?Course $course;
 
+    public function getCount(mysqli $conn, string $searchKeywords) : int
+    {
+        $selector = (new SqlSelector)
+        ->addSelectColumn('COUNT(*)')
+        ->setTable($this->databaseTable)
+        ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
+        ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id");
+
+        if (mb_strlen($searchKeywords) > 3)
+        {
+            $selector = $selector
+            ->addWhereClause("MATCH (courses.name) AGAINST (?)")
+            ->addWhereClause("OR Convert(AES_DECRYPT(students.full_name, '{$this->encryptionKey}') using 'utf8mb4') LIKE ?")
+            ->addValues('ss', [ "%$searchKeywords%", "%$searchKeywords%" ]);
+        }
+
+        return (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+    }
+
+    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearValues()
+        ->clearWhereClauses()
+        ->addSelectColumn("AES_DECRYPT(students.full_name, '{$this->encryptionKey}') AS studentName")
+        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
+        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
+        ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
+        ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id");
+
+        if (mb_strlen($searchKeywords) > 3)
+        {
+            $selector = $selector
+            ->addWhereClause("MATCH (courses.name) AGAINST (?)")
+            ->addWhereClause("OR Convert(AES_DECRYPT(students.full_name, '{$this->encryptionKey}') using 'utf8mb4') LIKE ?")
+            ->addValues('ss', [ "%$searchKeywords%", "%$searchKeywords%" ]);
+        }
+
+        $selector = $selector->setOrderBy(match($orderBy)
+        {
+            'name' => "courses.name ASC",
+            'datetime' => "{$this->databaseTable}.datetime DESC",
+            'id' => "{$this->databaseTable}.id DESC",
+            default => "{$this->databaseTable}.id DESC"
+        });
+
+        $calcPage = ($page - 1) * $numResultsOnPage;
+        $selector = $selector
+        ->setLimit('?, ?')
+        ->addValues('ii', [ $calcPage, $numResultsOnPage ])
+        ->setGroupBy("{$this->databaseTable}.id");
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRowFromDatabase' ], $drs);
+    }
+
     public function getCountFromStudent(mysqli $conn, string $searchKeywords) : int
     {
         $selector = (new SqlSelector)
@@ -56,8 +116,8 @@ class Subscription extends DataEntity
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
         ->clearWhereClauses()
-        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("COUNT(DISTINCT course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
@@ -107,13 +167,34 @@ class Subscription extends DataEntity
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
         ->addWhereClause("AND {$this->getWhereQueryColumnName('student_id')} = ?")
-        ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0));
+        ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
+        ->setGroupBy("{$this->databaseTable}.id");
 
         $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
         if (isset($dr))
             return $this->newInstanceFromDataRowFromDatabase($dr);
         else
             throw new DatabaseEntityNotFound("Inscrição não encontrada!", $this->databaseTable);
+    }
+
+    public function getAllFromStudentWithProgressData(mysqli $conn) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearValues()
+        ->clearWhereClauses()
+        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
+        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
+        ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addWhereClause($this->getWhereQueryColumnName('student_id') . ' = ?')
+        ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
+        ->setGroupBy("{$this->databaseTable}.id");
+
+        $dr = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([$this, 'newInstanceFromDataRow'], $dr ?? []);
     }
 
     public function getAllFromStudent(mysqli $conn) : array
