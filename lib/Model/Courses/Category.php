@@ -95,7 +95,7 @@ class Category extends DataEntity
         ->clearWhereClauses()
         ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.category_id = {$this->databaseTable}.id")
         ->addJoin("left join courses on courses.id = courses_categories_join.course_id")
-        ->addSelectColumn("Count(courses_categories_join.course_id) AS coursesNumber")
+        ->addSelectColumn("Count(DISTINCT courses_categories_join.course_id) AS coursesNumber")
         ->addWhereClause("courses.is_visible = 1")
         ->setGroupBy("{$this->databaseTable}.id");
 

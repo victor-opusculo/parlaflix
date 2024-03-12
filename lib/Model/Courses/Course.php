@@ -46,11 +46,12 @@ class Course extends DataEntity
         return $this;
     }
 
-    public function getCount(mysqli $conn, string $searchKeywords, bool $includeNonVisible = true) : int
+    public function getCount(mysqli $conn, string $searchKeywords, bool $includeNonVisible = true, ?int $categoryId = null) : int
     {
         $selector = (new SqlSelector)
-        ->addSelectColumn('COUNT(*)')
-        ->setTable($this->databaseTable);
+        ->addSelectColumn("COUNT(DISTINCT {$this->databaseTable}.id)")
+        ->setTable($this->databaseTable)
+        ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.course_id = {$this->databaseTable}.id");
 
         if (mb_strlen($searchKeywords) > 3)
         {
@@ -65,6 +66,13 @@ class Course extends DataEntity
             $selector->hasWhereClauses() ? 
                 $selector->addWhereClause("AND {$this->getWhereQueryColumnName('is_visible')} = 1") :
                 $selector->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1");
+        }
+
+        if ($categoryId)
+        {
+            $selector = $selector->hasWhereClauses()
+                ? $selector->addWhereClause("AND courses_categories_join.category_id = ?")->addValue('i', $categoryId)
+                : $selector->addWhereClause("courses_categories_join.category_id = ?")->addValue('i', $categoryId);
         }
 
         $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);

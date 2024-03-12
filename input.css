@@ -27,7 +27,7 @@
 {
     .btn { @apply cursor-pointer bg-violet-700 hover:bg-violet-800 active:bg-violet-900 px-2 py-1 text-white rounded border border-violet-900 min-w-[100px] text-center dark:bg-violet-800 dark:hover:bg-violet-900 dark:active:bg-violet-950 }
 
-    .link { @apply mx-2 hover:brightness-75 hover:underline active:brightness-50 }
+    .link { @apply mx-2 hover:brightness-75 hover:underline active:brightness-50 text-violet-700 dark:text-violet-300 }
 
     .pagination { @apply block my-2 list-none text-lg ml-4 }
     .pagination li { @apply inline mx-1 }

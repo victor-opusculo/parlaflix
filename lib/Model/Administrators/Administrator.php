@@ -47,6 +47,18 @@ class Administrator extends DataEntity
             throw new DatabaseEntityNotFound("Conta não localizada!", $this->databaseTable);
     }
 
+    public function exists(mysqli $conn) : bool
+    {
+        $selector = (new SqlSelector)
+        ->addSelectColumn('COUNT(*)')
+        ->setTable($this->databaseTable)
+        ->addWhereClause("{$this->getWhereQueryColumnName('id')} = ?")
+        ->addValue('i', $this->properties->id->getValue()->unwrapOr(0));
+
+        $count = $selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return (int)$count > 0;
+    }
+
     public function existsEmail(mysqli $conn) : bool
     {
         $selector = (new SqlSelector)

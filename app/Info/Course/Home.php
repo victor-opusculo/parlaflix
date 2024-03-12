@@ -28,7 +28,7 @@ final class Home extends Component
         try
         {
             $getter = new Course();
-            $this->courseCount = $getter->getCount($conn, $_GET['q'] ?? '', false);
+            $this->courseCount = $getter->getCount($conn, $_GET['q'] ?? '', false, $_GET['category_id'] ?? null);
             $this->courses = $getter->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? 'name', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, false, $_GET['category_id'] ?? null);
             
             foreach ($this->courses as $c)

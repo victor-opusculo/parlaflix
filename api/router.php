@@ -49,6 +49,10 @@ return
             '/students' => fn() =>
             [
                 '/[studentId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Students\StudentId::class
+            ],
+            '/subscriptions' => fn() =>
+            [
+                '/[subscriptionId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SubscriptionId::class
             ]
         ]
     ]

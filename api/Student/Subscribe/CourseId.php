@@ -22,9 +22,6 @@ final class CourseId extends RouteHandler
 
     protected function POST(): void
     {
-        session_name('parlaflix_student_user');
-        session_start();
-
         if ($_SESSION['user_type'] !== UserTypes::student)
         {
             $this->json([ 'error' => 'Você precisa estar logado como estudante!' ], 500);

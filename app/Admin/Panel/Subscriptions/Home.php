@@ -43,7 +43,7 @@ final class Home extends Component
                 'Pontos/requerido' => fn($s) => (string)($s->getOtherProperties()->studentPoints ?? 0) . '/' . (string)($s->getOtherProperties()->maxPoints ?? 0),
                 'Situação' => fn($s) => ($s->getOtherProperties()->studentPoints ?? 0) >= $s->course->min_points_required->unwrapOr(INF) ? 'Aprovado' : 'Não aprovado',
                 'Data de inscrição' => fn($s) => $s->datetime->unwrapOr(false)
-                    ? date_create($s->datetime->unwrap(), new DateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo'))->format('d/m/Y H:i:s')
+                    ? date_create($s->datetime->unwrap(), new DateTimeZone('UTC'))->setTimezone(new DateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo'))->format('d/m/Y H:i:s')
                     : ''
             ]);
         }

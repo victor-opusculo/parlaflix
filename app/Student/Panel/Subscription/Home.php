@@ -28,7 +28,7 @@ final class Home extends Component
         try
         {
             $getter = (new Subscription([ 'student_id' => $_SESSION['user_id'] ?? 0 ]));
-            $this->allSubscriptionCount = $getter->getCountFromStudent($conn, $_GET['q'] ?? '');
+            $this->allSubscriptionCount = $getter->getCountFromStudent($conn, $_GET['q'] ?? '', $_GET['category_id'] ?? null);
             $this->subscriptions = $getter->getMultipleFromStudent($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? '', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, $_GET['category_id'] ?? null);
 
             foreach ($this->subscriptions as $sub)

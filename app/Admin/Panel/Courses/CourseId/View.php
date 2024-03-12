@@ -86,7 +86,12 @@ final class View extends Component
             component(ConvenienceLinks::class, 
                 editUrl: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->courseId}/edit"),
                 deleteUrl: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->courseId}/delete")
-            )
+            ),
+
+            tag('div', class: 'text-right mt-4', children:
+            [
+                tag('a', class: 'btn', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/view_subscriptions"), children: text("Ver inscrições"))
+            ])
         ]):
         null;
     }

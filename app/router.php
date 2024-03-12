@@ -87,7 +87,8 @@ return
                 [
                     '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Edit::class,
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\View::class,
-                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class,
+                    '/view_subscriptions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\ViewSubscriptions::class
                 ]
             ],
             '/certificates' => fn() =>
@@ -107,7 +108,12 @@ return
             ],
             '/subscriptions' => fn() =>
             [
-                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\Home::class
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\Home::class,
+                '/[subscriptionId]' => fn() =>
+                [
+                    '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId\View::class,
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId\Delete::class
+                ]
             ]
         ]
     ],

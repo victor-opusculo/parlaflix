@@ -20,7 +20,7 @@ final class Home extends Component
         HeadManager::$title = "Cursos disponíveis";
         $conn = Connection::get();
         $firstCat = new Category([ 'title' => 'Todos os cursos' ]);
-        $firstCat->coursesNumber = (new Course)->getCount($conn, '', false);
+        $firstCat->coursesNumber = (new Course)->getCount($conn, '', false, null);
         $otherCats = (new Category)->getAllWithCourseCount($conn);
 
         foreach ($otherCats as $cat)

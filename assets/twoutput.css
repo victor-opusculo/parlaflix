@@ -722,6 +722,8 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
 .link {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(109 40 217 / var(--tw-text-opacity));
 }
 
 .link:hover {
@@ -733,6 +735,11 @@ input[type='text'], input[type='password'], input[type='email'], input[type='sea
 .link:active {
   --tw-brightness: brightness(.5);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+:is(.dark .link) {
+  --tw-text-opacity: 1;
+  color: rgb(196 181 253 / var(--tw-text-opacity));
 }
 
 .pagination {
