@@ -10,6 +10,9 @@ customElements.define('admin-logout-button', AdminLogoutButton)
 import BasicSearchField from './basic-search-field.js'
 customElements.define('basic-search-field', BasicSearchField)
 
+import CertificateAuthForm from './certificate-auth-form.js'
+customElements.define('certificate-auth-form', CertificateAuthForm)
+
 import ClientPaginator from './client-paginator.js'
 customElements.define('client-paginator', ClientPaginator)
 
@@ -52,6 +55,9 @@ customElements.define('set-certificate-bg-form', SetCertificateBgForm)
 import SetHomepageForm from './set-homepage-form.js'
 customElements.define('set-homepage-form', SetHomepageForm)
 
+import StudentChangeDataForm from './student-change-data-form.js'
+customElements.define('student-change-data-form', StudentChangeDataForm)
+
 import StudentLessonPasswordSubmitter from './student-lesson-password-submitter.js'
 customElements.define('student-lesson-password-submitter', StudentLessonPasswordSubmitter)
 
@@ -60,6 +66,9 @@ customElements.define('student-login-form', StudentLoginForm)
 
 import StudentLogoutButton from './student-logout-button.js'
 customElements.define('student-logout-button', StudentLogoutButton)
+
+import StudentRecoverPassword from './student-recover-password.js'
+customElements.define('student-recover-password', StudentRecoverPassword)
 
 import StudentRegisterForm from './student-register-form.js'
 customElements.define('student-register-form', StudentRegisterForm)

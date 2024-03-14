@@ -7,10 +7,20 @@ return
         '/logout' => \VictorOpusculo\Parlaflix\Api\Student\Logout::class,
         '/register' => \VictorOpusculo\Parlaflix\Api\Student\Register::class,
         '/presence' => \VictorOpusculo\Parlaflix\Api\Student\Presence::class,
+        '/[studentId]' => \VictorOpusculo\Parlaflix\Api\Student\StudentId::class,
         '/subscribe' => fn() =>
         [
             '/[courseId]' => \VictorOpusculo\Parlaflix\Api\Student\Subscribe\CourseId::class
+        ],
+        '/recover_password' => fn() =>
+        [
+            '/request_otp' => \VictorOpusculo\Parlaflix\Api\Student\RecoverPassword\RequestOtp::class,
+            '/change_password' => \VictorOpusculo\Parlaflix\Api\Student\RecoverPassword\ChangePassword::class
         ]
+    ],
+    '/certificate' => fn() =>
+    [
+        '/auth' => \VictorOpusculo\Parlaflix\Api\Certificate\Auth::class
     ],
     '/administrator' => fn() =>
     [
@@ -53,6 +63,10 @@ return
             '/subscriptions' => fn() =>
             [
                 '/[subscriptionId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SubscriptionId::class
+            ],
+            '/reports' => fn() =>
+            [
+                '/export_course_subscriptions' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Reports\ExportCourseSubscriptions::class
             ]
         ]
     ]

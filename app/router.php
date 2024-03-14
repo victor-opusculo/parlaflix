@@ -26,9 +26,11 @@ return
         '/' => \VictorOpusculo\Parlaflix\App\Student\Login::class,
         '/login' => \VictorOpusculo\Parlaflix\App\Student\Login::class,
         '/register' => \VictorOpusculo\Parlaflix\App\Student\Register::class,
+        '/recover_password' => \VictorOpusculo\Parlaflix\App\Student\RecoverPassword::class,
         '/panel' => fn() =>
         [
             '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Home::class,
+            '/edit_profile' => \VictorOpusculo\Parlaflix\App\Student\Panel\EditProfile::class,
             '__layout' => \VictorOpusculo\Parlaflix\App\Student\Panel\PanelLayout::class,
             '/subscription' => fn() =>
             [
@@ -116,6 +118,10 @@ return
                 ]
             ]
         ]
+    ],
+    '/certificate' => fn() =>
+    [
+        '/auth' => \VictorOpusculo\Parlaflix\App\Certificate\Auth::class
     ],
     '__layout' => \VictorOpusculo\Parlaflix\App\BaseLayout::class
 ];

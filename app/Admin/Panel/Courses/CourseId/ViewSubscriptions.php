@@ -83,8 +83,11 @@ final class ViewSubscriptions extends Component
                 detailsButtonURL: URLGenerator::generatePageUrl("/admin/panel/subscriptions/{param}"),
                 rudButtonsFunctionParamName: 'ID'
             ),
-            component(Paginator::class, totalItems: $this->subsCount, pageNum: $_GET['page_num'] ?? 1, numResultsOnPage: self::NUM_RESULTS_ON_PAGE)
+            component(Paginator::class, totalItems: $this->subsCount, pageNum: $_GET['page_num'] ?? 1, numResultsOnPage: self::NUM_RESULTS_ON_PAGE),
 
+            tag('div', class: 'mt-4 text-right', children:
+                tag('a', class: 'btn', href: URLGenerator::generateApiUrl("administrator/panel/reports/export_course_subscriptions", [ 'course_id' => $this->courseId, 'q' => $_GET['q'] ?? '', 'order_by' => $_GET['order_by'] ?? '' ]), children: text("Exportar para CSV"))
+            )
         ])
         : null;
     }

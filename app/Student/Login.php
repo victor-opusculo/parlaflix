@@ -24,7 +24,8 @@ final class Login extends Component
             tag('student-login-form'),
             tag('div', class: 'text-center', children:
             [
-                tag('a', class: 'link', href: URLGenerator::generatePageUrl('/student/register'), children: text('Não sou cadastrado. Registrar-me!'))
+                tag('a', class: 'link block', href: URLGenerator::generatePageUrl('/student/register'), children: text('Não sou cadastrado. Registrar-me!')),
+                tag('a', class: 'link block', href: URLGenerator::generatePageUrl('/student/recover_password'), children: text('Esqueci minha senha!'))
             ])
         ];
     }

@@ -34,7 +34,7 @@ foreach ($_GET as $k => $v)
 			box-shadow: 0px 5px 10px 0 rgba(0,0,0,0.2);">
 			<tr id="mailHead">
 				<td style="display: block;" align="center">
-					<img src="<?php echo URLGenerator::getHttpProtocolName() . "://" . $_SERVER["HTTP_HOST"] . URLGenerator::generateFileUrl('assets/pics/eadpi.png'); ?>" height="80" alt="Parlaflix" />
+					<img src="<?php echo URLGenerator::getHttpProtocolName() . "://" . $_SERVER["HTTP_HOST"] . URLGenerator::generateFileUrl('assets/pics/parlaflix.png'); ?>" height="80" alt="Parlaflix" />
 				</td>
 			</tr>
 		
@@ -46,8 +46,7 @@ foreach ($_GET as $k => $v)
 
 			<tr id="Logos" class="centControl">
 				<td style="display: block;" align="center">
-					<img style="margin-right: 10px;" src="<?php echo URLGenerator::getHttpProtocolName() . "://" . $_SERVER["HTTP_HOST"] . URLGenerator::generateFileUrl('assets/pics/epi.png'); ?>" alt="Escola do Parlamento de Itapevi" height="130" style="margin-right: 50px;"/>
-					<img src="<?php echo URLGenerator::getHttpProtocolName() . "://" . $_SERVER["HTTP_HOST"] . URLGenerator::generateFileUrl('assets/pics/cmi.png'); ?>" alt="Câmara Municipal de Itapevi" height="80"/>
+					<img src="<?php echo URLGenerator::getHttpProtocolName() . "://" . $_SERVER["HTTP_HOST"] . URLGenerator::generateFileUrl('assets/pics/abel.png'); ?>" alt="ABEL" height="100"/>
 				</td>
 			</tr>
 		</table>
