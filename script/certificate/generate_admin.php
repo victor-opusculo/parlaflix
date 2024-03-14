@@ -59,6 +59,9 @@ $studentGetter = new Student([ 'id' => $subscription->student_id->unwrapOrElse(f
 $studentGetter->setCryptKey(Connection::getCryptoKey());
 $student = $studentGetter->getSingle($conn);
 
+if ($scoredPoints < $subscription->course->min_points_required->unwrap())
+    die("Aluno não foi aprovado neste curso!");
+
 $issueDateTime = $endDateTime = new DateTime('now', new DateTimeZone('UTC'));
 $genCertificate = (new GeneratedCertificate([ 'course_id' => $subscription->course->id->unwrap(), 'student_id' => $student->id->unwrap(), 'datetime' => $issueDateTime->format('Y-m-d H:i:s') ]));
 $certId = 0;
@@ -81,9 +84,6 @@ else
 }
 
 $conn->close();
-
-if ($scoredPoints < $subscription->course->min_points_required->unwrap())
-    die("Aluno não foi aprovado neste curso!");
 
 $pdf = new CertPDF('L', 'mm', 'A4');
 $pdf->setData(  subscriptionDateTime: new DateTime($subscription->datetime->unwrap(), new DateTimeZone("UTC")),

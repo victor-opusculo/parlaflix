@@ -54,6 +54,9 @@ $maxScorePossible = $subscription->getOtherProperties()->maxPoints;
 if ($subscription->student_id->unwrapOr(0) != $_SESSION['user_id'])
     die("Certificado não localizado!");
 
+if ($scoredPoints < $subscription->course->min_points_required->unwrap())
+    die("Você não foi aprovado neste curso!");
+
 $studentGetter = new Student([ 'id' => $subscription->student_id->unwrapOrElse(fn() => throw new Exception("Aluno não localizado!")) ]);
 $studentGetter->setCryptKey(Connection::getCryptoKey());
 $student = $studentGetter->getSingle($conn);
@@ -80,9 +83,6 @@ else
 }
 
 $conn->close();
-
-if ($scoredPoints < $subscription->course->min_points_required->unwrap())
-    die("Você não foi aprovado neste curso!");
 
 $pdf = new CertPDF('L', 'mm', 'A4');
 $pdf->setData(  subscriptionDateTime: new DateTime($subscription->datetime->unwrap(), new DateTimeZone("UTC")),
