@@ -123,5 +123,6 @@ return
     [
         '/auth' => \VictorOpusculo\Parlaflix\App\Certificate\Auth::class
     ],
-    '__layout' => \VictorOpusculo\Parlaflix\App\BaseLayout::class
+    '__layout' => \VictorOpusculo\Parlaflix\App\BaseLayout::class,
+	'__error' => \VictorOpusculo\Parlaflix\App\BaseError::class
 ];
