@@ -27,7 +27,7 @@ URLGenerator::loadConfigs();
 		<script src="<?= URLGenerator::generateFileUrl('client-components/dist/index.js') ?>" type="module"></script>
 		<meta charset="utf8"/>
 		<meta content="width=device-width, initial-scale=1" name="viewport" />
-		<meta name="description" content="Plataforma EAD da Escola do Parlamento de Itapevi">
+		<meta name="description" content="Plataforma EAD da ABEL">
 		<meta name="keywords" content="">
   		<meta name="author" content="Victor Opusculo Oliveira Ventura de Almeida">
 		<link rel="stylesheet" href="<?= URLGenerator::generateFileUrl('assets/twoutput.css') ?>" />

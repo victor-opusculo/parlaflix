@@ -9,6 +9,7 @@ use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\EntitiesChangesReport;
 use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\SqlSelector;
+use VOpus\PhpOrm\Option;
 
 class Course extends DataEntity
 {
