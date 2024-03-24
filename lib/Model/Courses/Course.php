@@ -17,7 +17,7 @@ class Course extends DataEntity
     {
         $this->properties = (object)
         [
-            'id' => new DataProperty(null, fn() => null, DataProperty::MYSQL_INT),
+            'id' => new DataProperty('id', fn() => null, DataProperty::MYSQL_INT),
             'name' => new DataProperty('name', fn() => 'Sem nome definido', DataProperty::MYSQL_STRING),
             'presentation_html' => new DataProperty('presentation_html', fn() => null, DataProperty::MYSQL_STRING),
             'cover_image_media_id' => new DataProperty('cover_image_media_id', fn() => null, DataProperty::MYSQL_INT),

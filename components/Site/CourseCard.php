@@ -26,7 +26,7 @@ class CourseCard extends Component
                 $this->course->cover_image_media_id->unwrapOr(false) ?
                     scTag('img', class: 'absolute m-auto left-0 right-0 top-0 bottom-0', src: URLGenerator::generateFileUrl($this->course->coverMedia->fileNameFromBaseDir()))
                 :
-                    text('Sem imagem!')
+                    tag('span', class: 'absolute left-0 right-0 bottom-0 top-0 text-center align-middle leading-[300px]', children: text('Sem imagem!')) 
             ),
             tag('div', class: 'absolute bottom-0 left-0 right-0 z-10 dark:bg-neutral-700/50 bg-neutral-300/80 p-2 text-center', children: 
             [

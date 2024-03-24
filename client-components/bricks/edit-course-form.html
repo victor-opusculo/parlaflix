@@ -165,6 +165,7 @@
             }
 
             data.categories_ids_json = JSON.stringify(data.categoriesIds);
+            data.cover_image_media_id ||= null;
 
             data.lessonsChangesReport.create = [];
             data.lessonsChangesReport.update = [];
