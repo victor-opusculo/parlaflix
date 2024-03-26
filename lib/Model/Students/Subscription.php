@@ -43,7 +43,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id");
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id");
 
         $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
 
@@ -85,7 +85,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id");
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id");
 
         if (mb_strlen($searchKeywords) > 3)
         {
@@ -149,7 +149,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.course_id = {$this->databaseTable}.course_id")
         ->addWhereClause("{$this->getWhereQueryColumnName('student_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0));
@@ -216,7 +216,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addWhereClause("{$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->course_id->getValue()->unwrapOr(0));
 
@@ -256,7 +256,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addWhereClause("AND {$this->getWhereQueryColumnName('student_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
         ->setGroupBy("{$this->databaseTable}.id");
@@ -279,7 +279,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addWhereClause($this->getWhereQueryColumnName('student_id') . ' = ?')
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
         ->setGroupBy("{$this->databaseTable}.id");
@@ -324,7 +324,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addWhereClause("{$this->getWhereQueryColumnName('student_id')} = ?")
         ->addWhereClause(" AND {$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
@@ -349,7 +349,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id")
+        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addWhereClause("{$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->course_id->getValue()->unwrapOr(0));
 
