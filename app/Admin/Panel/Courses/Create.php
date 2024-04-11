@@ -28,7 +28,10 @@ final class Create extends Component
         return component(DefaultPageFrame::class, children:
         [
             tag('h1', children: text('Novo curso')),
-            tag('edit-course-form', categories_available_json: Data::hscq(json_encode($this->categories)))
+            tag('edit-course-form', 
+                categories_available_json: Data::hscq(json_encode($this->categories)),
+                timezone: $_SESSION['user_timezone'] ?? 'America/Sao_Paulo'
+            )
         ]);
     }
 }
