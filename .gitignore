@@ -4,6 +4,7 @@ phinx.php
 /**/php_errors.log
 php_errors.log
 log/*.log
+connect-ssh.bat
 
 uploads/media/*
 !uploads/media/.gitkeep

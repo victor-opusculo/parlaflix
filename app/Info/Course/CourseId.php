@@ -70,7 +70,11 @@ final class CourseId extends Component
             tag('h1', children: text($this->course->name->unwrapOr(''))),
             tag('section', class: 'flex md:flex-row flex-col', children:
             [
-                tag('div', class: 'flex-[30%]', children: scTag('img', src: URLGenerator::generateFileUrl($this->course->coverMedia->fileNameFromBaseDir()), alt: Data::hscq($this->course->name->unwrapOr('Curso')))),
+                tag('div', class: 'flex-[30%]', children: 
+                    scTag('img', 
+                        src: URLGenerator::generateFileUrl(isset($this->course->coverMedia) ? $this->course->coverMedia->fileNameFromBaseDir() : '/assets/pics/nopic.png'), 
+                        alt: Data::hscq($this->course->name->unwrapOr('Curso'))
+                    )),
                 tag('div', class: 'flex-[70%] px-4', children:
                 [
                     component(Label::class, label: 'Descrição', labelBold: true, lineBreak: true, children: rawText(nl2br(Data::hsc($this->course->presentation_html->unwrapOr('Sem descrição'))))),
