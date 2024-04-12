@@ -43,7 +43,7 @@
             fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/student/login'), { method: 'POST', headers, body })
             .then(res => res.json())
             .then(Parlaflix.Alerts.pushFromJsonResult)
-            .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('/student/panel', {}))
+            .then(Parlaflix.Helpers.URLGenerator.goToPageOrBackToOnSuccess('/student/panel', {}))
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
             return true;

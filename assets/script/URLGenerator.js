@@ -52,5 +52,20 @@ Parlaflix.Helpers.URLGenerator =
             if (msgBoxReturnValue === 'ok' && jsonResult?.success)
                 window.location.href = this.generatePageUrl(page, query);
         });
+    },
+
+    goToPageOrBackToOnSuccess(page, query = {})
+    {
+        return (([ msgBoxReturnValue, jsonResult ]) => 
+        {
+            if (msgBoxReturnValue === 'ok' && jsonResult?.success)
+            {
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('back_to'))
+                    window.location.href = this.generatePageUrl(url.searchParams.get('back_to') ?? '/', query)
+                else
+                    window.location.href = this.generatePageUrl(page, query);
+            }
+        });
     }
 };

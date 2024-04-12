@@ -85,7 +85,9 @@ final class CourseId extends Component
                         ? ($this->studentAlreadySubscribed
                             ? tag('p', class: 'text-center font-bold p-8', children: text('Você já está inscrito neste curso.'))
                             : tag('course-subscribe-button', courseid: $this->course->id->unwrap()))
-                        : tag('p', class: 'text-center font-bold p-8', children: text('Entre com sua conta de estudante para se inscrever neste curso.'))
+                        : tag('div', class: 'text-center p-8', children:
+                                tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/login', [ 'back_to' => $_GET['page'] ]), children: text('Inscrever-se'))
+                            )
                 ])
             ]),
             tag('h2', children: text('Aulas')),
