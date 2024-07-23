@@ -13,6 +13,7 @@ use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
 use VictorOpusculo\PComp\HeadManager;
+use VictorOpusculo\PComp\ScriptManager;
 
 use function VictorOpusculo\PComp\Prelude\component;
 use function VictorOpusculo\PComp\Prelude\rawText;
@@ -40,6 +41,15 @@ final class CourseId extends Component
             ->fetchLessons($conn)
             ->fetchCategoriesJoints($conn)
             ->fetchCoverMedia($conn);
+
+            ScriptManager::registerScript('share_script', <<<JAVASCRIPT
+                const { ShareUrl, ShareUrlAuto } = await import(Parlaflix.Helpers.URLGenerator.generateFileUrl("assets/script/share/share-url.js"));
+                const ShareUrlShare = ShareUrl({
+                    selector: '#share',
+                    title: document.title,
+                    textSuccess: "Compartilhado!"
+                });
+            JAVASCRIPT, "", true);
 
             HeadManager::$title = $this->course->name->unwrapOr('Curso');
 
@@ -87,7 +97,15 @@ final class CourseId extends Component
                             : tag('course-subscribe-button', courseid: $this->course->id->unwrap()))
                         : tag('div', class: 'text-center p-8', children:
                                 tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/login', [ 'back_to' => $_GET['page'] ]), children: text('Inscrever-se'))
-                            )
+                    ),
+
+                    tag('div', class: 'text-right', children: 
+                        tag('button', class: 'btn', type: 'button', id: 'share', children:
+                        [
+                            scTag('img', width: 24, height: 24, class: 'inline-block invert mr-2', src: URLGenerator::generateFileUrl('assets/pics/share.svg')),
+                            text("Compartilhar")
+                        ])
+                    )
                 ])
             ]),
             tag('h2', children: text('Aulas')),

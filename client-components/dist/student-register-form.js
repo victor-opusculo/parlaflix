@@ -96,7 +96,7 @@
       h("ext-label", {"label": `E-mail`}, [
         h("input", {"type": `email`, "required": ``, "class": `w-full`, "maxlength": `140`, "name": `email`, "value": state.email, "oninput": this.fieldChanged.bind(this)}, "")
       ]),
-      h("ext-label", {"label": `Número de telefone`}, [
+      h("ext-label", {"label": `Telefone`}, [
         h("input", {"type": `text`, "class": `w-full`, "maxlength": `140`, "name": `telephone`, "value": state.telephone, "oninput": this.fieldChanged.bind(this)}, "")
       ]),
       h("ext-label", {"label": `Instituição`}, [
@@ -126,7 +126,7 @@
         h("input", {"type": `checkbox`, "required": ``, "value": `${state.lgpdTermVersion}`, "checked": state.lgpdConsentCheck, "onchange": this.consentChecked.bind(this)}, "")
       ]),
       h("div", {"class": `text-center mt-4`}, [
-        h("button", {"class": `btn`, "type": `submit`}, `Cadastrar-me`)
+        h("button", {"class": `btn`, "type": `submit`}, `Concluir`)
       ])
     ]),
     h("dialog", {"id": `lgpdTermDialog`, "class": `md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800`}, [

@@ -39,4 +39,9 @@ URLGenerator::loadConfigs();
 		<?php render($app->mainFrameComponents); ?>
 	</body>
 	<?= ScriptManager::getScriptText() ?>
+	<script
+		src="https://cdn.jsdelivr.net/npm/shareon@2/dist/shareon.iife.js"
+		defer
+		init
+	></script>
 </html>

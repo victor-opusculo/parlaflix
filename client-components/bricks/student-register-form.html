@@ -68,7 +68,7 @@
         <ext-label label="E-mail">
             <input type="email" required class="w-full" maxlength="140" name="email" :value="state.email" @input="fieldChanged"/>
         </ext-label>
-        <ext-label label="Número de telefone">
+        <ext-label label="Telefone">
             <input type="text" class="w-full" maxlength="140" name="telephone" :value="state.telephone" @input="fieldChanged"/>
         </ext-label>
         <ext-label label="Instituição">
@@ -96,7 +96,7 @@
             <input type="checkbox" required value="${state.lgpdTermVersion}" :checked="state.lgpdConsentCheck" @change="consentChecked"/>
         </ext-label>
         <div class="text-center mt-4">
-            <button class="btn" type="submit">Cadastrar-me</button>
+            <button class="btn" type="submit">Concluir</button>
         </div>
     </form>
     <dialog id="lgpdTermDialog" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800">
