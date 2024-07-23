@@ -90,6 +90,7 @@ final class View extends Component
 
             tag('div', class: 'text-right mt-4', children:
             [
+                tag('a', class: 'btn mr-2', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/send_email"), children: text("Enviar e-mail para inscritos")),
                 tag('a', class: 'btn', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/view_subscriptions"), children: text("Ver inscrições"))
             ])
         ]):

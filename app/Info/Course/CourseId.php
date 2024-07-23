@@ -46,8 +46,8 @@ final class CourseId extends Component
                 const { ShareUrl, ShareUrlAuto } = await import(Parlaflix.Helpers.URLGenerator.generateFileUrl("assets/script/share/share-url.js"));
                 const ShareUrlShare = ShareUrl({
                     selector: '#share',
-                    title: document.title,
-                    textSuccess: "Compartilhado!"
+                    textSelector: 'span',
+                    textSuccess: "Compartilhar"
                 });
             JAVASCRIPT, "", true);
 
@@ -99,11 +99,11 @@ final class CourseId extends Component
                                 tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/login', [ 'back_to' => $_GET['page'] ]), children: text('Inscrever-se'))
                     ),
 
-                    tag('div', class: 'text-right', children: 
+                    tag('div', class: 'text-center', children: 
                         tag('button', class: 'btn', type: 'button', id: 'share', children:
                         [
                             scTag('img', width: 24, height: 24, class: 'inline-block invert mr-2', src: URLGenerator::generateFileUrl('assets/pics/share.svg')),
-                            text("Compartilhar")
+                            tag('span', children: text("Compartilhar")) 
                         ])
                     )
                 ])

@@ -62,7 +62,8 @@ return
             ],
             '/subscriptions' => fn() =>
             [
-                '/[subscriptionId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SubscriptionId::class
+                '/[subscriptionId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SubscriptionId::class,
+                '/send_email' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SendEmail::class
             ],
             '/reports' => fn() =>
             [

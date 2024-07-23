@@ -90,7 +90,8 @@ return
                     '/edit' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Edit::class,
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\View::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class,
-                    '/view_subscriptions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\ViewSubscriptions::class
+                    '/view_subscriptions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\ViewSubscriptions::class,
+                    '/send_email' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\SendEmail::class
                 ]
             ],
             '/certificates' => fn() =>

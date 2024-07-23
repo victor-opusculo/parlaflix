@@ -49,6 +49,9 @@ customElements.define('loading-spinner', LoadingSpinner)
 import NewMediaForm from './new-media-form.js'
 customElements.define('new-media-form', NewMediaForm)
 
+import SendSubscribersEmail from './send-subscribers-email.js'
+customElements.define('send-subscribers-email', SendSubscribersEmail)
+
 import SetCertificateBgForm from './set-certificate-bg-form.js'
 customElements.define('set-certificate-bg-form', SetCertificateBgForm)
 
