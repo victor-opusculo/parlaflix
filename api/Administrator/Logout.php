@@ -20,6 +20,8 @@ final class Logout extends RouteHandler
         LogEngine::writeLog("Log-off de administrador realizado.");
         session_unset();
         if (isset($_SESSION)) session_destroy();
+        
+        setcookie("admin_logged_in", "", 0, "/");
         $this->json([ 'success' => 'Você saiu!' ]);
         exit;
     }

@@ -37,6 +37,7 @@ final class Login extends RouteHandler
                 $_SESSION['user_name'] = $admin->full_name->unwrapOr("Nome não definido");
                 $_SESSION['user_timezone'] = $admin->timezone->unwrapOr("America/Sao_Paulo");
                 LogEngine::writeLog("Log-in de administrador realizado: ID {$admin->id->unwrapOr(0)}");
+                setcookie("admin_logged_in", "1", 0, "/");
                 $this->json([ 'success' => 'Bem-vindo!' ]);
             }
             else

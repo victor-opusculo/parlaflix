@@ -4,6 +4,7 @@ namespace VictorOpusculo\Parlaflix\App\Admin\Panel;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 use VictorOpusculo\PComp\Component;
+use VictorOpusculo\PComp\Context;
 
 use function VictorOpusculo\PComp\Prelude\tag;
 use function VictorOpusculo\PComp\Prelude\text;
@@ -22,6 +23,8 @@ final class PanelLayout extends Component
             header('location:' . URLGenerator::generatePageUrl('/admin/login', [ 'messages' => 'Administrador não logado!' ]), true, 303);
             exit;
         }
+
+        setcookie("admin_logged_in", "1", 0, "/");
     }
 
     protected function markup(): Component|array|null
