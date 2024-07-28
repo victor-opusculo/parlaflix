@@ -14,7 +14,7 @@ class NavBar extends Component
        ScriptManager::registerScript('darkModeTogglerScript', 
             "window.addEventListener('load', () => document.getElementById('darkModeToggler').checked = window.localStorage.darkMode === '1');");
 
-        if (mb_strpos($_GET['page'] ?? "/", "/admin") !== false)
+        if (mb_strpos($_GET['page'] ?? "/", "admin/") !== false)
             $this->isAdmin = true;
     } 
 
