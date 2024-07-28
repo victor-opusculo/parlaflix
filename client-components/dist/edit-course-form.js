@@ -42,7 +42,7 @@
         lessons: [],
         categoriesIds: [],
         lessonsChangesReport: { create: [], update: [], delete: [] },
-        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+        searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: ''*/ },
 
         lessons_json: '[]',
         categories_ids_json: '[]'
@@ -265,11 +265,7 @@
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `cover_image_media_id`, "value": state.cover_image_media_id, "oninput": this.changeField.bind(this)}, ""),
         h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtnClicked.bind(this)}, `Procurar`)
       ]),
-      ((state.searchMedia.enabled) ? h("div", {}, [
-        h("basic-search-field", {"searchkeywords": state.searchMedia.q, "searchcallback": this.searchKeyword.bind(this)}, ""),
-        h("data-grid", {"datarows": state.searchMedia.dataRows, "returnidcallback": this.setMediaId.bind(this), "selectlinkparamname": `ID`}, ""),
-        h("client-paginator", {"totalitems": state.searchMedia.allCount, "resultsonpage": state.searchMedia.resultsOnPage, "changepagecallback": this.mediaPageChange.bind(this), "pagenum": state.searchMedia.pageNum}, "")
-      ]) : ''),
+      ((state.searchMedia.enabled) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
       h("ext-label", {"label": `Carga horária`}, [
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
       ]),

@@ -46,6 +46,9 @@ customElements.define('ext-label', ExtLabel)
 import LoadingSpinner from './loading-spinner.js'
 customElements.define('loading-spinner', LoadingSpinner)
 
+import MediaClientSelect from './media-client-select.js'
+customElements.define('media-client-select', MediaClientSelect)
+
 import NewMediaForm from './new-media-form.js'
 customElements.define('new-media-form', NewMediaForm)
 

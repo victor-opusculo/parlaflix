@@ -1,0 +1,118 @@
+<script>
+    const state =
+    {
+        set_id_field_callback: _ => void 0,
+        search_keywords: '',
+        page_num: 1,
+        total_items: 0,
+        num_results_on_page: 10,
+        data_rows: [],
+
+        media_to_upload: null
+    }
+
+    const methods = 
+    {
+        searchAction(query)
+        {
+            this.render({ ...this.state, page_num: 1, search_keywords: query });
+            this.fetchMedia();
+        },
+
+        selectMediaFromDataGrid(id)
+        {
+            if (typeof this.state.set_id_field_callback === "function")
+                this.state.set_id_field_callback(id);
+        },
+
+        changePageAction(toPage)
+        {
+            this.render({ ...this.state, page_num: toPage });
+            this.fetchMedia();
+        },
+
+        fetchMedia()
+        {
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/administrator/panel/media", { page_num: this.state.page_num, results_on_page: this.state.num_results_on_page, q: this.state.search_keywords }))
+            .then(res => res.json())
+            .then(json =>
+            {
+                if (json.success && json.data && json.data.dataRows && typeof json.data.allCount === "number")
+                {
+                    const transformed = json.data.dataRows.map( m => (
+                        {
+                            'ID': String(m.id),
+                            'Nome': m.name,
+                            'Descrição': m.description?.substring(0, 80) ?? '',
+                            'Extensão': m.file_extension,
+                            'Prévia': { type: 'image', src: Parlaflix.Helpers.URLGenerator.generateFileUrl(`uploads/media/${m.id}.${m.file_extension}`), width: 64 }
+                        })
+                    );
+                    this.render({ ...this.state, page_num: this.state.page_num, data_rows: transformed, total_items: json.data.allCount, search_keywords: this.state.search_keywords } );
+                }
+            });
+        },
+
+        newMediaFileChanged(e)
+        {
+            this.render({ ...this.state, media_to_upload: e.target.files[0] ?? null });
+        },
+
+        quickUploadMedia()
+        {
+            if (this.state.media_to_upload === null)
+                return;
+
+            const headers = new Headers();
+            const formData = new FormData();
+
+            formData.append('media:name', this.state.media_to_upload?.name ?? "Sem nome");
+            formData.append('media:description', "");
+            formData.append('mediaFile', this.state.media_to_upload ? this.state.media_to_upload : null);
+
+            const route = Parlaflix.Helpers.URLGenerator.generateApiUrl('/administrator/panel/media/create');
+
+            fetch(route, { headers, body: formData, method: 'POST' })
+            .then(res => res.json())
+            .then(json => 
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json)
+                .then(_ => 
+                {
+                    this.render({ ...this.state, page_num: 1, search_keywords: "" });
+                    this.fetchMedia();
+                });
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)))
+        },
+    }
+
+    function setup()
+    {
+        this.fetchMedia();
+    }
+</script>
+
+<template>
+    <div>
+        <ext-label label="Subir novo(a)">
+            <input type="file" name="newMediafile" class="file:btn" @change="newMediaFileChanged"/>
+            <button type="button" name="newMediaUpload" class="btn ml-2" @click="quickUploadMedia">Upload</button>
+        </ext-label>
+        <basic-search-field 
+            :searchcallback="this.searchAction.bind(this)" 
+            :searchkeywords="state.search_keywords" 
+        ></basic-search-field>
+        <data-grid
+            selectlinkparamname="ID"
+            :returnidcallback="this.selectMediaFromDataGrid.bind(this)"
+            :datarows="state.data_rows"
+        ></data-grid>
+        <client-paginator
+            :totalitems="state.total_items"
+            :resultsonpage="state.num_results_on_page"
+            :pagenum="state.page_num"
+            :changepagecallback="this.changePageAction.bind(this)"
+        ></client-paginator>
+    </div>
+</template>

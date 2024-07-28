@@ -15,7 +15,7 @@
         lessons: [],
         categoriesIds: [],
         lessonsChangesReport: { create: [], update: [], delete: [] },
-        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+        searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: ''*/ },
 
         lessons_json: '[]',
         categories_ids_json: '[]'
@@ -237,16 +237,10 @@
             <input type="number" min="1" step="1" name="cover_image_media_id" :value="state.cover_image_media_id" @input="changeField" />
             <button type="button" class="btn ml-2" @click="searchBtnClicked">Procurar</button>
         </ext-label>
-        <div :if="state.searchMedia.enabled">
-            <basic-search-field :searchkeywords="state.searchMedia.q" :searchcallback="this.searchKeyword.bind(this)"></basic-search-field>
-            <data-grid :datarows="state.searchMedia.dataRows" :returnidcallback="this.setMediaId.bind(this)" selectlinkparamname="ID"></data-grid>
-            <client-paginator 
-                :totalitems="state.searchMedia.allCount"
-                :resultsonpage="state.searchMedia.resultsOnPage"
-                :changepagecallback="this.mediaPageChange.bind(this)"
-                :pagenum="state.searchMedia.pageNum"
-            ></client-paginator>
-        </div>
+        <media-client-select
+            :if="state.searchMedia.enabled"
+            :set_id_field_callback="this.setMediaId.bind(this)"
+        ></media-client-select>
         <ext-label label="Carga horária">
             <input type="number" min="1" step="1" name="hours" :value="state.hours" @input="changeField" />
         </ext-label>
