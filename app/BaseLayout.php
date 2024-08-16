@@ -23,7 +23,12 @@ final class BaseLayout extends Component
             [
                 tag('header', class: 'bg-black py-4 text-white font-bold flex flex-col md:flex-row justify-between md:px-8 items-center', children: 
                 [
-                    scTag('img', width: 128, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.svg')),
+                    tag('div', class: 'flex flex-row items-center', children:
+                    [
+                        scTag('img', class:'inline-block mr-4', width: 128, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.svg')),          
+                        tag('a', class:'inline-block align-center', href: "https://www.portalabel.org.br", children: scTag('img', width: 200, src: URLGenerator::generateFileUrl('assets/pics/abel_dark.png')),)
+                        
+                    ]),
                     component(NavBar::class),
                     component(DarkModeToggler::class)
                 ]),
