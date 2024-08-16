@@ -1,25 +1,27 @@
 <?php
 namespace VictorOpusculo\Parlaflix\Lib\Model\Settings;
 
-use mysqli;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 
-class LgpdTermVersion extends DataEntity
+class CertificateBackground2MediaId extends DataEntity
 {
     public function __construct($initialValues = null)
     {
         $this->properties = (object)
         [
-            'name' => new DataProperty(null, fn() => 'DEFAULT_LGPD_TERM_VERSION', DataProperty::MYSQL_STRING),
+            'name' => new DataProperty(null, fn() => 'CERT_BG_2_MEDIA_ID', DataProperty::MYSQL_STRING),
             'value' => new DataProperty(null, fn() => '', DataProperty::MYSQL_STRING)
         ];
+
         parent::__construct($initialValues);
+
+        $this->properties->name->setValue('CERT_BG_2_MEDIA_ID');
+
     }
 
     protected string $databaseTable = 'settings';
-    protected string $formFieldPrefixName = 'lgpdTermVersion';
+    protected string $formFieldPrefixName = 'certBg2MediaId';
     protected array $primaryKeys = ['name'];
-    
-
+    protected array $setPrimaryKeysValue = ['name'];
 }

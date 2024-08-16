@@ -30,7 +30,9 @@
     const state =
     {
         media_id: null,
-        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+        media2_id: null,
+        searchMedia: false,
+        searchMedia2: false
     };
 
     const methods =
@@ -42,41 +44,12 @@
 
         searchBtnClicked(e)
         {
-            this.fetchMedias();
-            this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
+            this.render({ ...this.state, searchMedia: !this.state.searchMedia });
         },
 
-        fetchMedias(page = 1, query = '')
+        searchBtn2Clicked(e)
         {
-            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/administrator/panel/media", { page_num: page, results_on_page: this.state.searchMedia.resultsOnPage, q: query }))
-            .then(res => res.json())
-            .then(json =>
-            {
-                if (json.success && json.data && json.data.dataRows && typeof json.data.allCount === "number")
-                {
-                    const transformed = json.data.dataRows.map( m => (
-                        {
-                            'ID': String(m.id),
-                            'Nome': m.name,
-                            'Descrição': m.description?.substring(0, 80) ?? '',
-                            'Extensão': m.file_extension,
-                            'Prévia': { type: 'image', src: Parlaflix.Helpers.URLGenerator.generateFileUrl(`uploads/media/${m.id}.${m.file_extension}`), width: 64 }
-                        })
-                    );
-                    this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, pageNum: page, dataRows: transformed, allCount: json.data.allCount, q: query } });
-                }
-            });
-
-        },
-
-        mediaPageChange(page = 1)
-        {
-            this.fetchMedias(page, this.state.searchMedia.q);
-        },
-
-        searchKeyword(query = '')
-        {
-            this.fetchMedias(this.state.searchMedia.pageNum, query);
+            this.render({ ...this.state, searchMedia2: !this.state.searchMedia2 });
         },
 
         setMediaId(id)
@@ -84,12 +57,17 @@
             this.render({ ...this.state, media_id: Number(id) });
         },
 
+        setMedia2Id(id)
+        {
+            this.render({ ...this.state, media2_id: Number(id) });
+        },
+
         submit(e)
         {
             e.preventDefault();
 
             const headers = new Headers({ 'Content-Type': 'application/json' });
-            const body = JSON.stringify({ data: { 'media_id': this.state.media_id }});
+            const body = JSON.stringify({ data: { 'media_id': this.state.media_id, 'media2_id': this.state.media2_id }});
 
             const route = Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/certificates/set_bg_image`);
 
@@ -112,11 +90,12 @@
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `media_id`, "value": state.media_id, "oninput": this.changeField.bind(this)}, ""),
         h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtnClicked.bind(this)}, `Procurar`)
       ]),
-      ((state.searchMedia.enabled) ? h("div", {}, [
-        h("basic-search-field", {"searchkeywords": state.searchMedia.q, "searchcallback": this.searchKeyword.bind(this)}, ""),
-        h("data-grid", {"datarows": state.searchMedia.dataRows, "returnidcallback": this.setMediaId.bind(this), "selectlinkparamname": `ID`}, ""),
-        h("client-paginator", {"totalitems": state.searchMedia.allCount, "resultsonpage": state.searchMedia.resultsOnPage, "changepagecallback": this.mediaPageChange.bind(this), "pagenum": state.searchMedia.pageNum}, "")
-      ]) : ''),
+      ((state.searchMedia) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
+      h("ext-label", {"label": `Imagem do verso (Mídia ID)`}, [
+        h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `media2_id`, "value": state.media2_id, "oninput": this.changeField.bind(this)}, ""),
+        h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtn2Clicked.bind(this)}, `Procurar`)
+      ]),
+      ((state.searchMedia2) ? h("media-client-select", {"set_id_field_callback": this.setMedia2Id.bind(this)}, "") : ''),
       h("div", {"class": `text-center mt-4`}, [
         h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
       ])

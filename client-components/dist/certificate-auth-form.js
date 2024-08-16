@@ -56,7 +56,7 @@
 
         onSubmit(e)
         {
-            e.preventDefault();
+            e?.preventDefault();
 
             fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/certificate/auth', { code: this.state.code, datetime: `${this.state.date} ${this.state.time}`} ))
             .then(res => res.json())
@@ -70,6 +70,14 @@
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
     };
+
+    function setup()
+    {
+        this.state = { ...this.state, code: this.getAttribute("code") ?? null, date: this.getAttribute("date") ?? null, time: this.getAttribute("time") ?? null };
+        
+        if (this.state.code && this.state.date && this.state.time)
+            this.onSubmit(undefined);
+    }
 
 
   const __template = function({ state }) {
