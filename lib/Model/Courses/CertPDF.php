@@ -3,6 +3,7 @@ namespace VictorOpusculo\Parlaflix\Lib\Model\Courses;
 
 use DateTime;
 use DateTimeZone;
+use Normalizer;
 use tFPDF;
 use VictorOpusculo\Parlaflix\Lib\Helpers\System;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
@@ -45,7 +46,7 @@ class CertPDF extends tFPDF
         $this->AddFont("freesans", "", "FreeSans-LrmZ.ttf", true); 
 		$this->AddFont("freesans", "B", "FreeSansBold-Xgdd.ttf", true);
 		$this->AddFont("freesans", "I", "FreeSansOblique-ol30.ttf", true);
-		$this->AddFont("sandana", "", "SandanaRegular.ttf", true);
+		$this->AddFont("abrilfatface", "", "AbrilFatface-Regular.ttf", true);
     }
 
     public function drawFrontPage() : void
@@ -67,7 +68,7 @@ class CertPDF extends tFPDF
 
         $this->setY(133.5);
         $this->SetX(10);
-        $this->SetFont('sandana', '', 24);
+        $this->SetFont('abrilfatface', '', 24);
         $this->SetTextColor(0xB, 0x7B, 0x77);
         $this->MultiCell(212, 13, $this->studentName, 0, "C"); //Student name
     }
@@ -83,7 +84,7 @@ class CertPDF extends tFPDF
 
         $this->SetXY(90, 87);
         $this->SetTextColor(0, 0, 0);
-        $this->SetFont('sandana', '', 12);
+        $this->SetFont('abrilfatface', '', 12);
         $this->MultiCell($TABLE_CELL_WIDTH, 5, $this->studentName);
         
         $this->SetXY(90, 87 + 21);
