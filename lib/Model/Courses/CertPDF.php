@@ -71,14 +71,13 @@ class CertPDF extends tFPDF
         $this->SetFont('abrilfatface', '', 24);
         $this->SetTextColor(0xB, 0x7B, 0x77);
         $this->MultiCell(212, 13, $this->studentName, 0, "C"); //Student name
+
     }
 
     public function drawBackPage() : void
     {
         $this->AddPage();
         $this->Image(CERT_BG2, 0, 0, 297, 210, "JPG"); // Face page
-
-        $this->drawAuthenticationInfo();
 
         $TABLE_CELL_WIDTH = 180;
 
@@ -125,18 +124,25 @@ class CertPDF extends tFPDF
 		return $dayNumber . " de " . ($monthName) . " de " . $dateTime->format("Y");
 	}
 
+    public function Footer()
+    {
+        if ($this->PageNo() == 1)
+            $this->drawAuthenticationInfo();
+    }
+
     private function drawAuthenticationInfo()
 	{
-		$this->SetXY(20, 65);
-		$this->SetFont("freesans", "I", 11);
+		$this->SetXY(21, -27);
+        $this->SetTextColor(0, 0, 0);
+		$this->SetFont("freesans", "I", 8);
 		
 		$code = $this->authInfos["code"];
 		$issueDateTime = $this->authInfos["issueDateTime"]->format("d/m/Y H:i:s");
 				
 		$authText = "Verifique a autenticidade deste certificado em: " . AUTH_ADDRESS . " e informe os seguintes dados: Código $code - Emissão inicial em $issueDateTime (horário de Brasília).";
-		$this->MultiCell(250, 5, $authText, 0, "L");
+		$this->MultiCell(73, 4, $authText, 0, "L");
 
-        $this->Link(20, 65, 250, 15, 
+        $this->Link(21, 180, 73, 20, 
             System::getHttpProtocolName() . "://" . $_SERVER["HTTP_HOST"] . 
             URLGenerator::generatePageUrl("/certificate/auth", [ 'code' => $code, 'date' => $this->authInfos["issueDateTime"]->format("Y-m-d"), 'time' => $this->authInfos["issueDateTime"]->format("H:i:s") ])
         );
