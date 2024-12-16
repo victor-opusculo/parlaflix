@@ -6,6 +6,7 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\PComp\RouteHandler;
+use VOpus\PhpOrm\Option;
 
 require_once __DIR__ . '/../../../../lib/Middlewares/AdminLoginCheck.php';
 require_once __DIR__ . '/../../../../lib/Middlewares/JsonBodyParser.php';
@@ -27,11 +28,15 @@ final class StudentId extends RouteHandler
         {
             $data = $_POST['data'] ?? [];
 
+            $isMember = $data['students:is_abel_member'] ?? false;
+
             $student = (new Student([ 'id' => $this->studentId ]))
             ->setCryptKey(Connection::getCryptoKey())
             ->getSingle($conn)
             ->setCryptKey(Connection::getCryptoKey())
             ->fillPropertiesFromFormInput($data);
+
+            $student->is_abel_member = $isMember ? 1 : 0;
 
             $result = $student->save($conn);
             if ($result['affectedRows'] > 0)

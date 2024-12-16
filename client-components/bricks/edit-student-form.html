@@ -7,7 +7,8 @@
         telephone: null,
         institution: null,
         instrole: null,
-        timezone: null
+        timezone: null,
+        is_abel_member: false
     };
 
     const methods = 
@@ -15,6 +16,12 @@
         changeField(e)
         {
             this.render({ ...this.state, [ e.target.name ]: e.target.value });
+        },
+
+        changeRadio(e)
+        {
+            if (e.target.checked)
+                this.render({ ...this.state, [ e.target.name ]: Boolean(Number(e.target.value)) }); 
         },
 
         submit(e)
@@ -36,6 +43,11 @@
 
         }
     };
+
+    function setup()
+    {
+        this.state = { ...this.state, is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) };
+    }
 </script>
 
 <template>
@@ -56,6 +68,11 @@
         <ext-label label="Cargo">
             <input type="text" required maxlength="140" class="w-full" name="instrole" :value="state.instrole" @input="changeField" />
         </ext-label>
+        <div class="ml-2">
+            Associado da ABEL? 
+            <label><input type="radio" name="is_abel_member" value="1" @change="changeRadio" :checked="state.is_abel_member" /> Sim</label> 
+            <label class="ml-2"><input type="radio" name="is_abel_member" value="0" @change="changeRadio" :checked="state.is_abel_member == false" /> Não</label>
+        </div>
         <ext-label label="Fuso horário">
             <select @change="changeField" name="timezone">
                 <option :for="dtz in Parlaflix.Time.TimeZones" :value="dtz" :selected="dtz === state.timezone">${dtz}</option>

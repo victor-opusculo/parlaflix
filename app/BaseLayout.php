@@ -13,6 +13,7 @@ use function VictorOpusculo\PComp\Prelude\scTag;
 use function VictorOpusculo\PComp\Prelude\tag;
 use function VictorOpusculo\PComp\Prelude\text;
 
+#[\AllowDynamicProperties]
 final class BaseLayout extends Component
 {
     protected function markup(): Component|array|null

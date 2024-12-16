@@ -35,7 +35,8 @@
         telephone: null,
         institution: null,
         instrole: null,
-        timezone: null
+        timezone: null,
+        is_abel_member: false
     };
 
     const methods = 
@@ -43,6 +44,12 @@
         changeField(e)
         {
             this.render({ ...this.state, [ e.target.name ]: e.target.value });
+        },
+
+        changeRadio(e)
+        {
+            if (e.target.checked)
+                this.render({ ...this.state, [ e.target.name ]: Boolean(Number(e.target.value)) }); 
         },
 
         submit(e)
@@ -65,6 +72,11 @@
         }
     };
 
+    function setup()
+    {
+        this.state = { ...this.state, is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) };
+    }
+
 
   const __template = function({ state }) {
     return [  
@@ -84,6 +96,19 @@
       ]),
       h("ext-label", {"label": `Cargo`}, [
         h("input", {"type": `text`, "required": ``, "maxlength": `140`, "class": `w-full`, "name": `instrole`, "value": state.instrole, "oninput": this.changeField.bind(this)}, "")
+      ]),
+      h("div", {"class": `ml-2`}, [
+`
+            Associado da ABEL? 
+            `,
+        h("label", {}, [
+          h("input", {"type": `radio`, "name": `is_abel_member`, "value": `1`, "onchange": this.changeRadio.bind(this), "checked": state.is_abel_member}, ""),
+` Sim`
+        ]),
+        h("label", {"class": `ml-2`}, [
+          h("input", {"type": `radio`, "name": `is_abel_member`, "value": `0`, "onchange": this.changeRadio.bind(this), "checked": state.is_abel_member == false}, ""),
+` Não`
+        ])
       ]),
       h("ext-label", {"label": `Fuso horário`}, [
         h("select", {"onchange": this.changeField.bind(this), "name": `timezone`}, [

@@ -54,7 +54,7 @@ abstract class DataEntity implements \IteratorAggregate, \JsonSerializable
 	}
 
 	#[\ReturnTypeWillChange]
-	public function jsonSerialize()
+	public function jsonSerialize() : mixed
 	{
 		$outputObj = [];
 

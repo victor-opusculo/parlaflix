@@ -37,6 +37,7 @@
         password: '',
         password2: '',
         timezone: 'America/Sao_Paulo',
+        is_abel_member: false,
         lgpdConsentCheck: false,
         lgpdtermversion: 0,
         lgpdTermText: '',
@@ -53,6 +54,11 @@
         consentChecked(e)
         {
             this.render({ ...this.state, lgpdConsentCheck: e.target.checked });
+        },
+
+        memberChecked(e)
+        {
+            this.render({ ...this.state, is_abel_member: e.target.checked });
         },
 
         showLgpd()
@@ -115,6 +121,9 @@
         h("select", {"onchange": this.fieldChanged.bind(this), "name": `timezone`}, [
           ((Parlaflix.Time.TimeZones).map((dtz) => (h("option", {"value": dtz, "selected": dtz === 'America/Sao_Paulo'}, `${dtz}`))))
         ])
+      ]),
+      h("ext-label", {"reverse": `1`, "label": `Sou associado da ABEL`}, [
+        h("input", {"type": `checkbox`, "value": `1`, "checked": state.is_abel_member, "onchange": this.memberChecked.bind(this)}, "")
       ]),
       h("div", {"class": `mt-4`}, [
 `

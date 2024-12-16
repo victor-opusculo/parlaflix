@@ -10,6 +10,7 @@
         certificate_text: '',
         min_points_required: 1,
         is_visible: 1,
+        members_only: 0,
         
         categoriesAvailable: [],
         lessons: [],
@@ -226,6 +227,9 @@
     <form @submit="submit">
         <ext-label label="Visível (publicado)" reverse="1">
             <input type="checkbox" name="is_visible" value="1" @change="changeField" :checked="Boolean(Number(state.is_visible))" />
+        </ext-label>
+        <ext-label label="Exclusivo para associados" reverse="1">
+            <input type="checkbox" name="members_only" value="1" @change="changeField" :checked="Boolean(Number(state.members_only))" />
         </ext-label>
         <ext-label label="Nome">
             <input type="text" class="w-full" name="name" :value="state.name" @input="changeField"/>

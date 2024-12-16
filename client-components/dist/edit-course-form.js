@@ -37,6 +37,7 @@
         certificate_text: '',
         min_points_required: 1,
         is_visible: 1,
+        members_only: 0,
         
         categoriesAvailable: [],
         lessons: [],
@@ -254,6 +255,9 @@
     h("form", {"onsubmit": this.submit.bind(this)}, [
       h("ext-label", {"label": `Visível (publicado)`, "reverse": `1`}, [
         h("input", {"type": `checkbox`, "name": `is_visible`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_visible))}, "")
+      ]),
+      h("ext-label", {"label": `Exclusivo para associados`, "reverse": `1`}, [
+        h("input", {"type": `checkbox`, "name": `members_only`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.members_only))}, "")
       ]),
       h("ext-label", {"label": `Nome`}, [
         h("input", {"type": `text`, "class": `w-full`, "name": `name`, "value": state.name, "oninput": this.changeField.bind(this)}, "")

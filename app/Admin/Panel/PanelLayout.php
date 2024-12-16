@@ -9,6 +9,7 @@ use VictorOpusculo\PComp\Context;
 use function VictorOpusculo\PComp\Prelude\tag;
 use function VictorOpusculo\PComp\Prelude\text;
 
+#[\AllowDynamicProperties]
 final class PanelLayout extends Component
 {
     protected function setUp()

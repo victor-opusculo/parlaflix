@@ -36,6 +36,7 @@ final class Login extends RouteHandler
                 $_SESSION['user_email'] = $student->email->unwrap();
                 $_SESSION['user_name'] = $student->full_name->unwrapOr("Nome não definido");
                 $_SESSION['user_timezone'] = $student->timezone->unwrapOr("America/Sao_Paulo");
+                $_SESSION['user_is_member'] = (bool)$student->is_abel_member->unwrapOr(0);
                 LogEngine::writeLog("Log-in de estudante realizado: ID {$student->id->unwrapOr(0)}");
                 $this->json([ 'success' => 'Bem-vindo!' ]);
             }

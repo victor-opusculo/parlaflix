@@ -5,6 +5,7 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\RouteHandler;
 
@@ -29,10 +30,23 @@ final class CourseId extends RouteHandler
         }
 
         $conn = Connection::get();
-        $courseExists = (new Course([ 'id' => $this->courseId ]))->exists($conn);
+        $course = (new Course([ 'id' => $this->courseId ]))->getSingle($conn);
+        $courseExists = $course->exists($conn);
+        $isOnlyForMembers = (bool)$course->members_only->unwrapOr(0);
         if (!$courseExists)
         {
             $this->json([ 'error' => 'Curso não existente' ], 404);
+            exit;
+        }
+
+        $studentGetter = (new Student([ 'id' => $_SESSION['user_id'] ]));
+        $studentGetter->setCryptKey(Connection::getCryptoKey());
+        $student = $studentGetter->getSingle($conn);
+        $isAbelMember = (bool)$student->is_abel_member->unwrapOr(0);
+
+        if ($isOnlyForMembers && !$isAbelMember)
+        {
+            $this->json([ 'error' => 'Este curso é exclusivo para associados!' ], 500);
             exit;
         }
 

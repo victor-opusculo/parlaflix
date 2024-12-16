@@ -27,9 +27,11 @@ final class Home extends Component
         $conn = Connection::get();
         try
         {
+            $isUserAbelMember = (bool)($_SESSION['user_is_member'] ?? false);
+
             $getter = (new Subscription([ 'student_id' => $_SESSION['user_id'] ?? 0 ]));
-            $this->allSubscriptionCount = $getter->getCountFromStudent($conn, $_GET['q'] ?? '', $_GET['category_id'] ?? null);
-            $this->subscriptions = $getter->getMultipleFromStudent($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? '', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, $_GET['category_id'] ?? null);
+            $this->allSubscriptionCount = $getter->getCountFromStudent($conn, $_GET['q'] ?? '', $_GET['category_id'] ?? null, $isUserAbelMember);
+            $this->subscriptions = $getter->getMultipleFromStudent($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? '', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, $_GET['category_id'] ?? null, $isUserAbelMember);
 
             foreach ($this->subscriptions as $sub)
             {
@@ -80,7 +82,7 @@ final class Home extends Component
             component(OrderByLinks::class, linksDefinitions: [ 'Nome do curso' => 'name', 'Data de inscrição' => 'datetime' ]),
 
             component(StudentSubscriptionsGrid::class, subscriptions: $this->subscriptions),
-            component(Paginator::class, totalItems: $this->allSubscriptionCount, numPage: $_GET['page_num'] ?? 1, numResultsOnPage: self::NUM_RESULTS_ON_PAGE)
+            component(Paginator::class, totalItems: $this->allSubscriptionCount, pageNum: $_GET['page_num'] ?? 1, numResultsOnPage: self::NUM_RESULTS_ON_PAGE)
         ]);
     }
 }

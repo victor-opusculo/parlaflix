@@ -55,6 +55,7 @@ final class Edit extends Component
             tag('h1', children: text("Editar estudante")),
             tag('edit-student-form',
                 ...$this->student->getValuesForHtmlForm(skip: [ 'lgpdtermversion', 'lgpdTermText' ]),
+                is_abel_member: $this->student->is_abel_member->unwrapOr(0)
             )
         ])
         : null;

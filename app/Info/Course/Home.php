@@ -27,9 +27,15 @@ final class Home extends Component
         $conn = Connection::get();
         try
         {
+            session_name('parlaflix_student_user');
+            session_start();
+
+            $userIsMember = (bool)($_SESSION['user_is_member'] ?? false);
+            $this->isUserAbelMember = $userIsMember;
+
             $getter = new Course();
-            $this->courseCount = $getter->getCount($conn, $_GET['q'] ?? '', false, $_GET['category_id'] ?? null);
-            $this->courses = $getter->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? 'name', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, false, $_GET['category_id'] ?? null);
+            $this->courseCount = $getter->getCount($conn, $_GET['q'] ?? '', false, $_GET['category_id'] ?? null, true);
+            $this->courses = $getter->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? 'name', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, false, $_GET['category_id'] ?? null, true);
             
             foreach ($this->courses as $c)
                 $c->fetchCoverMedia($conn);
@@ -48,6 +54,7 @@ final class Home extends Component
     private array $courses = [];
     private int $courseCount = 0;
     private array $categories = [];
+    private bool $isUserAbelMember = false;
 
     protected function markup(): Component|array|null
     {
@@ -76,7 +83,7 @@ final class Home extends Component
                 'Nome' => 'name',
                 'Carga horária' => 'hours'
             ]),
-            component(CourseGrid::class, courses: $this->courses),
+            component(CourseGrid::class, isUserAbelMember: $this->isUserAbelMember, courses: $this->courses),
             component(Paginator::class, totalItems: $this->courseCount, pageNum: $_GET['page_num'] ?? 1, numResultsOnPage: self::NUM_RESULTS_ON_PAGE)
         ]);
     }

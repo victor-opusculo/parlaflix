@@ -113,7 +113,7 @@ class Subscription extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRowFromDatabase' ], $drs);
     }
 
-    public function getCountFromStudent(mysqli $conn, string $searchKeywords, ?int $categoryId = null) : int
+    public function getCountFromStudent(mysqli $conn, string $searchKeywords, ?int $categoryId = null, ?bool $includeOnlyMembers = false) : int
     {
         $selector = (new SqlSelector)
         ->addSelectColumn('COUNT(*)')
@@ -130,6 +130,12 @@ class Subscription extends DataEntity
             ->addValue('s', $searchKeywords);
         }
 
+        if (!$includeOnlyMembers)
+        {
+            $selector = $selector
+            ->addWhereClause(" AND courses.members_only = 0");
+        }
+
         if ($categoryId)
         {
             $selector = $selector
@@ -140,7 +146,7 @@ class Subscription extends DataEntity
         return (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
     }
 
-    public function getMultipleFromStudent(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, ?int $categoryId = null) : array
+    public function getMultipleFromStudent(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, ?int $categoryId = null, ?bool $includeOnlyMembers = false) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
@@ -159,6 +165,12 @@ class Subscription extends DataEntity
             $selector = $selector
             ->addWhereClause(" AND MATCH (courses.name) AGAINST (?)")
             ->addValue('s', $searchKeywords);
+        }
+
+        if (!$includeOnlyMembers)
+        {
+            $selector = $selector
+            ->addWhereClause(" AND courses.members_only = 0");
         }
 
         if ($categoryId)

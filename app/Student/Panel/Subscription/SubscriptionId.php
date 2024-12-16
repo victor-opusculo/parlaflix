@@ -1,6 +1,7 @@
 <?php
 namespace VictorOpusculo\Parlaflix\App\Student\Panel\Subscription;
 
+use Exception;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
 use VictorOpusculo\Parlaflix\Components\Layout\FlexSeparator;
@@ -34,6 +35,15 @@ final class SubscriptionId extends Component
             $this->subscription = (new Subscription([ 'id' => $this->subscriptionId, 'student_id' => $_SESSION['user_id'] ?? 0 ]))
             ->getSingleFromStudent($conn)
             ->fetchCourse($conn);
+
+            $isUserAbelMember = (bool)($_SESSION['user_is_member'] ?? false);
+            $isCourseForMembers = (bool)$this->subscription->course->members_only->unwrapOr(0);
+
+            if (!$isUserAbelMember && $isCourseForMembers)
+            {
+                $this->subscription = null;
+                throw new Exception("Curso exclusivo para associados!");
+            }
 
             $this->subscription->course
             ->informDateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo')

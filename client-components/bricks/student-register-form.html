@@ -10,6 +10,7 @@
         password: '',
         password2: '',
         timezone: 'America/Sao_Paulo',
+        is_abel_member: false,
         lgpdConsentCheck: false,
         lgpdtermversion: 0,
         lgpdTermText: '',
@@ -26,6 +27,11 @@
         consentChecked(e)
         {
             this.render({ ...this.state, lgpdConsentCheck: e.target.checked });
+        },
+
+        memberChecked(e)
+        {
+            this.render({ ...this.state, is_abel_member: e.target.checked });
         },
 
         showLgpd()
@@ -87,6 +93,9 @@
             <select @change="fieldChanged" name="timezone">
                 <option :for="dtz in Parlaflix.Time.TimeZones" :value="dtz" :selected="dtz === 'America/Sao_Paulo'">${dtz}</option>
             </select>
+        </ext-label>
+        <ext-label reverse="1" label="Sou associado da ABEL">
+            <input type="checkbox" value="1" :checked="state.is_abel_member" @change="memberChecked"/>
         </ext-label>
         <div class="mt-4">
             Concorda com o termo de consentimento para uso dos seus dados pessoais?

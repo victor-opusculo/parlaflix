@@ -29,6 +29,7 @@ class Student extends DataEntity
             ], true), 
             'password_hash' => new DataProperty(null, fn() => null, DataProperty::MYSQL_STRING, false),
             'timezone' => new DataProperty('timezone', fn() => 'America/Sao_Paulo', DataProperty::MYSQL_STRING, false),
+            'is_abel_member' => new DataProperty(null, fn() => 0, DataProperty::MYSQL_INT, false),
             'lgpd_term_version' => new DataProperty('lgpdtermversion', fn() => null, DataProperty::MYSQL_INT),
             'lgpd_term' => new DataProperty('lgpdTermText', fn() => null, DataProperty::MYSQL_STRING)
         ];

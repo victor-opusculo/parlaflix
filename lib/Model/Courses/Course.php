@@ -25,6 +25,7 @@ class Course extends DataEntity
             'certificate_text' => new DataProperty('certificate_text', fn() => null, DataProperty::MYSQL_STRING),
             'min_points_required' => new DataProperty('min_points_required', fn() => 0, DataProperty::MYSQL_INT),
             'is_visible' => new DataProperty('is_visible', fn() => 0, DataProperty::MYSQL_INT),
+            'members_only' => new DataProperty('members_only', fn() => 0, DataProperty::MYSQL_INT),
             'created_at' => new DataProperty('created_at', fn() => gmdate('Y-m-d H:i:s'), DataProperty::MYSQL_STRING)
         ];
 
@@ -47,7 +48,7 @@ class Course extends DataEntity
         return $this;
     }
 
-    public function getCount(mysqli $conn, string $searchKeywords, bool $includeNonVisible = true, ?int $categoryId = null) : int
+    public function getCount(mysqli $conn, string $searchKeywords, bool $includeNonVisible = true, ?int $categoryId = null, ?bool $includeMembersOnly = false) : int
     {
         $selector = (new SqlSelector)
         ->addSelectColumn("COUNT(DISTINCT {$this->databaseTable}.id)")
@@ -69,6 +70,13 @@ class Course extends DataEntity
                 $selector->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1");
         }
 
+        if (!$includeMembersOnly)
+        {
+            $selector = $selector->hasWhereClauses()
+                ? $selector->addWhereClause("AND {$this->getWhereQueryColumnName('members_only')} = 0")
+                : $selector->addWhereClause("{$this->getWhereQueryColumnName('members_only')} = 0");
+        }
+
         if ($categoryId)
         {
             $selector = $selector->hasWhereClauses()
@@ -80,7 +88,7 @@ class Course extends DataEntity
         return $count;
     }
 
-    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, bool $includeNonVisible = true, ?int $categoryId = null) : array
+    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, bool $includeNonVisible = true, ?int $categoryId = null, ?bool $includeMembersOnly = false) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.course_id = {$this->databaseTable}.id")
@@ -100,6 +108,13 @@ class Course extends DataEntity
             $selector->hasWhereClauses() ? 
                 $selector->addWhereClause("AND {$this->getWhereQueryColumnName('is_visible')} = 1") :
                 $selector->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1");
+        }
+
+        if (!$includeMembersOnly)
+        {
+            $selector = $selector->hasWhereClauses()
+                ? $selector->addWhereClause("AND {$this->getWhereQueryColumnName('members_only')} = 0")
+                : $selector->addWhereClause("{$this->getWhereQueryColumnName('members_only')} = 0");
         }
 
         if ($categoryId)

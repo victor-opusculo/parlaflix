@@ -1,6 +1,7 @@
 <?php
 namespace VictorOpusculo\Parlaflix\App\Info\Course;
 
+use Exception;
 use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
@@ -9,6 +10,7 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
@@ -60,6 +62,23 @@ final class CourseId extends Component
             {
                 $subsGetter = (new Subscription([ 'student_id' => $_SESSION['user_id'], 'course_id' => $this->courseId ]));
                 $this->studentAlreadySubscribed = $subsGetter->isStudentSubscribed($conn);
+
+                $isMember = (bool)($_SESSION['user_is_member'] ?? false);
+                $isCourseForMembers = (bool)$this->course->members_only->unwrapOr(0);
+                if ($isCourseForMembers && !$isMember)
+                {
+                    $this->course = null;
+                    throw new Exception("Curso exclusivo para associados!");
+                }
+            }
+            else
+            {
+                $isCourseForMembers = (bool)$this->course->members_only->unwrapOr(0);
+                if ($isCourseForMembers)
+                {
+                    $this->course = null;
+                    throw new Exception("Curso exclusivo para associados!");
+                }
             }
         }
         catch (\Exception $e)
@@ -71,7 +90,7 @@ final class CourseId extends Component
     private bool $studentLoggedIn = false;
     private bool $studentAlreadySubscribed = false;
     private ?Course $course = null; 
-    protected $courseId;
+    protected mixed $courseId;
 
     protected function markup(): Component|array|null
     {

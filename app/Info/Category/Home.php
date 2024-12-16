@@ -17,10 +17,11 @@ final class Home extends Component
 {
     protected function setUp()
     {
+
         HeadManager::$title = "Cursos disponíveis";
         $conn = Connection::get();
         $firstCat = new Category([ 'title' => 'Todos os cursos' ]);
-        $firstCat->coursesNumber = (new Course)->getCount($conn, '', false, null);
+        $firstCat->coursesNumber = (new Course)->getCount($conn, '', false, null, true);
         $otherCats = (new Category)->getAllWithCourseCount($conn);
 
         foreach ($otherCats as $cat)
