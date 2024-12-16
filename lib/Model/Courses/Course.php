@@ -144,6 +144,37 @@ class Course extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
+    /** @return array<Course> */
+    public function getLatest(mysqli $conn) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearWhereClauses()
+        ->clearValues()
+        ->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1")
+        ->setOrderBy("{$this->getWhereQueryColumnName('id')} DESC")
+        ->setLimit("5");
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
+    }
+
+    /** @return array<Course> */
+    public function getMostSubscriptions(mysqli $conn) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearWhereClauses()
+        ->clearValues()
+        ->addSelectColumn("COUNT(student_subscriptions.id) AS subscriptionNumber")
+        ->addJoin("INNER JOIN student_subscriptions ON student_subscriptions.course_id = {$this->databaseTable}.id")
+        ->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1")
+        ->setOrderBy("subscriptionNumber DESC")
+        ->setGroupBy("{$this->databaseTable}.id")
+        ->setLimit("5");
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
+    }
+
     public function getSingleVisibleOnly(mysqli $conn) : self
     {
         $selector = $this->getGetSingleSqlSelector()

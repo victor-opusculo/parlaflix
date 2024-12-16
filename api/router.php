@@ -1,6 +1,10 @@
 <?php
 return 
 [
+    '/course' => fn() =>
+    [
+        '/get_courses' => \VictorOpusculo\Parlaflix\Api\Course\GetCourses::class
+    ],
     '/student' => fn() =>
     [
         '/login' => \VictorOpusculo\Parlaflix\Api\Student\Login::class,

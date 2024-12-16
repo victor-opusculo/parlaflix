@@ -43,6 +43,9 @@ customElements.define('edit-student-form', EditStudentForm)
 import ExtLabel from './ext-label.js'
 customElements.define('ext-label', ExtLabel)
 
+import FiveCoursesLatest from './five-courses-latest.js'
+customElements.define('five-courses-latest', FiveCoursesLatest)
+
 import LoadingSpinner from './loading-spinner.js'
 customElements.define('loading-spinner', LoadingSpinner)
 

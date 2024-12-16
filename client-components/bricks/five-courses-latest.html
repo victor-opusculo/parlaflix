@@ -1,0 +1,55 @@
+
+<script>
+    const state =
+    {
+        data: [],
+        mode: "latest",
+        genUrlFn: () => ""
+    };
+
+    const methods =
+    {
+        fetchData()
+        {
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl(`/course/get_courses`, { mode: this.state.mode || "latest" }))
+            .then(res => res.json())
+            .then(({ data }) => this.render({ ...this.state, data }))
+            .catch(console.error);
+        },
+
+        changeMode(e)
+        {
+            this.render({ ...this.state, mode: e.target.value });
+            this.fetchData();
+        }
+    };
+
+    function setup()
+    {
+        window.addEventListener('load', _ => void (document.getElementById("radioLatestCourses").checked = true));
+        this.render({ ...this.state, mode: "latest", genUrlFn: Parlaflix.Helpers.URLGenerator.generatePageUrl });
+        this.fetchData();
+    }
+</script>
+
+<template>
+    <div style="margin-top: 20px; margin-left:auto; margin-right:auto; max-width: 600px; display: flex; flex-direction: column;">
+        <form class="my-2">
+            <input type="radio" name="courseListMode" value="latest" class="hidden peer/btnLatest" id="radioLatestCourses" :checked="state.mode === 'latest'" @change="changeMode">
+            <label for="radioLatestCourses" class="btn brightness-50 peer-checked/btnLatest:brightness-100">Mais recentes</label>
+            <input type="radio" name="courseListMode" value="most_subscriptions" class="hidden peer/btnMostSubs" id="radioMostSubscribedCourses" :checked="state.mode === 'most_subscriptions'" @change="changeMode">
+            <label class="btn ml-2 brightness-50 peer-checked/btnMostSubs:brightness-100" for="radioMostSubscribedCourses">Mais inscrições</label>
+        </form>
+        <div style="display:grid; grid-template-columns: 200px auto; grid-template-rows: auto auto; margin-bottom: 15px;" :for="course in state.data">
+            <div style="margin-right: 15px;">
+                <a href="${state.genUrlFn('/info/course/' + course.id)}"><img src="${course.imageUrl}" alt="${course.name}" /></a>
+            </div>
+            <div style="position:relative;"><a href="${state.genUrlFn('/info/course/' + course.id)}">
+                ${course.name}
+                <br/>
+                <span class="btn" style="position:absolute; bottom: 0; ">Inscreva-se!</span> 
+                <span class="text-[0.7rem]">${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}</span> 
+            </a></div>
+        </div>
+    </div>
+</template>
