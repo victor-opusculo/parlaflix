@@ -29,8 +29,8 @@ final class Home extends Component
         try
         {
 
-            $this->courseCount = (new Course)->getCount($conn, $_GET['q'] ?? '');
-            $this->courses = (new Course)->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? '', $_GET['page_num'] ?? 1, self::NUM_ITEMS_ON_PAGE);
+            $this->courseCount = (new Course)->getCount($conn, $_GET['q'] ?? '', true, null, true);
+            $this->courses = (new Course)->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? '', $_GET['page_num'] ?? 1, self::NUM_ITEMS_ON_PAGE, true, null, true);
             $this->courses = Data::transformDataRows($this->courses, 
             [
                 'ID' => fn($m) => $m->id->unwrapOr(''),
