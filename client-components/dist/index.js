@@ -7,6 +7,9 @@ customElements.define('admin-login-form', AdminLoginForm)
 import AdminLogoutButton from './admin-logout-button.js'
 customElements.define('admin-logout-button', AdminLogoutButton)
 
+import AdminSettingsForm from './admin-settings-form.js'
+customElements.define('admin-settings-form', AdminSettingsForm)
+
 import BasicSearchField from './basic-search-field.js'
 customElements.define('basic-search-field', BasicSearchField)
 

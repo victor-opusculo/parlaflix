@@ -34,7 +34,8 @@ final class PanelLayout extends Component
                 tag('span', children:
                 [ 
                     tag('span', class: 'font-bold', children: text('Estudante logado(a): ')),
-                    text($_SESSION['user_name'] ?? '***')
+                    text($_SESSION['user_name'] ?? '***'),
+                    ($_SESSION['user_is_member'] ?? false) ? text(" (Associado(a) ABEL)") : null
                 ]),
                 tag('span', children:
                 [

@@ -1,0 +1,42 @@
+<script>
+    const state =
+    {
+        main_inbox_mail: ""
+    };
+
+    const methods = 
+    {
+        submit(e)
+        {
+            e.preventDefault();
+
+            const data = this.state;
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const body = JSON.stringify({ data });
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl('/administrator/panel/settings'), { method: 'PUT', headers, body })
+            .then(res => res.json())
+            .then(json =>
+            {
+                Parlaflix.Alerts.pushFromJsonResult(json);
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+        },
+
+        changeField(e)
+        {
+            this.render({ ...this.state, [e.target.name]: e.target.value });
+        }
+    };
+
+</script>
+
+<template>
+    <form @submit="submit">
+        <ext-label label="E-mail principal de notificação">
+            <input type="email" size="40" @change="changeField" name="main_inbox_mail" :value="state.main_inbox_mail" />
+        </ext-label>
+        <div class="my-2">
+            <button type="submit" class="btn">Salvar</button>
+        </div>
+    </form>
+</template>

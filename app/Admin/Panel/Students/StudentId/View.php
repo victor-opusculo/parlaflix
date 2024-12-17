@@ -72,6 +72,7 @@ final class View extends Component
             component(Label::class, labelBold: true, label: "Cargo", children: text($this->student->other_data->unwrap()->instRole->unwrapOr(''))),
 
             component(Label::class, labelBold: true, label: "Fuso horário", children: text($this->student->timezone->unwrapOr(''))),
+            component(Label::class, labelBold: true, label: "Associado da ABEL?", children: text($this->student->is_abel_member->unwrapOr(0) ? "Sim" : "Não")),
 
             component(Label::class, labelBold: true, label: 'Termo LGPD Versão', children: text($this->student->lgpd_term_version->unwrapOr(''))),
             component(Label::class, labelBold: true, lineBreak: true, label: 'Termo LGPD', children:

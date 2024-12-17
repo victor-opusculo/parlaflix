@@ -34,7 +34,8 @@ final class Home extends Component
                 'ID' => fn($s) => $s->id->unwrapOr(0),
                 'Nome completo' => fn($s) => $s->full_name->unwrapOr(''),
                 'E-mail' => fn($s) => $s->email->unwrapOr(''),
-                'Telefone' => fn($s) => $s->other_data->unwrap()->telephone->unwrapOr('')
+                'Telefone' => fn($s) => $s->other_data->unwrap()->telephone->unwrapOr(''),
+                'Associado?' => fn($s) => $s->is_abel_member->unwrapOr(0) ? "Sim" : "Não"
             ]);
         }
         catch (\Exception $e)

@@ -117,6 +117,10 @@ return
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId\View::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId\Delete::class
                 ]
+            ],
+            '/settings' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Settings\Home::class
             ]
         ]
     ],

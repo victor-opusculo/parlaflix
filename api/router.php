@@ -33,6 +33,7 @@ return
         '/[id]' => \VictorOpusculo\Parlaflix\Api\Administrator\AdminId::class,
         '/panel' => fn() =>
         [
+            '/settings' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Settings\Route::class,
             '/media' => fn() =>
             [
                 '/' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Media\Home::class,

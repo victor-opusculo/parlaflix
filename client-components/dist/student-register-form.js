@@ -41,7 +41,8 @@
         lgpdConsentCheck: false,
         lgpdtermversion: 0,
         lgpdTermText: '',
-        slotId: ''
+        slotId: '',
+        waiting: false
     };
 
     const methods =
@@ -68,12 +69,13 @@
 
         submit(e)
         {
-            this.render({...this.state, lgpdTermText: document.getElementById('lgpdTermForm')?.elements['lgpdTerm']?.value ?? '***'});
+            this.render({...this.state, waiting: true, lgpdTermText: document.getElementById('lgpdTermForm')?.elements['lgpdTerm']?.value ?? '***'});
             e.preventDefault();
 
             if (this.state.password !== this.state.password2)
             {
                 Parlaflix.Alerts.push(Parlaflix.Alerts.types.info, "As senhas não coincidem!");
+                this.render({ ...this.state, waiting: false });
                 return;
             }
 
@@ -87,7 +89,8 @@
             .then(res => res.json())
             .then(Parlaflix.Alerts.pushFromJsonResult)
             .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('/student/login'))
-            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)))
+            .finally(() => this.render({ ...this.state, waiting: false }));
             
         }
     };
@@ -135,7 +138,7 @@
         h("input", {"type": `checkbox`, "required": ``, "value": `${state.lgpdTermVersion}`, "checked": state.lgpdConsentCheck, "onchange": this.consentChecked.bind(this)}, "")
       ]),
       h("div", {"class": `text-center mt-4`}, [
-        h("button", {"class": `btn`, "type": `submit`}, `Concluir`)
+        h("button", {"class": `btn`, "type": `submit`, "disabled": state.waiting}, `${state.waiting ? 'Aguarde...' : 'Concluir'}`)
       ])
     ]),
     h("dialog", {"id": `lgpdTermDialog`, "class": `md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800`}, [

@@ -3,6 +3,7 @@ namespace VictorOpusculo\Parlaflix\Api\Student;
 
 use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Settings\MainInboxMail;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\PComp\RouteHandler;
 
@@ -34,8 +35,20 @@ class Register extends RouteHandler
             
             if ($result['newId'])
             {
+                $isMember = (bool)($_POST['data']['students:is_abel_member']);
+                if ($isMember)
+                {
+                    $email = $student->email->unwrapOr("");
+                    $fullname = $student->full_name->unwrapOr("");
+                    MainInboxMail::sendEmail($conn, $email, $fullname);
+                }
+                
                 LogEngine::writeLog("Cadastro de estudante feito! Aluno ID: {$result['newId']}.");
-                $this->json([ 'success' => 'Cadastro efetuado com sucesso! Você pode entrar com sua conta agora.' ]);
+                $this->json([ 'success' => match ($isMember)
+                {
+                    true => 'Cadastro efetuado com sucesso! Você pode entrar com sua conta agora. A ABEL foi notificada para avaliar seu status de associado. Assim que confirmarmos, você terá acesso a todos os cursos.',
+                    false => 'Cadastro efetuado com sucesso! Você pode entrar com sua conta agora.'
+                }]);
             }
             else
                 throw new \Exception("Não foi possível criar o cadastro!");
