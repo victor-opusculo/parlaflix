@@ -58,7 +58,7 @@ final class Surveys extends Component
         [
             tag('h1', children: text("Avaliações")),
             tag('h3', class: 'text-center', children: text($this->course->name->unwrapOr("***"))),
-            count($this->surveys) > 1
+            count($this->surveys) > 0
             ? array_map(fn(Survey $s) => 
                 [
                     component(Label::class, labelBold: true, label: "De", children: text(Data::firstName($s->getOtherProperties()->studentName ?? "***"))),
