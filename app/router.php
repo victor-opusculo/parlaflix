@@ -35,6 +35,7 @@ return
             '/subscription' => fn() =>
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\Home::class,
+                '/new_survey' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\NewSurvey::class,
                 '/[subscriptionId]' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\SubscriptionId::class
             ]
         ]

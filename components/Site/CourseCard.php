@@ -2,6 +2,7 @@
 namespace VictorOpusculo\Parlaflix\Components\Site;
 
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
+use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\PComp\{View, Component};
 use function VictorOpusculo\PComp\Prelude\{tag, text, scTag};
@@ -19,7 +20,7 @@ class CourseCard extends Component
 
     protected function markup() : Component|array|null
     {
-        return tag('a', class: 'block overflow-clip relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
+        return tag('a', class: 'block overflow-clip relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded-sm border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
         href: $this->detailsUrl,
         children:
         [
@@ -36,7 +37,11 @@ class CourseCard extends Component
                 tag('div', children: text($this->course->name->unwrap())),
                 tag('div', class: 'flex flex-row items-center justify-center' , children: 
                 [
-                    tag('span', children: text($this->course->hours->unwrap() . ' horas'))
+                    tag('span', children: text(
+                        $this->course->hours->unwrap() >= 2 
+                        ? Data::formatCourseHourNumber($this->course->hours->unwrap()) . ' horas'
+                        : Data::formatCourseHourNumber($this->course->hours->unwrap())  . ' hora'
+                    ))
                 ])
             ])
         ]);

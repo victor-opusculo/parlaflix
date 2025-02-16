@@ -107,7 +107,7 @@ final class CourseId extends Component
                 tag('div', class: 'flex-[70%] px-4', children:
                 [
                     component(Label::class, label: 'Descrição', labelBold: true, lineBreak: true, children: rawText(nl2br(Data::hsc($this->course->presentation_html->unwrapOr('Sem descrição'))))),
-                    component(Label::class, label: 'Carga horária', labelBold: true, children: text($this->course->hours->unwrapOr('Indefinido'))),
+                    component(Label::class, label: 'Carga horária', labelBold: true, children: text(Data::formatCourseHourNumber($this->course->hours->unwrapOr(0)) . "h")),
                     component(Label::class, label: 'Categoria(s)', labelBold: true, children: text(array_reduce($this->course->categoriesJoints, fn($carry, $j) => ($carry ? $carry . ', ' : '') . $j->getOtherProperties()->title, null))),
 
                     $this->studentLoggedIn

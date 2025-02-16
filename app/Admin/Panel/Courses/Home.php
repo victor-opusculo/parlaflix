@@ -35,7 +35,7 @@ final class Home extends Component
             [
                 'ID' => fn($m) => $m->id->unwrapOr(''),
                 'Nome' => fn($m) => $m->name->unwrapOr('(Sem nome)'),
-                'Carga horária' => fn($m) => $m->hours->unwrapOr(''),
+                'Carga horária' => fn($m) => Data::formatCourseHourNumber($m->hours->unwrapOr(0)),
                 'Cadastrado em' => fn($c) => !empty($c->created_at->unwrapOr('')) ? 
                     date_create($c->created_at->unwrapOr('now'), new DateTimeZone('UTC'))
                     ->setTimezone(new DateTimeZone($_SESSION['user_timezone'] ?? 'America/Sao_Paulo'))

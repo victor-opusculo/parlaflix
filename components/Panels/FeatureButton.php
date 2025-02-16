@@ -15,7 +15,7 @@ class FeatureButton extends Component
     protected function markup() : Component|array|null
     {
         return tag('a', 
-        class: 'flex flex-col items-center justify-center w-40 h-40 border border-neutral-700 rounded hover:backdrop-brightness-75 mr-2 mb-2 ' . $this->additionalClasses, 
+        class: 'flex flex-col items-center justify-center w-40 h-40 border border-neutral-700 rounded-sm hover:backdrop-brightness-75 mr-2 mb-2 ' . $this->additionalClasses, 
         href: $this->url, 
         children: 
         [ 

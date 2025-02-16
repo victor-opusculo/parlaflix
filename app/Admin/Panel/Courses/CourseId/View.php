@@ -71,7 +71,7 @@ final class View extends Component
             component(Label::class, label: 'Imagem de capa', labelBold: true, lineBreak: true, children:
                 component(ImageMediaViewer::class, media: $this->course->coverMedia ?? null, forceWidth: 256)
             ),
-            component(Label::class, label: 'Carga horária', labelBold: true, children: text($this->course->hours->unwrapOr(0))),
+            component(Label::class, label: 'Carga horária', labelBold: true, children: text(Data::formatCourseHourNumber($this->course->hours->unwrapOr(0)))),
             component(Label::class, label: 'Texto para o certificado', labelBold: true, lineBreak: true, children:
                 rawText(nl2br(Data::hsc($this->course->certificate_text->unwrapOr(''))))    
             ),

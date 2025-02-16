@@ -76,4 +76,11 @@ final class Data
             Parlaflix.Time.TimeZones = [" . array_reduce(DateTimeZone::listIdentifiers(), fn($prev, $dtz) => ($prev ? $prev . ',' : '') . "\"$dtz\"" ) . "];
         ";
     }
+
+    public static function formatCourseHourNumber(int|float $hours) : string
+    {
+        $rounded = round($hours, 2);
+        $formatted = number_format($rounded, 2, ",", ".");
+        return preg_replace("/,?0+$/", "", $formatted);
+    }
 } 

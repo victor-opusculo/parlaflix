@@ -226,7 +226,7 @@
             const route = this.state.id ? 
                 Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/courses/${this.state.id}`) :
                 Parlaflix.Helpers.URLGenerator.generateApiUrl('/administrator/panel/courses/create');
-
+console.log(outputData);
             fetch(route, { headers, body, method: this.state.id ? 'PUT' : 'POST' } )
             .then(res => res.json())
             .then(json =>
@@ -271,7 +271,7 @@
       ]),
       ((state.searchMedia.enabled) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
       h("ext-label", {"label": `Carga horária`}, [
-        h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
+        h("input", {"type": `number`, "min": `0.01`, "step": `0.01`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("ext-label", {"label": `Texto para o certificado`, "linebreak": `1`}, [
         h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `300`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)

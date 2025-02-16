@@ -21,7 +21,7 @@ class PageMessages extends Component
             render(
             [
                 tag('div', 
-                    class: 'rounded px-4 py-2 w-[400px] my-2 mx-auto bg-violet-200 text-center text-xl dark:bg-violet-800 dark:text-white', 
+                    class: 'rounded-sm px-4 py-2 w-[400px] my-2 mx-auto bg-violet-200 text-center text-xl dark:bg-violet-800 dark:text-white', 
                     children: array_map(fn($m) => tag('p', children: [ text($m) ]), $messages )
                 )
             ]);

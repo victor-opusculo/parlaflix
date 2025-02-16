@@ -1,0 +1,67 @@
+
+<script>
+    const state =
+    {
+        subscription_id: null,
+        filledStar: null,
+        emptyStar: null,
+        pointsGiven: 0,
+        message: ""
+    };
+
+    const methods =
+    {
+        submit(e)
+        {
+            e.preventDefault();
+
+            if (this.state.pointsGiven < 1)
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "A nota deve ser marcada: Uma ou mais estrelas!");
+                return false;
+            }
+        },
+
+        starClicked(e)
+        {
+            const points = Number.parseInt(e.target.getAttribute('data-points'));
+            this.render({ ...this.state, pointsGiven: points });
+        },
+
+        onInputChange(e)
+        {
+            this.render({ ...this.state, [e.target.name]: e.target.value });
+        }
+    };
+
+    function setup()
+    {
+        const filledStar =  Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_filled.png');
+        const emptyStar = Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_empty.png');
+
+        this.state = { ...this.state, filledStar, emptyStar };
+    }
+</script>
+
+<template>
+    <form @submit="submit">
+
+        <div class="my-2">
+            <span>Nota: </span>
+            <img 
+                :for="n in Array.from({ length: 5 }).map((_, i) => i + 1)" 
+                :src="state.pointsGiven >= n ? state.filledStar : state.emptyStar" 
+                :data-points="n"
+                @click="starClicked"
+                width="42"
+                class="inline-block mr-2 ${state.pointsGiven < n ? 'dark:invert' : ''} cursor-pointer"/>
+        </div>
+        <div>
+            <span>Se quiser, deixe uma mensagem:</span>
+            <textarea rows="5" class="w-full" :value="state.message" @change="onInputChange" name="message" maxlength="1000"></textarea>
+        </div>
+        <div class="text-center my-4">
+            <button type="submit" class="btn">Enviar</button>
+        </div>
+    </form>
+</template>

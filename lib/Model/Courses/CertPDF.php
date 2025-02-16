@@ -5,6 +5,7 @@ use DateTime;
 use DateTimeZone;
 use Normalizer;
 use tFPDF;
+use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Helpers\System;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 
@@ -17,7 +18,7 @@ class CertPDF extends tFPDF
     private int $studentScoredPoints;
     private int $maxScorePossible;
     private int $minScoreRequired;
-    private int $hours;
+    private float $hours;
     private array $authInfos;
     private Course $course;
 
@@ -28,7 +29,7 @@ class CertPDF extends tFPDF
                             int $studentScoredPoints,
                             int $maxScorePossible,
                             int $minScoreRequired,
-                            int $hours,
+                            float $hours,
                             array $authInfos,
                             Course $course) : void
     {
@@ -90,7 +91,7 @@ class CertPDF extends tFPDF
         $this->MultiCell($TABLE_CELL_WIDTH, 5, $this->course->name->unwrapOr(""));
 
         $this->SetXY(90, 87 + 21 + 22);
-        $this->MultiCell($TABLE_CELL_WIDTH, 5, $this->hours . 'h');
+        $this->MultiCell($TABLE_CELL_WIDTH, 5, Data::formatCourseHourNumber($this->hours) . 'h');
 
         $this->SetXY(90, 87 + 21 + 22 + 22);
         $this->MultiCell($TABLE_CELL_WIDTH, 5, $this->subscriptionDateTime->format('d/m/Y'));

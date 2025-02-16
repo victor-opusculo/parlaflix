@@ -84,3 +84,6 @@ customElements.define('student-recover-password', StudentRecoverPassword)
 
 import StudentRegisterForm from './student-register-form.js'
 customElements.define('student-register-form', StudentRegisterForm)
+
+import StudentSurveyForm from './student-survey-form.js'
+customElements.define('student-survey-form', StudentSurveyForm)

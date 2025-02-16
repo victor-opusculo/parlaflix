@@ -17,7 +17,7 @@ class CategoryGrid extends Component
     {
         return tag('div', class: 'p-4 flex md:flex-row flex-col flex-wrap items-center justify-center', children:
             count($this->categories) > 0
-                ? array_map(fn($c) => tag('a', class: 'block overflow-auto relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
+                ? array_map(fn($c) => tag('a', class: 'block overflow-auto relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded-sm border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
                 href: $c->id->unwrapOr(false)
                     ? URLGenerator::generatePageUrl("/info/course", [ 'category_id' => $c->id->unwrap() ])
                     : URLGenerator::generatePageUrl("/info/course"),

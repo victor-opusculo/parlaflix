@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "./tailwind.config.js";
 
 @layer base
 {
@@ -19,13 +18,13 @@
 
     input[type='text'], input[type='password'], input[type='email'], input[type='search'], input[type='date'], input[type='time'], input[type='number'], textarea, select
     {
-        @apply border border-neutral-700 rounded p-1 dark:border-neutral-500 dark:text-white dark:bg-zinc-950
+        @apply border border-neutral-700 rounded-sm  p-1 dark:border-neutral-500 dark:text-white dark:bg-zinc-950
     }
 }
 
 @layer components
 {
-    .btn { @apply cursor-pointer bg-violet-700 hover:bg-violet-800 active:bg-violet-900 px-2 py-1 text-white rounded border border-violet-900 min-w-[100px] text-center dark:bg-violet-800 dark:hover:bg-violet-900 dark:active:bg-violet-950 }
+    .btn { @apply cursor-pointer bg-violet-700 hover:bg-violet-800 active:bg-violet-900 px-2 py-1 text-white rounded-sm   border border-violet-900 min-w-[100px] text-center dark:bg-violet-800 dark:hover:bg-violet-900 dark:active:bg-violet-950 }
 
     .link { @apply mx-2 hover:brightness-75 hover:underline active:brightness-50 text-violet-700 dark:text-violet-300 }
 

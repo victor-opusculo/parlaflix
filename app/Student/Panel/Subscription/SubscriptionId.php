@@ -8,6 +8,7 @@ use VictorOpusculo\Parlaflix\Components\Layout\FlexSeparator;
 use VictorOpusculo\Parlaflix\Components\Panels\StudentLessonViewer;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
+use VictorOpusculo\Parlaflix\Lib\Model\Courses\Survey;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\StudentLessonPassword;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
@@ -54,6 +55,8 @@ final class SubscriptionId extends Component
             HeadManager::$title = $this->subscription->course->name->unwrapOr('Curso');
 
             $this->approved = ($this->subscription->getOtherProperties()->studentPoints ?? 0) >= ($this->subscription->course->min_points_required->unwrapOr(INF));
+            $this->canSendNewSurvey = !(new Survey([ 'course_id' => $this->subscription->course->id->unwrapOr(0), 'student_id' => $_SESSION['user_id'] ?? 0 ]))
+                ->existsFromStudentAndCourse($conn);
 
             $currLess = array_filter($this->subscription->course->lessons, fn($less) => $less->index->unwrapOr(0) == ($_GET['lesson_index'] ?? INF));
             if (count($currLess) > 0)
@@ -106,6 +109,7 @@ final class SubscriptionId extends Component
     private ?Subscription $subscription = null;
     private ?Lesson $loadedLesson = null;
     private bool $isPasswordCorrect = false;
+    private bool $canSendNewSurvey = false;
 
     protected function markup(): Component|array|null
     {
@@ -113,7 +117,7 @@ final class SubscriptionId extends Component
         [
             tag('h1', children: text($this->subscription->course->name->unwrapOr('Curso'))),
 
-            tag('section', class: 'rounded border border-neutral-300 dark:border-neutral-700 p-4 m-2 w-full flex md:flex-row flex-col bg-neutral-100 dark:bg-neutral-800', children:
+            tag('section', class: 'rounded-sm border border-neutral-300 dark:border-neutral-700 p-4 m-2 w-full flex md:flex-row flex-col bg-neutral-100 dark:bg-neutral-800', children:
                 [
                     tag('div', class: 'block w-[8rem] h-[8rem] relative', children:
                     [
@@ -163,11 +167,17 @@ final class SubscriptionId extends Component
                                 tag('a', class: 'btn', href: URLGenerator::generateScriptUrl('certificate/generate.php', [ 'subscription_id' => $this->subscription->id->unwrapOr(0) ]), children: text('Gerar'))
                             ])
                         :
-                        null
+                        null,
+
+                        $this->approved && $this->canSendNewSurvey
+                            ? component(Label::class, labelBold: true, label: "Avaliação", children:
+                                tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/panel/subscription/new_survey', [ 'subscription_id' => $this->subscription->id->unwrapOr(0) ]), children: text('Envie sua opinião sobre este curso!'))
+                            )
+                            : null
                     ])
                 ]),
                             
-                tag('section', class: 'flex md:flex-row flex-col rounded border border-neutral-300 dark:border-neutral-700 p-4 m-2 w-full bg-neutral-100 dark:bg-neutral-800', children:
+                tag('section', class: 'flex md:flex-row flex-col rounded-sm border border-neutral-300 dark:border-neutral-700 p-4 m-2 w-full bg-neutral-100 dark:bg-neutral-800', children:
                 [
                     tag('button', class: 'inline md:hidden btn', id: 'subscriptionLessonsListToggleButton', type: 'button', children: text('Ver/ocultar aulas')),
                     tag('div',

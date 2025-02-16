@@ -37,7 +37,7 @@ final class BaseLayout extends Component
                 tag('main', children: $this->children)
             ]),
 
-            tag('dialog', id: 'messageBox', class: 'backdrop:backdrop-blur', children:
+            tag('dialog', id: 'messageBox', class: 'backdrop:backdrop-blur m-auto', children:
             [
                     tag('form', method: 'dialog', class: 'text-center min-w-[350px] p-4 dark:text-white dark:bg-zinc-800', children:
                     [

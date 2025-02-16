@@ -5,9 +5,13 @@
   "main": "lego.config.js",
   "type": "module",
   "scripts": {
+    "twcomp": "npx @tailwindcss/cli -i input.css -o assets/twoutput.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.6"
+  }
 }
