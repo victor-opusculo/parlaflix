@@ -125,7 +125,7 @@
     return [  
     h("div", {}, [
       h("ext-label", {"label": `Subir novo(a)`}, [
-        h("input", {"type": `file`, "name": `newMediafile`, "class": `file:btn`, "onchange": this.newMediaFileChanged.bind(this)}, ""),
+        h("input", {"type": `file`, "name": `newMediafile`, "class": `file:cursor-pointer file:bg-violet-700 file:hover:bg-violet-800 file:active:bg-violet-900 file:px-2 file:py-1 file:text-white file:rounded-sm file:border file:border-violet-900 file:min-w-[100px] file:text-center file:dark:bg-violet-800 file:dark:hover:bg-violet-900 file:dark:active:bg-violet-950`, "onchange": this.newMediaFileChanged.bind(this)}, ""),
         h("button", {"type": `button`, "name": `newMediaUpload`, "class": `btn ml-2`, "onclick": this.quickUploadMedia.bind(this)}, `Upload`)
       ]),
       h("basic-search-field", {"searchcallback": this.searchAction.bind(this), "searchkeywords": state.search_keywords}, ""),

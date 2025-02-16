@@ -43,7 +43,7 @@
         lessons: [],
         categoriesIds: [],
         lessonsChangesReport: { create: [], update: [], delete: [] },
-        searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: ''*/ },
+        searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' */},
 
         lessons_json: '[]',
         categories_ids_json: '[]'
@@ -72,11 +72,11 @@
 
         searchBtnClicked(e)
         {
-            this.fetchMedias();
+            //this.fetchMedias();
             this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
         },
 
-        fetchMedias(page = 1, query = '')
+        /*fetchMedias(page = 1, query = '')
         {
             fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/administrator/panel/media", { page_num: page, results_on_page: this.state.searchMedia.resultsOnPage, q: query }))
             .then(res => res.json())
@@ -107,7 +107,7 @@
         searchKeyword(query = '')
         {
             this.fetchMedias(this.state.searchMedia.pageNum, query);
-        },
+        },*/
 
         setMediaId(id)
         {
@@ -226,7 +226,7 @@
             const route = this.state.id ? 
                 Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/courses/${this.state.id}`) :
                 Parlaflix.Helpers.URLGenerator.generateApiUrl('/administrator/panel/courses/create');
-console.log(outputData);
+
             fetch(route, { headers, body, method: this.state.id ? 'PUT' : 'POST' } )
             .then(res => res.json())
             .then(json =>
