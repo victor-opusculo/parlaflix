@@ -92,7 +92,8 @@ final class View extends Component
             [
                 tag('a', class: 'btn mr-2', href: URLGenerator::generatePageUrl("/info/course/{$this->course->id->unwrapOr(0)}"), children: text("Ver página pública")),
                 tag('a', class: 'btn mr-2', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/send_email"), children: text("Enviar e-mail para inscritos")),
-                tag('a', class: 'btn', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/view_subscriptions"), children: text("Ver inscrições"))
+                tag('a', class: 'btn mr-2', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/view_subscriptions"), children: text("Ver inscrições")),
+                tag('a', class: 'btn', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->course->id->unwrapOr(0)}/surveys"), children: text("Ver opiniões de inscritos"))
             ])
         ]):
         null;

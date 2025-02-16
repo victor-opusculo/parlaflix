@@ -40,6 +40,17 @@
     .responsibleTable tbody { @apply block lg:table-row-group }
     .responsibleTable tr { @apply block py-4 lg:py-2 lg:table-row }
     .responsibleTable td { @apply block lg:table-cell before:font-bold before:content-[attr(data-th)':_'] lg:before:content-none }
+
+    .progressBar { @apply [&::-webkit-progress-value]:bg-violet-700 [&::-moz-progress-bar]:bg-violet-700 }
+    .starProgressBar { @apply [&::-webkit-progress-value]:bg-yellow-500 [&::-moz-progress-bar]:bg-yellow-500 }
 }
 
 html { scroll-behavior: smooth; font-size: 18px;}
+
+.stars5Mask
+{
+    -webkit-mask-image: url('pics/mask-star.svg');
+    mask-image: url('pics/mask-star.svg');
+    mask-repeat: repeat-x;
+    mask-size: calc(100% / 5) 100%;
+}

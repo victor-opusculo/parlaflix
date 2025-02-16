@@ -45,8 +45,20 @@
             if (this.state.pointsGiven < 1)
             {
                 Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "A nota deve ser marcada: Uma ou mais estrelas!");
-                return false;
+                return;
             }
+
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            const body = JSON.stringify({ data: { 'course_surveys:pointsGiven': this.state.pointsGiven, 'course_surveys:message': this.state.message } });
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl("/student/survey", { subscription_id: this.state.subscription_id ?? 0 }), { method: "POST", body, headers })
+            .then(res => res.json())
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(([ret, jsonReturn ]) =>
+            {
+                if (jsonReturn.success)
+                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/student/panel/subscription/${this.state.subscription_id}`);
+            })
+            .catch(console.error);
         },
 
         starClicked(e)
@@ -79,7 +91,7 @@
       ]),
       h("div", {}, [
         h("span", {}, `Se quiser, deixe uma mensagem:`),
-        h("textarea", {"rows": `5`, "class": `w-full`, "value": state.message, "onchange": this.onInputChange.bind(this), "name": `message`}, "")
+        h("textarea", {"rows": `5`, "class": `w-full`, "value": state.message, "onchange": this.onInputChange.bind(this), "name": `message`, "maxlength": `1000`}, "")
       ]),
       h("div", {"class": `text-center my-4`}, [
         h("button", {"type": `submit`, "class": `btn`}, `Enviar`)

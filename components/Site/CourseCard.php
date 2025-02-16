@@ -1,9 +1,11 @@
 <?php 
 namespace VictorOpusculo\Parlaflix\Components\Site;
 
+use Exception;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
+use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\PComp\{View, Component};
 use function VictorOpusculo\PComp\Prelude\{tag, text, scTag};
 
@@ -11,7 +13,6 @@ class CourseCard extends Component
 {
     protected function setUp()
     {
-
     }
 
     protected Course $course;
@@ -35,6 +36,9 @@ class CourseCard extends Component
             tag('div', class: 'absolute bottom-0 left-0 right-0 z-10 dark:bg-neutral-700/50 bg-neutral-300/80 p-2 text-center', children: 
             [
                 tag('div', children: text($this->course->name->unwrap())),
+                tag('div', class: 'stars5Mask w-[100px] h-[24px] inline-block text-center', children:
+                    tag('progress', class: 'w-full h-full starProgressBar inline', min: 0, max: 5, value: $this->course->surveysAveragePoints)
+                ),
                 tag('div', class: 'flex flex-row items-center justify-center' , children: 
                 [
                     tag('span', children: text(

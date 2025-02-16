@@ -1,5 +1,5 @@
 <?php
-namespace VictorOpusculo\Parlaflix\App\Info\Course;
+namespace VictorOpusculo\Parlaflix\App\Info\Course\CourseId;
 
 use Exception;
 use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
@@ -9,8 +9,8 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
+use VictorOpusculo\Parlaflix\Lib\Model\Courses\Survey;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
-use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
@@ -23,7 +23,7 @@ use function VictorOpusculo\PComp\Prelude\scTag;
 use function VictorOpusculo\PComp\Prelude\tag;
 use function VictorOpusculo\PComp\Prelude\text;
 
-final class CourseId extends Component
+final class View extends Component
 {
     protected function setUp()
     {
@@ -52,6 +52,8 @@ final class CourseId extends Component
                     textSuccess: "Compartilhar"
                 });
             JAVASCRIPT, "", true);
+
+            $this->surveysAveragePoints = (new Survey([ 'course_id' => $this->course->id->unwrapOr(0) ]))->getAverageFromCourse($conn);
 
             HeadManager::$title = $this->course->name->unwrapOr('Curso');
 
@@ -90,6 +92,7 @@ final class CourseId extends Component
     private bool $studentLoggedIn = false;
     private bool $studentAlreadySubscribed = false;
     private ?Course $course = null; 
+    private float $surveysAveragePoints = 0;
     protected mixed $courseId;
 
     protected function markup(): Component|array|null
@@ -109,6 +112,15 @@ final class CourseId extends Component
                     component(Label::class, label: 'Descrição', labelBold: true, lineBreak: true, children: rawText(nl2br(Data::hsc($this->course->presentation_html->unwrapOr('Sem descrição'))))),
                     component(Label::class, label: 'Carga horária', labelBold: true, children: text(Data::formatCourseHourNumber($this->course->hours->unwrapOr(0)) . "h")),
                     component(Label::class, label: 'Categoria(s)', labelBold: true, children: text(array_reduce($this->course->categoriesJoints, fn($carry, $j) => ($carry ? $carry . ', ' : '') . $j->getOtherProperties()->title, null))),
+                    component(Label::class, label: 'Avaliações', labelBold: true, children:
+                    [
+                        tag('div', class: 'stars5Mask w-[200px] h-[42px] inline-block mr-4', children:
+                            tag('progress', class: 'w-full h-full starProgressBar', min: 0, max: 5, value: $this->surveysAveragePoints)
+                        ),
+                        text('('),
+                        tag('a', class: 'link', href: URLGenerator::generatePageUrl("/info/course/{$this->courseId}/surveys"), children: text("Ver avaliações")),
+                        text(')')
+                    ]),
 
                     $this->studentLoggedIn
                         ? ($this->studentAlreadySubscribed

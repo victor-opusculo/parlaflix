@@ -32,6 +32,8 @@ URLGenerator::loadConfigs();
   		<meta name="author" content="Victor Opusculo Oliveira Ventura de Almeida">
 		<link rel="stylesheet" href="<?= URLGenerator::generateFileUrl('assets/twoutput.css') ?>" />
 		<link rel="shortcut icon" type="image/x-icon" href="<?= URLGenerator::generateFileUrl("assets/favicon.ico") ?>" />
+		<link rel="preload" href="<?= URLGenerator::generateFileUrl('assets/pics/star_empty.png') ?>" as="image" />
+		<link rel="preload" href="<?= URLGenerator::generateFileUrl('assets/pics/star_filled.png') ?>" as="image" />
 		<?= HeadManager::getHeadText() ?>
 		<?= StyleManager::getStylesText() ?>
 	</head>

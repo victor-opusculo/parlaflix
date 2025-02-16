@@ -83,4 +83,11 @@ final class Data
         $formatted = number_format($rounded, 2, ",", ".");
         return preg_replace("/,?0+$/", "", $formatted);
     }
+
+    public static function firstName(?string $fullName) : string
+    {
+        $original = $fullName ?? 0;
+        $names = explode(" ", $original);
+        return array_shift($names) ?? "***";
+    }
 } 

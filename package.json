@@ -5,7 +5,8 @@
   "main": "lego.config.js",
   "type": "module",
   "scripts": {
-    "twcomp": "npx @tailwindcss/cli -i input.css -o assets/twoutput.css",
+    "twcomp": "npx @tailwindcss/cli -i input.css -o assets/twoutput.css --minify",
+    "twwatch": "npx @tailwindcss/cli -i input.css -o assets/twoutput.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

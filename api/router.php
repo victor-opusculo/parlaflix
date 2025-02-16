@@ -12,6 +12,7 @@ return
         '/register' => \VictorOpusculo\Parlaflix\Api\Student\Register::class,
         '/presence' => \VictorOpusculo\Parlaflix\Api\Student\Presence::class,
         '/[studentId]' => \VictorOpusculo\Parlaflix\Api\Student\StudentId::class,
+        '/survey' => \VictorOpusculo\Parlaflix\Api\Student\Survey::class,
         '/subscribe' => fn() =>
         [
             '/[courseId]' => \VictorOpusculo\Parlaflix\Api\Student\Subscribe\CourseId::class
@@ -69,6 +70,10 @@ return
             [
                 '/[subscriptionId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SubscriptionId::class,
                 '/send_email' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Subscriptions\SendEmail::class
+            ],
+            '/surveys' => fn() =>
+            [
+                '/[surveyId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Surveys\SurveyId::class
             ],
             '/reports' => fn() =>
             [

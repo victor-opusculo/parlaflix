@@ -65,6 +65,7 @@ final class NewSurvey extends Component
             ? component(DefaultPageFrame::class, children:
             [
                 tag('h1', children: text("Enviar opinião")),
+                tag('h3', class: 'text-center', children: text("Conte-nos o que achou!")),
                 component(Label::class, labelBold: true, label: "Curso", children: text($this->subscription->course->name->unwrapOr("***"))),
                 scTag('hr'),
                 tag('student-survey-form', subscription_id: $this->subscriptionId)

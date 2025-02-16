@@ -25,6 +25,7 @@ final class GetCourses extends RouteHandler
             $output = array_map(function(Course $c) use ($conn)
             {
                 $c->fetchCoverMedia($conn);
+                $c->fetchAverageSurveyPoints($conn);
 
                 $imageUrl = null;
                 if ($c->members_only->unwrapOr(0))
@@ -40,7 +41,8 @@ final class GetCourses extends RouteHandler
                     "name" => $c->name->unwrapOr("Sem nome"), 
                     "hours" => (float)$c->hours->unwrapOr(0), 
                     "imageUrl" => $imageUrl, 
-                    "subscriptionNumber" => $c->getOtherProperties()->subscriptionNumber ?? 0 
+                    "subscriptionNumber" => $c->getOtherProperties()->subscriptionNumber ?? 0,
+                    "surveyPoints" => $c->surveysAveragePoints
                 ];
 
             }, $courses);

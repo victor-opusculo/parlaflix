@@ -8,6 +8,7 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 use VictorOpusculo\Parlaflix\Lib\Model\Administrators\Administrator;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\PComp\RouteHandler;
+use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 
 require_once __DIR__ . '/../../lib/Middlewares/JsonBodyParser.php';
 
@@ -42,6 +43,13 @@ final class Login extends RouteHandler
             }
             else
                 throw new Exception("Senha incorreta!");
+        }
+        catch (DatabaseEntityNotFound $e)
+        {
+            LogEngine::writeErrorLog($e->getMessage());
+            session_unset();
+            if (isset($_SESSION)) session_destroy();
+            $this->json([ 'error' => "Credenciais incorretas!" ], 500);
         }
         catch (Exception $e)
         {

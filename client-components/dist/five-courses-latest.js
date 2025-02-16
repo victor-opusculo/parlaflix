@@ -61,26 +61,28 @@
 
   const __template = function({ state }) {
     return [  
-    h("div", {"style": `margin-top: 20px; margin-left:auto; margin-right:auto; max-width: 600px; display: flex; flex-direction: column;`}, [
+    h("div", {"style": `margin-top: 20px; display: flex; flex-direction: column;`, "class": `items-center`}, [
       h("form", {"class": `my-2`}, [
         h("input", {"type": `radio`, "name": `courseListMode`, "value": `latest`, "class": `hidden peer/btnLatest`, "id": `radioLatestCourses`, "checked": state.mode === 'latest', "onchange": this.changeMode.bind(this)}, ""),
         h("label", {"for": `radioLatestCourses`, "class": `btn brightness-50 peer-checked/btnLatest:brightness-100`}, `Mais recentes`),
         h("input", {"type": `radio`, "name": `courseListMode`, "value": `most_subscriptions`, "class": `hidden peer/btnMostSubs`, "id": `radioMostSubscribedCourses`, "checked": state.mode === 'most_subscriptions', "onchange": this.changeMode.bind(this)}, ""),
         h("label", {"class": `btn ml-2 brightness-50 peer-checked/btnMostSubs:brightness-100`, "for": `radioMostSubscribedCourses`}, `Mais inscrições`)
       ]),
-      ((state.data).map((course) => (h("div", {"style": `display:grid; grid-template-columns: 200px auto; grid-template-rows: auto auto; margin-bottom: 15px;`}, [
-        h("div", {"style": `margin-right: 15px;`}, [
-          h("a", {"href": `${state.genUrlFn('/info/course/' + course.id)}`},             h("img", {"src": `${course.imageUrl}`, "alt": `${course.name}`}, ""))
-        ]),
-        h("div", {"style": `position:relative;`},           h("a", {"href": `${state.genUrlFn('/info/course/' + course.id)}`}, [
-`
-                ${course.name}
-                `,
-            h("br", {}, ""),
-            h("span", {"class": `btn`, "style": `position:absolute; bottom: 0; `}, `Inscreva-se!`),
-            h("span", {"class": `text-[0.7rem]`}, `${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}`)
-          ]))
-      ]))))
+      h("div", {"class": `flex flex-row flex-wrap`}, [
+        ((state.data).map((course) => (h("a", {"class": `block overflow-clip relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded-sm border border-neutral-300 dark:border-neutral-700 hover:brightness-75`, "href": `${state.genUrlFn('/info/course/' + course.id)}`}, [
+          h("div", {"class": `absolute left-0 right-0 bottom-0 top-0 w-full`}, [
+            h("img", {"class": `absolute m-auto left-0 right-0 top-0 bottom-0`, "src": `${course.imageUrl}`, "alt": `${course.name}`}, "")
+          ]),
+          h("div", {"class": `absolute bottom-0 left-0 right-0 z-10 dark:bg-neutral-700/80 bg-neutral-300/80 p-2 text-center`}, [
+            h("div", {}, `${course.name}`),
+            h("div", {"class": `text-[0.7rem]`}, `${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}`),
+            h("div", {"class": `stars5Mask w-[100px] h-[24px] inline-block text-center`}, [
+              h("progress", {"class": `w-full h-full starProgressBar inline`, "min": `0`, "max": `5`, "value": `${course.surveyPoints}`}, "")
+            ]),
+            h("div", {"class": `btn`}, `Inscreva-se!`)
+          ])
+        ]))))
+      ])
     ])
   ]
   }

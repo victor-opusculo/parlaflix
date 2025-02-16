@@ -38,7 +38,9 @@ final class Home extends Component
             $this->courses = $getter->getMultiple($conn, $_GET['q'] ?? '', $_GET['order_by'] ?? 'name', $_GET['page_num'] ?? 1, self::NUM_RESULTS_ON_PAGE, false, $_GET['category_id'] ?? null, true);
             
             foreach ($this->courses as $c)
-                $c->fetchCoverMedia($conn);
+                $c
+                ->fetchCoverMedia($conn)
+                ->fetchAverageSurveyPoints($conn);
 
             $this->categories = (new Category)->getAll($conn);
             ScriptManager::registerScript('courseCategorySelectScript', '', URLGenerator::generateFileUrl('assets/script/CourseCategorySelect.js'));

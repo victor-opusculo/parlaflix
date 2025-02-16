@@ -14,7 +14,11 @@ return
         '/course' => fn() =>
         [
             '/' => \VictorOpusculo\Parlaflix\App\Info\Course\Home::class,
-            '/[courseId]' => \VictorOpusculo\Parlaflix\App\Info\Course\CourseId::class
+            '/[courseId]' => fn() =>
+            [
+                '/' => \VictorOpusculo\Parlaflix\App\Info\Course\CourseId\View::class,
+                '/surveys' => \VictorOpusculo\Parlaflix\App\Info\Course\CourseId\Surveys::class
+            ]
         ],
         '/category' => fn() =>
         [
@@ -92,7 +96,16 @@ return
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\View::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class,
                     '/view_subscriptions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\ViewSubscriptions::class,
-                    '/send_email' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\SendEmail::class
+                    '/send_email' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\SendEmail::class,
+                    '/surveys' => fn() =>
+                    [
+                        '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Surveys\Home::class,
+                        '/[surveyId]' => fn() =>
+                        [
+                            '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Surveys\SurveyId\View::class,
+                            '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Surveys\SurveyId\Delete::class
+                        ]
+                    ]
                 ]
             ],
             '/certificates' => fn() =>

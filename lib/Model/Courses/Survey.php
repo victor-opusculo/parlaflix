@@ -26,8 +26,8 @@ final class Survey extends DataEntity
             'id' => new DataProperty(null, fn() => null, DataProperty::MYSQL_INT),
             'course_id' => new DataProperty(null, fn() => null, DataProperty::MYSQL_INT),
             'student_id' => new DataProperty(null, fn() => null, DataProperty::MYSQL_INT),
-            'points' => new DataProperty('points', fn() => null, DataProperty::MYSQL_INT),
-            'message' => new DataProperty('hours', fn() => 0, DataProperty::MYSQL_STRING),
+            'points' => new DataProperty('pointsGiven', fn() => null, DataProperty::MYSQL_INT),
+            'message' => new DataProperty('message', fn() => 0, DataProperty::MYSQL_STRING),
             'created_at' => new DataProperty('created_at', fn() => gmdate('Y-m-d H:i:s'), DataProperty::MYSQL_STRING)
         ];
 
@@ -55,6 +55,18 @@ final class Survey extends DataEntity
         return $count > 0;
     }
 
+    public function getAverageFromCourse(mysqli $conn) : float
+    {
+        $selector = (new SqlSelector)
+        ->addSelectColumn("AVG({$this->databaseTable}.points) AS average")
+        ->setTable($this->databaseTable)
+        ->addWhereClause("{$this->databaseTable}.course_id = ?")
+        ->addValue('i', $this->course_id->unwrapOr(0));
+
+        $avg = $selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return (float)$avg;
+    }
+
     public function getSingle(mysqli $conn): static
     {
         $selector = $this->getGetSingleSqlSelector()
@@ -71,7 +83,7 @@ final class Survey extends DataEntity
             throw new DatabaseEntityNotFound("Opinião não localizada!", $this->databaseTable);
     }
 
-    public function getCount(mysqli $conn, string $searchKeywords) : int
+    public function getCount(mysqli $conn, string $searchKeywords, ?int $courseId) : int
     {
         $selector = (new SqlSelector)
         ->addSelectColumn("COUNT(DISTINCT {$this->databaseTable}.id)")
@@ -84,11 +96,19 @@ final class Survey extends DataEntity
             ->addValue('s', $searchKeywords);
         }
 
+        if ($courseId)
+        {
+            $selector = $selector
+            ->hasWhereClauses()
+                ? $selector->addWhereClause("AND {$this->databaseTable}.course_id = ?")->addValue('i', $courseId)
+                : $selector->addWhereClause("{$this->databaseTable}.course_id = ?")->addValue('i', $courseId);
+        }
+
         $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
         return $count;
     }
 
-    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage) : array
+    public function getMultiple(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, ?int $courseId) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->addJoin("LEFT JOIN courses ON courses.id = {$this->databaseTable}.course_id")
@@ -101,8 +121,16 @@ final class Survey extends DataEntity
         if (mb_strlen($searchKeywords) > 3)
         {
             $selector = $selector
-            ->addWhereClause("MATCH (name) AGAINST (?) ")
+            ->addWhereClause("MATCH (message) AGAINST (?) ")
             ->addValue('s', $searchKeywords);
+        }
+
+        if ($courseId)
+        {
+            $selector = $selector
+            ->hasWhereClauses()
+                ? $selector->addWhereClause("AND {$this->databaseTable}.course_id = ?")->addValue('i', $courseId)
+                : $selector->addWhereClause("{$this->databaseTable}.course_id = ?")->addValue('i', $courseId);
         }
 
         $selector = $selector
@@ -136,4 +164,10 @@ final class Survey extends DataEntity
         $this->student = $getter->getSingle($conn);
         return $this;
     }
+
+    public function beforeDatabaseInsert(mysqli $conn): int
+    {
+        $this->properties->created_at->resetValue();
+        return 0;
+    } 
 }

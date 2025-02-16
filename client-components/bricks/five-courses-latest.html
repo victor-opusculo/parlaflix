@@ -33,23 +33,31 @@
 </script>
 
 <template>
-    <div style="margin-top: 20px; margin-left:auto; margin-right:auto; max-width: 600px; display: flex; flex-direction: column;">
+    <div style="margin-top: 20px; display: flex; flex-direction: column;" class="items-center">
         <form class="my-2">
             <input type="radio" name="courseListMode" value="latest" class="hidden peer/btnLatest" id="radioLatestCourses" :checked="state.mode === 'latest'" @change="changeMode">
             <label for="radioLatestCourses" class="btn brightness-50 peer-checked/btnLatest:brightness-100">Mais recentes</label>
             <input type="radio" name="courseListMode" value="most_subscriptions" class="hidden peer/btnMostSubs" id="radioMostSubscribedCourses" :checked="state.mode === 'most_subscriptions'" @change="changeMode">
             <label class="btn ml-2 brightness-50 peer-checked/btnMostSubs:brightness-100" for="radioMostSubscribedCourses">Mais inscrições</label>
         </form>
-        <div style="display:grid; grid-template-columns: 200px auto; grid-template-rows: auto auto; margin-bottom: 15px;" :for="course in state.data">
-            <div style="margin-right: 15px;">
-                <a href="${state.genUrlFn('/info/course/' + course.id)}"><img src="${course.imageUrl}" alt="${course.name}" /></a>
-            </div>
-            <div style="position:relative;"><a href="${state.genUrlFn('/info/course/' + course.id)}">
-                ${course.name}
-                <br/>
-                <span class="btn" style="position:absolute; bottom: 0; ">Inscreva-se!</span> 
-                <span class="text-[0.7rem]">${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}</span> 
-            </a></div>
+        <div class="flex flex-row flex-wrap">
+            <a 
+                class="block overflow-clip relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded-sm border border-neutral-300 dark:border-neutral-700 hover:brightness-75"
+                href="${state.genUrlFn('/info/course/' + course.id)}"
+                :for="course in state.data"
+            >
+                <div class="absolute left-0 right-0 bottom-0 top-0 w-full">
+                    <img class="absolute m-auto left-0 right-0 top-0 bottom-0" src="${course.imageUrl}" alt="${course.name}" />
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 z-10 dark:bg-neutral-700/80 bg-neutral-300/80 p-2 text-center">
+                    <div>${course.name}</div>
+                    <div class="text-[0.7rem]">${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}</div> 
+                    <div class="stars5Mask w-[100px] h-[24px] inline-block text-center">
+                        <progress class="w-full h-full starProgressBar inline" min="0" max="5" value="${course.surveyPoints}"></progress>
+                    </div>
+                    <div class="btn">Inscreva-se!</div> 
+                </div>
+            </a>
         </div>
     </div>
 </template>

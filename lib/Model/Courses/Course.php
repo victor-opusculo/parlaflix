@@ -39,6 +39,7 @@ class Course extends DataEntity
     public array $lessons = [];
     public array $categoriesJoints = [];
     public ?Media $coverMedia = null;
+    public float $surveysAveragePoints = 0;
 
     protected ?string $dateTimeZone = null;
 
@@ -209,6 +210,12 @@ class Course extends DataEntity
             return $this;
 
         $this->coverMedia = (new Media([ 'id' => $this->properties->cover_image_media_id->getValue()->unwrap() ]))->getSingle($conn);
+        return $this;
+    }
+
+    public function fetchAverageSurveyPoints(mysqli $conn) : self
+    {
+        $this->surveysAveragePoints = (new Survey([ 'course_id' => $this->id->unwrapOr(0) ]))->getAverageFromCourse($conn);
         return $this;
     }
 

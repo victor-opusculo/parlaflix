@@ -136,7 +136,7 @@ final class SubscriptionId extends Component
                         component(Label::class, labelBold: true, label: "Progresso", children:
                         [
                             tag('progress', 
-                                class: 'my-2 mr-2 [&::-webkit-progress-value]:bg-violet-700 [&::-moz-progress-bar]:bg-violet-700', 
+                                class: 'my-2 mr-2 progressBar', 
                                 value: $this->subscription->getOtherProperties()->doneLessonCount ?? 0, 
                                 max: $this->subscription->getOtherProperties()->lessonCount ?? 1
                             ),
