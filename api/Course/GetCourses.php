@@ -15,11 +15,14 @@ final class GetCourses extends RouteHandler
         try
         {
             $mode = $_GET['mode'] ?? "latest"; // "latest" or "most_subscriptions"
+            $restriction = $_GET['restriction'] ?? "open";
+            $pageNum = (int)$_GET['page_num'] ?? 1;
+            $numResultsOnPage = (int)$_GET['num_results_on_page'] ?? 5;
             $courses = match($mode)
             {
-                "latest" => (new Course)->getLatest($conn),
-                "most_subscriptions" => (new Course)->getMostSubscriptions($conn),
-                default => (new Course)->getLatest($conn)
+                "latest" => (new Course)->getLatest($conn, $restriction, $pageNum, $numResultsOnPage),
+                "most_subscriptions" => (new Course)->getMostSubscriptions($conn, $restriction, $pageNum, $numResultsOnPage),
+                default => (new Course)->getLatest($conn, $restriction, $pageNum, $numResultsOnPage)
             };
 
             $output = array_map(function(Course $c) use ($conn)
@@ -28,9 +31,7 @@ final class GetCourses extends RouteHandler
                 $c->fetchAverageSurveyPoints($conn);
 
                 $imageUrl = null;
-                if ($c->members_only->unwrapOr(0))
-                    $imageUrl = URLGenerator::generateFileUrl("assets/pics/members_only.png");
-                else if (isset($c->coverMedia))
+                if (isset($c->coverMedia))
                     $imageUrl = URLGenerator::generateFileUrl($c->coverMedia->fileNameFromBaseDir());
                 else
                     $imageUrl = URLGenerator::generateFileUrl("assets/pics/nopic.png");
@@ -46,6 +47,22 @@ final class GetCourses extends RouteHandler
                 ];
 
             }, $courses);
+
+            /*
+            Mocks:
+            
+            if ($pageNum > 0)
+            {
+                $output = [ ...$output, ...array_map(fn() =>  
+                [ 
+                    "id" => (int)100,
+                    "name" => "Teste", 
+                    "hours" => (float)10, 
+                    "imageUrl" => URLGenerator::generateFileUrl("assets/pics/nopic.png"), 
+                    "subscriptionNumber" => 10,
+                    "surveyPoints" => 3.2
+                ], range(1, 5)) ];
+            }*/
 
             $this->json([ 'data' => $output ], 200);
         }

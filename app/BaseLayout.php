@@ -20,7 +20,7 @@ final class BaseLayout extends Component
     {
         return 
         [
-            tag('div', class: 'min-h-[calc(100vh-150px)]', children:
+            tag('div', class: 'min-h-[calc(100vh-150px)]', id: "mainPageDiv", children:
             [
                 tag('header', class: 'bg-black py-4 text-white font-bold flex flex-col md:flex-row justify-between md:px-8 items-center', children: 
                 [

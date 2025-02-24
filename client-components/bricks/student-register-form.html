@@ -111,7 +111,7 @@
             <button class="btn" type="submit" :disabled="state.waiting">${state.waiting ? 'Aguarde...' : 'Concluir'}</button>
         </div>
     </form>
-    <dialog id="lgpdTermDialog" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800">
+    <dialog id="lgpdTermDialog" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800 m-auto">
         <form id="lgpdTermForm" method="dialog">
             <slot id="${state.slotId}"></slot>
             <div class="text-center my-4">

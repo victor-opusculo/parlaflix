@@ -146,31 +146,51 @@ class Course extends DataEntity
     }
 
     /** @return array<Course> */
-    public function getLatest(mysqli $conn) : array
+    public function getLatest(mysqli $conn, string $restriction = "open", int $pageNum = 1, int $numResultsOnPage = 5) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->clearWhereClauses()
         ->clearValues()
         ->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1")
-        ->setOrderBy("{$this->getWhereQueryColumnName('id')} DESC")
-        ->setLimit("5");
+        ->setOrderBy("{$this->getWhereQueryColumnName('id')} DESC");
+
+        $selector = match ($restriction)
+        {
+            "open" => $selector->addWhereClause("AND {$this->databaseTable}.members_only = 0"),
+            "exclusive" => $selector->addWhereClause("AND {$this->databaseTable}.members_only = 1"),
+            "all" => $selector,
+            default => $selector
+        };
+
+        $calcPage = ($pageNum - 1) * $numResultsOnPage;
+        $selector = $selector->setLimit("?,?")->addValues('ii', [ $calcPage, $numResultsOnPage ]);
 
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);
     }
 
     /** @return array<Course> */
-    public function getMostSubscriptions(mysqli $conn) : array
+    public function getMostSubscriptions(mysqli $conn, string $restriction = "open", int $pageNum = 1, int $numResultsOnPage = 5) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->clearWhereClauses()
         ->clearValues()
         ->addSelectColumn("COUNT(student_subscriptions.id) AS subscriptionNumber")
-        ->addJoin("INNER JOIN student_subscriptions ON student_subscriptions.course_id = {$this->databaseTable}.id")
+        ->addJoin("LEFT JOIN student_subscriptions ON student_subscriptions.course_id = {$this->databaseTable}.id")
         ->addWhereClause("{$this->getWhereQueryColumnName('is_visible')} = 1")
         ->setOrderBy("subscriptionNumber DESC")
-        ->setGroupBy("{$this->databaseTable}.id")
-        ->setLimit("5");
+        ->setGroupBy("{$this->databaseTable}.id");
+
+        $selector = match ($restriction)
+        {
+            "open" => $selector->addWhereClause("AND {$this->databaseTable}.members_only = 0"),
+            "exclusive" => $selector->addWhereClause("AND {$this->databaseTable}.members_only = 1"),
+            "all" => $selector,
+            default => $selector
+        };
+
+        $calcPage = ($pageNum - 1) * $numResultsOnPage;
+        $selector = $selector->setLimit("?,?")->addValues('ii', [ $calcPage, $numResultsOnPage ]);
 
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRow' ], $drs);

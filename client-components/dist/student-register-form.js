@@ -141,7 +141,7 @@
         h("button", {"class": `btn`, "type": `submit`, "disabled": state.waiting}, `${state.waiting ? 'Aguarde...' : 'Concluir'}`)
       ])
     ]),
-    h("dialog", {"id": `lgpdTermDialog`, "class": `md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800`}, [
+    h("dialog", {"id": `lgpdTermDialog`, "class": `md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800 m-auto`}, [
       h("form", {"id": `lgpdTermForm`, "method": `dialog`}, [
         h("slot", {"id": `${state.slotId}`}, ""),
         h("div", {"class": `text-center my-4`}, [
