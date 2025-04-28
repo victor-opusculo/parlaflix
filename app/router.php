@@ -118,6 +118,13 @@ return
                     ]
                 ]
             ],
+            '/presences' => fn() =>
+            [
+                '/[presenceId]' => fn() =>
+                [
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Presences\PresenceId\Delete::class
+                ]
+            ],
             '/certificates' => fn() =>
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Certificates\Home::class,

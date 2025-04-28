@@ -70,6 +70,22 @@ final class StudentLessonPassword extends DataEntity
             throw new DatabaseEntityNotFound("Registro de presença não encontrado!", $this->databaseTable);
     }
 
+    public function getSingleWithInfo(mysqli $conn) : self
+    {    
+        $selector = $this->getGetSingleSqlSelector()
+        ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
+        ->addJoin("INNER JOIN course_lessons ON course_lessons.id = {$this->databaseTable}.lesson_id")
+        ->addSelectColumn("course_lessons.title AS lessonTitle")
+        ->addSelectColumn("AES_DECRYPT(students.full_name,'{$this->encryptionKey}') AS studentName")
+        ->addSelectColumn("AES_DECRYPT(students.email,'{$this->encryptionKey}') AS studentEmail");
+
+        $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
+        if (isset($dr))
+            return $this->newInstanceFromDataRowFromDatabase($dr);
+        else
+            throw new DatabaseEntityNotFound("Registro de presença não encontrado!", $this->databaseTable);
+    }
+
     public function beforeDatabaseInsert(mysqli $conn): int
     {
         if (!isset($_SESSION['user_timezone']))

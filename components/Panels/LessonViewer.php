@@ -24,7 +24,11 @@ class LessonViewer extends Component
             tag('legend', children: text("Aula nº {$this->lesson->index->unwrapOr(0)}")),
 
             component(Label::class, label: 'Título', labelBold: true, children: text($this->lesson->title->unwrapOr(''))),
-            component(Label::class, label: 'Mais informações', labelBold: true, lineBreak: true, children: rawText(nl2br(Data::hsc($this->lesson->presentation_html->unwrapOr(''))))),
+            component(Label::class, label: 'Mais informações', labelBold: true, lineBreak: true, children: 
+                tag('div', children:
+                    rawText(nl2br($this->lesson->presentation_html->unwrapOr('')))
+                )
+            ),
             component(Label::class, label: 'Link da sala (aula ao vivo)', labelBold: true, children: 
                 $this->lesson->live_meeting_url->unwrapOr(false) 
                     ? tag('a', class: 'link', href: Data::hscq($this->lesson->live_meeting_url->unwrap()), children: text($this->lesson->live_meeting_url->unwrap()))

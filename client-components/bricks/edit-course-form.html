@@ -249,7 +249,7 @@
             <input type="number" min="0.01" step="0.01" name="hours" :value="state.hours" @input="changeField" />
         </ext-label>
         <ext-label label="Texto para o certificado" linebreak="1">
-            <textarea class="w-full" name="certificate_text" rows="4" maxlength="300" @input="changeField">${state.certificate_text}</textarea>
+            <textarea class="w-full" name="certificate_text" rows="4" maxlength="450" @input="changeField">${state.certificate_text}</textarea>
         </ext-label>
         <ext-label label="Mínimo de pontos necessário para aprovação">
             <input type="number" min="1" step="1" name="min_points_required" :value="state.min_points_required" @input="changeField" />

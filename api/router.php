@@ -60,7 +60,8 @@ return
             ],
             '/presences' => fn() =>
             [
-                '/mark' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Presences\Mark::class
+                '/mark' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Presences\Mark::class,
+                '/[presenceId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Presences\PresenceId::class
             ],
             '/certificates' => fn() =>
             [
