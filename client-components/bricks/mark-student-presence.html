@@ -1,0 +1,78 @@
+<script>
+
+    const state =
+    {
+        lessonId: null,
+        availableSubscriptions: [],
+        selectedOption: null,
+    };
+
+    const methods = 
+    {
+        openDialog()
+        {
+            document.getElementById("diagMarkPresence")?.showModal();
+        },
+
+        closeDialog()
+        {
+            document.getElementById("diagMarkPresence")?.close();
+        },
+
+        onSubmit(e)
+        {
+            e.preventDefault();
+            
+            if (!this.state.selectedOption) return;
+
+            const { selectedOption: { id }, lessonId } = this.state;
+
+            const body = JSON.stringify({ studentId: id, lessonId });
+            const headers = new Headers({ 'Content-Type': "application/json" });
+
+            this.closeDialog();
+
+            fetch(Parlaflix.Helpers.URLGenerator.generateApiUrl(`/administrator/panel/presences/mark`), { body, headers, method: 'POST' })
+            .then(res => res.json())//.then(console.log);
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(([ret, json]) =>
+            {
+                if (json.success)
+                    window.location.reload();
+            })
+            .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+        },
+
+        changeOption(e)
+        {
+            this.render({ ...this.state, selectedOption: this.state.availableSubscriptions.find(opt => opt.id == e.target.value)});
+        }
+    };
+
+    function setup()
+    {
+        this.state = { 
+            ...this.state, 
+            availableSubscriptions: JSON.parse(this.getAttribute("available_subscriptions") || '[]'),
+            lessonId: Number.parseInt(this.getAttribute("lesson_id"))
+        };
+    }
+</script>
+
+<template>
+    <div class="my-4">
+        <button class="btn" type="button" @click="openDialog">Nova presença</button>
+        <dialog class="m-auto" id="diagMarkPresence">
+            <form @submit="onSubmit" class="text-center min-w-[350px] p-4 dark:text-white dark:bg-zinc-800">
+                <ext-label label="Marcar presença para">
+                    <select @change="changeOption" required>
+                        <option value="">--- Selecione ---</option>
+                        <option :for="opt in state.availableSubscriptions" value="${opt.id}" :selected="opt === state.selectedOption">${opt.name} (${opt.email})</option>
+                    </select>
+                </ext-label>
+                <button class="btn my-4 mr-2" type="submit">Marcar</button>
+                <button class="btn my-4" type="button" @click="closeDialog">Cancelar</button>
+            </form>
+        </dialog>
+    </div>
+</template>

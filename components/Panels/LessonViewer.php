@@ -4,6 +4,7 @@ namespace VictorOpusculo\Parlaflix\Components\Panels;
 use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
+use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
 use VictorOpusculo\PComp\Component;
 
@@ -39,7 +40,9 @@ class LessonViewer extends Component
                 component(VideoRenderer::class, videoHost: $this->lesson->video_host->unwrapOr(''), videoCode: $this->lesson->video_url->unwrapOr(''))
             ),
             component(Label::class, label: 'Senha para verificação de presença', labelBold: true, children: text($this->lesson->completion_password->unwrapOr(''))),
-            component(Label::class, label: 'Pontos de verificação de presença', labelBold: true, children: text($this->lesson->completion_points->unwrapOr('')))
+            component(Label::class, label: 'Pontos de verificação de presença', labelBold: true, children: text($this->lesson->completion_points->unwrapOr(''))),
+            
+            tag('a', class: 'btn my-4', href: URLGenerator::generatePageUrl("/admin/panel/lessons/{$this->lesson->id->unwrapOr(0)}/presences"), children: text("Ver presenças"))
         ]);
     }
 }

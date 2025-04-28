@@ -217,7 +217,7 @@ class Subscription extends DataEntity
         return (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
     }
 
-    public function getMultipleFromCourse(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage) : array
+    public function getMultipleFromCourse(mysqli $conn, string $searchKeywords, string $orderBy, ?int $page, ?int $numResultsOnPage) : array
     {
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
@@ -249,11 +249,15 @@ class Subscription extends DataEntity
             default => "{$this->databaseTable}.datetime DESC"
         });
 
-        $calcPage = ($page - 1) * $numResultsOnPage;
-        $selector = $selector
-        ->setLimit('?, ?')
-        ->addValues('ii', [ $calcPage, $numResultsOnPage ])
-        ->setGroupBy("{$this->databaseTable}.id");
+        if ($page && $numResultsOnPage)
+        {
+            $calcPage = ($page - 1) * $numResultsOnPage;
+            $selector = $selector
+            ->setLimit('?, ?')
+            ->addValues('ii', [ $calcPage, $numResultsOnPage ]);
+        }
+
+        $selector = $selector->setGroupBy("{$this->databaseTable}.id");
 
         $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
         return array_map([ $this, 'newInstanceFromDataRowFromDatabase' ], $drs);

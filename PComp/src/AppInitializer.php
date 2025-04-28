@@ -21,6 +21,7 @@ final class AppInitializer
 
 		$paths = explode('/', $urlPath);
 
+		
 		$pageClass = null;
 
 		$currentNamespace = $routesTree;
@@ -108,6 +109,7 @@ final class AppInitializer
 			$page->prepareSetUp();
 
 			$this->mainFrameComponents = [ $page ];
+			
 		}
 		catch (\Exception $e)
 		{

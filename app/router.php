@@ -108,6 +108,16 @@ return
                     ]
                 ]
             ],
+            '/lessons' => fn() =>
+            [
+                '/[lessonId]' => fn() =>
+                [
+                    '/presences' => fn() =>
+                    [
+                        '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Lessons\LessonId\Presences\Home::class
+                    ]
+                ]
+            ],
             '/certificates' => fn() =>
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Certificates\Home::class,

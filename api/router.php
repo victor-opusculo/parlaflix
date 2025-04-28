@@ -58,6 +58,10 @@ return
                 '/create' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Courses\Create::class,
                 '/[courseId]' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Courses\CourseId::class
             ],
+            '/presences' => fn() =>
+            [
+                '/mark' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Presences\Mark::class
+            ],
             '/certificates' => fn() =>
             [
                 '/set_bg_image' => \VictorOpusculo\Parlaflix\Api\Administrator\Panel\Certificates\SetBgImage::class

@@ -4,12 +4,28 @@ namespace VictorOpusculo\Parlaflix\Lib\Model\Courses;
 
 use DateTime;
 use DateTimeZone;
+use Exception;
 use mysqli;
+use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Students\StudentLessonPassword;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\Option;
 use VOpus\PhpOrm\SqlSelector;
 
+/**
+ * @property Option<int> id
+ * @property Option<int> course_id
+ * @property Option<int> index
+ * @property Option<string> title
+ * @property Option<string> presentation_html
+ * @property Option<string> live_meeting_url
+ * @property Option<string> live_meeting_datetime
+ * @property Option<string> video_host
+ * @property Option<string> video_url
+ * @property Option<string> completion_password
+ * @property Option<int> completion_points
+ */
 class Lesson extends DataEntity
 {
     public function __construct(?array $initialValues = null)
@@ -54,6 +70,10 @@ class Lesson extends DataEntity
     protected array $primaryKeys = ['id']; 
 
     protected ?string $dateTimeZone = null;
+    public ?Course $course = null;
+
+    /** @var StudentLessonPassword[] */
+    public array $studentPresences = [];
 
     public function informDateTimeZone(string $dtz) : self
     {
@@ -92,5 +112,20 @@ class Lesson extends DataEntity
         $currentDt = new DateTime('now', new DateTimeZone($this->dateTimeZone));
 
         return $currentDt >= $liveMeetDt;
+    }
+
+    public function fetchCourse(mysqli $conn) : self
+    {
+        $this->course = (new Course([ 'id' => $this->course_id->unwrapOrElse(fn() => throw new Exception("ID de curso não presente em entity de aula de curso") )]))
+        ->getSingle($conn);
+        return $this;
+    }
+
+    public function fetchPresences(mysqli $conn) : self
+    {
+        $this->studentPresences = (new StudentLessonPassword([ 'lesson_id' => $this->id->unwrapOrElse(fn() => throw new Exception("ID de curso não presente em entity de aula de curso")) ]))
+        ->setCryptKey($this->encryptionKey)
+        ->getAllByLesson($conn);
+        return $this;
     }
 }

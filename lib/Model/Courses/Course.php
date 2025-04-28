@@ -4,6 +4,7 @@ namespace VictorOpusculo\Parlaflix\Lib\Model\Courses;
 
 use mysqli;
 use VictorOpusculo\Parlaflix\Lib\Model\Media\Media;
+use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\EntitiesChangesReport;
@@ -11,6 +12,19 @@ use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\SqlSelector;
 use VOpus\PhpOrm\Option;
 
+
+/**
+ * @property Option<int> id
+ * @property Option<string> name
+ * @property Option<string> presentation_html
+ * @property Option<int> cover_image_media_id
+ * @property Option<int> hours
+ * @property Option<string> certificate_text
+ * @property Option<int> min_points_required
+ * @property Option<int> is_visible
+ * @property Option<int> members_only
+ * @property Option<string> created_at
+ */
 class Course extends DataEntity
 {
     public function __construct(?array $initialValues = null)
@@ -38,6 +52,9 @@ class Course extends DataEntity
     
     public array $lessons = [];
     public array $categoriesJoints = [];
+
+    /** @var Subscription[] */
+    public array $subscriptions = [];
     public ?Media $coverMedia = null;
     public float $surveysAveragePoints = 0;
 
@@ -295,5 +312,13 @@ class Course extends DataEntity
         $updateResult['affectedRows'] += (new CourseCategoryJoin)->saveCategoriesOfCourseId($conn, $this->properties->id->getValue()->unwrap(), $categoriesIds);
 
         return $updateResult;
+    }
+
+    public function fetchSubscriptions(mysqli $conn) : self
+    {
+        $this->subscriptions = (new Subscription([ 'course_id' => $this->id->unwrap() ]))
+        ->setCryptKey($this->encryptionKey)
+        ->getMultipleFromCourse($conn, "", "", null, null);
+        return $this;
     }
 }

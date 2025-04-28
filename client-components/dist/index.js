@@ -52,6 +52,9 @@ customElements.define('five-courses-latest', FiveCoursesLatest)
 import LoadingSpinner from './loading-spinner.js'
 customElements.define('loading-spinner', LoadingSpinner)
 
+import MarkStudentPresence from './mark-student-presence.js'
+customElements.define('mark-student-presence', MarkStudentPresence)
+
 import MediaClientSelect from './media-client-select.js'
 customElements.define('media-client-select', MediaClientSelect)
 

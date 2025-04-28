@@ -9,7 +9,16 @@ use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\SqlSelector;
+use VOpus\PhpOrm\Option;
 
+
+/**
+ * @property Option<int> id
+ * @property Option<int> student_id
+ * @property Option<int> lesson_id
+ * @property Option<string> given_password
+ * @property Option<int> is_correct
+ */
 final class StudentLessonPassword extends DataEntity
 {
     public function __construct(?array $initialValues = null)
@@ -77,5 +86,21 @@ final class StudentLessonPassword extends DataEntity
             throw new LessonPasswordIncorrect("Senha de aula incorreta!", $this->properties->lesson_id->getValue()->unwrapOr(0));
 
         return 0;
+    }
+
+    /** @return StudentLessonPassword[] */
+    public function getAllByLesson(mysqli $conn) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearValues()
+        ->clearWhereClauses()
+        ->addWhereClause("{$this->getWhereQueryColumnName('lesson_id')} = ?")
+        ->addSelectColumn("AES_DECRYPT(students.full_name, '{$this->encryptionKey}') AS studentName")
+        ->addSelectColumn("AES_DECRYPT(students.email, '{$this->encryptionKey}') AS studentEmail")
+        ->addValue('i', $this->properties->lesson_id->getValue()->unwrapOr(0) )
+        ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id");
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRowFromDatabase'], $drs);
     }
 }
