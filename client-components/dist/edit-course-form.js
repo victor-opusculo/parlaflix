@@ -274,7 +274,7 @@
         h("input", {"type": `number`, "min": `0.01`, "step": `0.01`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
       ]),
       h("ext-label", {"label": `Texto para o certificado`, "linebreak": `1`}, [
-        h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `300`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)
+        h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `450`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)
       ]),
       h("ext-label", {"label": `Mínimo de pontos necessário para aprovação`}, [
         h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
