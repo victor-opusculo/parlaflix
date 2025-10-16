@@ -26,9 +26,9 @@ class CourseCard extends Component
         children:
         [
             tag('div', class: 'absolute left-0 right-0 bottom-0 top-0 w-full', children:
-                !$this->isUserAbelMember && (bool)$this->course->members_only->unwrapOr(0)
+                /* !$this->isUserAbelMember && (bool)$this->course->members_only->unwrapOr(0)
                     ? scTag('img', class: 'absolute m-auto left-0 right-0 top-0 bottom-0', src: URLGenerator::generateFileUrl('assets/pics/members_only.png'))
-                    : ($this->course->cover_image_media_id->unwrapOr(false) 
+                    : */ ($this->course->cover_image_media_id->unwrapOr(false) 
                         ? scTag('img', class: 'absolute m-auto left-0 right-0 top-0 bottom-0', src: URLGenerator::generateFileUrl($this->course->coverMedia->fileNameFromBaseDir()))
                         : tag('span', class: 'absolute left-0 right-0 bottom-0 top-0 text-center align-middle leading-[300px]', children: text('Sem imagem!')) 
                       )
