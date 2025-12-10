@@ -1,8 +1,9 @@
 export default {
     sourceDir: './client-components/bricks',
     targetDir: './client-components/dist',
-    useShadowDOM: false,
-    preScript: ` 
+    useShadowDOM: true,
+    preStyle: '@import "./assets/twoutput.css"'
+    /*preScript: ` 
     import { render } from './lego.min.js';
    
     Component.prototype.render = function(state)
@@ -26,5 +27,5 @@ export default {
              slot.appendChild(c);
             
       return rendered;
-    };`
+    };`*/
 };

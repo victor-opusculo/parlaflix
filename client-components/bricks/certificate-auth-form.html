@@ -1,31 +1,31 @@
 
 <script>
-    const state =
+    export default class extends Lego
     {
-        code: null,
-        date: null,
-        time: null,
-
-        result:
+        state =
         {
-            valid: null,
-            message: null,
-            studentName: null,
-            courseName: null,
-            studentPoints: null,
-            minPointsRequired: null,
-            maxPointsPossible: null,
+            code: null,
+            date: null,
+            time: null,
 
-            certId: null,
-            certDatetime: null
+            result:
+            {
+                valid: null,
+                message: null,
+                studentName: null,
+                courseName: null,
+                studentPoints: null,
+                minPointsRequired: null,
+                maxPointsPossible: null,
+
+                certId: null,
+                certDatetime: null
+            }
         }
-    };
 
-    const methods =
-    {
-        onCodeChange(e) { this.render({ ...this.state, code: e.target.value }); },
-        onDateChange(e) { this.render({ ...this.state, date: e.target.value }); },
-        onTimeChange(e) { this.render({ ...this.state, time: e.target.value }); },
+        onCodeChange(e) { this.render({ ...this.state, code: e.target.value }); }
+        onDateChange(e) { this.render({ ...this.state, date: e.target.value }); }
+        onTimeChange(e) { this.render({ ...this.state, time: e.target.value }); }
 
         onSubmit(e)
         {
@@ -42,14 +42,14 @@
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
 
-    function setup()
-    {
-        this.state = { ...this.state, code: this.getAttribute("code") ?? null, date: this.getAttribute("date") ?? null, time: this.getAttribute("time") ?? null };
-        
-        if (this.state.code && this.state.date && this.state.time)
-            this.onSubmit(undefined);
+        connected()
+        {
+            this.state = { ...this.state, code: this.getAttribute("code") ?? null, date: this.getAttribute("date") ?? null, time: this.getAttribute("time") ?? null };
+                    
+            if (this.state.code && this.state.date && this.state.time)
+                this.onSubmit(undefined);
+        }
     }
 </script>
 

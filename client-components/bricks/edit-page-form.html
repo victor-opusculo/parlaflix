@@ -1,19 +1,19 @@
 <script>
-    const state = 
+    export default class extends Lego
     {
-        id: 0,
-        title: '',
-        content: '',
-        html_enabled: 0,
-        is_published: 1
-    };
+        state = 
+        {
+            id: 0,
+            title: '',
+            content: '',
+            html_enabled: 0,
+            is_published: 1
+        }
 
-    const methods = 
-    {
         changeField(e)
         {
             this.render({ ...this.state, [ e.target.getAttribute('data-fieldname') ]: e.target.type !== 'checkbox' ? e.target.value : (e.target.checked ? 1 : 0) });
-        },
+        }
 
         submit(e)
         {
@@ -43,8 +43,7 @@
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
-
+    }
 
 </script>
 

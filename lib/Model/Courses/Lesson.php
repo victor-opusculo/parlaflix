@@ -23,6 +23,7 @@ use VOpus\PhpOrm\SqlSelector;
  * @property Option<string> live_meeting_datetime
  * @property Option<string> video_host
  * @property Option<string> video_url
+ * @property Option<string> presence_method
  * @property Option<string> completion_password
  * @property Option<int> completion_points
  */
@@ -41,6 +42,7 @@ class Lesson extends DataEntity
             'live_meeting_datetime' => new DataProperty('live_meeting_datetime', fn() => null, DataProperty::MYSQL_STRING),
             'video_host' => new DataProperty('video_host', fn() => null, DataProperty::MYSQL_STRING),
             'video_url' => new DataProperty('video_url', fn() => null, DataProperty::MYSQL_STRING),
+            'presence_method' => new DataProperty('presence_method', fn() => null, DataProperty::MYSQL_STRING),
             'completion_password' => new DataProperty('completion_password', fn() => null, DataProperty::MYSQL_STRING),
             'completion_points' => new DataProperty('completion_points', fn() => null, DataProperty::MYSQL_INT)
         ];

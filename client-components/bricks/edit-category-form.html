@@ -1,24 +1,24 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        id: null,
-        title: '',
-        icon_media_id: null,
-        searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
-    };
+        state =
+        {
+            id: null,
+            title: '',
+            icon_media_id: null,
+            searchMedia: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+        }
 
-    const methods =
-    {
         changeField(e)
         {
             this.render({ ...this.state, [e.target.name]: e.target.value });
-        },
+        }
 
         searchBtnClicked(e)
         {
             this.fetchMedias();
             this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
-        },
+        }
 
         fetchMedias(page = 1, query = '')
         {
@@ -41,22 +41,22 @@
                 }
             });
 
-        },
+        }
 
         mediaPageChange(page = 1)
         {
             this.fetchMedias(page, this.state.searchMedia.q);
-        },
+        }
 
         searchKeyword(query = '')
         {
             this.fetchMedias(this.state.searchMedia.pageNum, query);
-        },
+        }
 
         setMediaId(id)
         {
             this.render({ ...this.state, icon_media_id: Number(id) });
-        },
+        }
 
         submit(e)
         {
@@ -83,7 +83,7 @@
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
         }
-    };
+    }
 </script>
 
 <template>

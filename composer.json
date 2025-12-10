@@ -44,7 +44,7 @@
 	[
 		{
 			"type": "path",
-			"url": "./PComp",
+			"url": "../../PComp",
 			"options": { "symlink": true }
 		}
 	]

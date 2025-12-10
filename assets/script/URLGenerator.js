@@ -40,6 +40,21 @@ Parlaflix.Helpers.URLGenerator =
             return baseUrl + `/api.php?route=${routePath}${qs}`;
     },
 
+    generateFunctionUrl(routePath, call = "", query = {})
+    {
+        let qs = (useFriendlyUrls ? '?' : (call ? '&' : '')) + 
+        (call ? "call=" + call : "") + 
+        (Object.keys(query).length > 0 ? "&" + this.generateQueryString(query) : '');
+        
+        if (qs.endsWith('&'))
+            qs = qs.substring(0, qs.lastIndexOf('&'));
+
+        if (useFriendlyUrls)
+            return baseUrl + '/--function' + (routePath[0] === '/' ? (routePath + qs) : ('/' + routePath + qs));
+        else
+            return baseUrl + `/function.php?route=${routePath}${qs}`;
+    },
+
     generateQueryString(queryData)
     {
         return Object.entries(queryData).reduce( (prev, [ currKey, currVal ]) => (prev ? prev + '&' : '') + `${currKey}=${encodeURI(currVal)}`, '');
@@ -69,3 +84,5 @@ Parlaflix.Helpers.URLGenerator =
         });
     }
 };
+
+Parlaflix.functionUrl = Parlaflix.Helpers.URLGenerator.generateFunctionUrl.bind(Parlaflix.Helpers.URLGenerator);

@@ -12,7 +12,7 @@ final class System
 
     public static function getMailConfigs()
     {
-        $configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/parlaflix_config.ini", true);
+        $configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/../parlaflix_config.ini", true);
         return $configs['regularmail'];
     }
 

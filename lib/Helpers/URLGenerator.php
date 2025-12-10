@@ -12,7 +12,7 @@ final class URLGenerator
 	{
 		if (isset(self::$useFriendlyUrls) && isset(self::$baseUrl)) return;
 
-		$configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/parlaflix_config.ini", true);
+		$configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/../parlaflix_config.ini", true);
 		self::$useFriendlyUrls = (bool)($configs['urls']['usefriendly']);
 		self::$baseUrl = $configs['urls']['baseurl'];
 	}
@@ -60,6 +60,21 @@ final class URLGenerator
 		{
 			true => self::$baseUrl . '/--api' . ($apiPath[0] == '/' ? $apiPath . $qs : '/' . $apiPath . $qs),
 			false => self::$baseUrl . "/api.php?route=$apiPath$qs"
+		};
+	}
+
+	public static function generateFunctionUrl(string $route, string $call = "", array $query = []) : string
+	{
+		self::loadConfigs();
+		$qs = (self::$useFriendlyUrls ? '?' : '&') . ($call ? "call=" . $call : "") . (count($query) > 0 ? '&' . self::generateQueryString($query) : '');
+
+		if ($qs[strlen($qs) - 1] === '&')
+			$qs = substr($qs, 0, strlen($qs) - 1);
+
+		return match (self::$useFriendlyUrls)
+		{
+			true => self::$baseUrl . '/--function' . ($route[0] == '/' ? ($route . $qs) : '/' . $route . $qs),
+			false => self::$baseUrl . "/function.php?route=$route$qs"
 		};
 	}
 

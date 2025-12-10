@@ -1,60 +1,24 @@
- // Lego version 1.0.0
-  import { h, Component } from './lego.min.js'
-   
-    import { render } from './lego.min.js';
-   
-    Component.prototype.render = function(state)
+
+// Lego version 1.10.1
+import { h, Component } from 'https://cdn.jsdelivr.net/npm/@polight/lego@1.10.1/dist/lego.min.js'
+
+class Lego extends Component {
+  useShadowDOM = true
+
+  get vdom() {
+    return ({ state }) => [
+  h("img", {"src": Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/loading.svg'), "class": `inline-block animate-spin ${state.additionalclasses}`}, "")]
+  }
+  get vstyle() {
+    return ({ state }) => h('style', {}, `
+    @import "./assets/twoutput.css"
+    
+  `)}
+}
+
+
+
+export default class extends Lego
     {
-      const childs = Array.from(this.childNodes);
-      this.__originalChildren = childs.length && !this.__originalChildren?.length ? childs : this.__originalChildren;
-
-       this.__state.slotId = `slot_${performance.now().toString().replace('.','')}_${Math.floor(Math.random() * 1000)}`;
-   
-      this.setState(state);
-      if(!this.__isConnected) return
-   
-      const rendered = render([
-        this.vdom({ state: this.__state }),
-        this.vstyle({ state: this.__state }),
-      ], this.document);
-   
-      const slot = this.document.querySelector(`#${this.__state.slotId}`);
-      if (slot)
-         for (const c of this.__originalChildren)
-             slot.appendChild(c);
-            
-      return rendered;
-    };
-
-  
-    const state = { additionalclasses: '' };
-
-
-  const __template = function({ state }) {
-    return [  
-    h("img", {"src": Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/loading.svg'), "class": `inline-block animate-spin ${state.additionalclasses}`}, "")
-  ]
-  }
-
-  const __style = function({ state }) {
-    return h('style', {}, `
-      
-      
-    `)
-  }
-
-  // -- Lego Core
-  export default class Lego extends Component {
-    init() {
-      this.useShadowDOM = false
-      if(typeof state === 'object') this.__state = Object.assign({}, state, this.__state)
-      if(typeof methods === 'object') Object.keys(methods).forEach(methodName => this[methodName] = methods[methodName])
-      if(typeof connected === 'function') this.connected = connected
-      if(typeof setup === 'function') setup.bind(this)()
+        state = { additionalclasses: '' }
     }
-    get vdom() { return __template }
-    get vstyle() { return __style }
-  }
-  // -- End Lego Core
-
-  

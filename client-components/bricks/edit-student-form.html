@@ -1,28 +1,28 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        id: null,
-        fullname: null,
-        email: null,
-        telephone: null,
-        institution: null,
-        instrole: null,
-        timezone: null,
-        is_abel_member: false
-    };
+        state =
+        {
+            id: null,
+            fullname: null,
+            email: null,
+            telephone: null,
+            institution: null,
+            instrole: null,
+            timezone: null,
+            is_abel_member: false
+        }
 
-    const methods = 
-    {
         changeField(e)
         {
             this.render({ ...this.state, [ e.target.name ]: e.target.value });
-        },
+        }
 
         changeRadio(e)
         {
             if (e.target.checked)
                 this.render({ ...this.state, [ e.target.name ]: Boolean(Number(e.target.value)) }); 
-        },
+        }
 
         submit(e)
         {
@@ -42,11 +42,11 @@
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
         }
-    };
 
-    function setup()
-    {
-        this.state = { ...this.state, is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) };
+        connected()
+        {
+            this.state = { ...this.state, is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) };
+        }
     }
 </script>
 

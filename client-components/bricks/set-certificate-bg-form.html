@@ -1,38 +1,38 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        media_id: null,
-        media2_id: null,
-        searchMedia: false,
-        searchMedia2: false
-    };
+        state =
+        {
+            media_id: null,
+            media2_id: null,
+            searchMedia: false,
+            searchMedia2: false
+        }
 
-    const methods =
-    {
         changeField(e)
         {
             this.render({ ...this.state, [e.target.name]: e.target.value });
-        },
+        }
 
         searchBtnClicked(e)
         {
             this.render({ ...this.state, searchMedia: !this.state.searchMedia });
-        },
+        }
 
         searchBtn2Clicked(e)
         {
             this.render({ ...this.state, searchMedia2: !this.state.searchMedia2 });
-        },
+        }
 
         setMediaId(id)
         {
             this.render({ ...this.state, media_id: Number(id) });
-        },
+        }
 
         setMedia2Id(id)
         {
             this.render({ ...this.state, media2_id: Number(id) });
-        },
+        }
 
         submit(e)
         {
@@ -52,7 +52,7 @@
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
         }
-    };
+    }
 </script>
 
 <template>

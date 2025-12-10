@@ -12,7 +12,6 @@ use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\SqlSelector;
 use VOpus\PhpOrm\Option;
 
-
 /**
  * @property Option<int> id
  * @property Option<string> name

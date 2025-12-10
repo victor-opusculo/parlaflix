@@ -1,22 +1,22 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        datarows: [],
-        columnstohide: [],
-        returnidcallback: null,
-        selectlinkparamname: 'id'
-    };
+        state =
+        {
+            datarows: [],
+            columnstohide: [],
+            returnidcallback: null,
+            selectlinkparamname: 'id'
+        }
 
-    const methods = 
-    {
         selectClick(e)
         {
             e.preventDefault();
             const param = e.target.getAttribute('data-id');
             this.state.returnidcallback(param);
-        },
+        }
         
-    }; 
+    }
 </script>
 
 <template>

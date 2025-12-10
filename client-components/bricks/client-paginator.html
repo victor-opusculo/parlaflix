@@ -1,14 +1,15 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        totalitems: 0,
-        resultsonpage: 20,
-        pagenum: 1,
-        changepagecallback: null
-    };
+        state =
+        {
+            totalitems: 0,
+            resultsonpage: 20,
+            pagenum: 1,
+            changepagecallback: null
+        }
 
-    const methods =
-    {
+   
         changePage(e)
         {
             e.preventDefault();
@@ -16,7 +17,7 @@
             if (typeof this.state.changepagecallback === "function")
                 this.state.changepagecallback(toPage);
         }
-    };
+    }
 </script>
 
 <template>

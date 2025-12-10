@@ -1,11 +1,12 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        main_inbox_mail: ""
-    };
+        state =
+        {
+            main_inbox_mail: ""
+        }
 
-    const methods = 
-    {
+    
         submit(e)
         {
             e.preventDefault();
@@ -20,13 +21,13 @@
                 Parlaflix.Alerts.pushFromJsonResult(json);
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
-        },
+        }
 
         changeField(e)
         {
             this.render({ ...this.state, [e.target.name]: e.target.value });
         }
-    };
+    }
 
 </script>
 

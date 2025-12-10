@@ -1,63 +1,97 @@
- // Lego version 1.0.0
-  import { h, Component } from './lego.min.js'
-   
-    import { render } from './lego.min.js';
-   
-    Component.prototype.render = function(state)
-    {
-      const childs = Array.from(this.childNodes);
-      this.__originalChildren = childs.length && !this.__originalChildren?.length ? childs : this.__originalChildren;
 
-       this.__state.slotId = `slot_${performance.now().toString().replace('.','')}_${Math.floor(Math.random() * 1000)}`;
-   
-      this.setState(state);
-      if(!this.__isConnected) return
-   
-      const rendered = render([
-        this.vdom({ state: this.__state }),
-        this.vstyle({ state: this.__state }),
-      ], this.document);
-   
-      const slot = this.document.querySelector(`#${this.__state.slotId}`);
-      if (slot)
-         for (const c of this.__originalChildren)
-             slot.appendChild(c);
+// Lego version 1.10.1
+import { h, Component } from 'https://cdn.jsdelivr.net/npm/@polight/lego@1.10.1/dist/lego.min.js'
+
+class Lego extends Component {
+  useShadowDOM = true
+
+  get vdom() {
+    return ({ state }) => [
+  h("form", {"onsubmit": this.submit.bind(this)}, [
+    h("ext-label", {"label": `Visível (publicado)`, "reverse": `1`}, [
+    h("input", {"type": `checkbox`, "name": `is_visible`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_visible))}, "")
+]),
+    h("ext-label", {"label": `Exclusivo para associados`, "reverse": `1`}, [
+    h("input", {"type": `checkbox`, "name": `members_only`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.members_only))}, "")
+]),
+    h("ext-label", {"label": `Nome`}, [
+    h("input", {"type": `text`, "class": `w-full`, "name": `name`, "value": state.name, "oninput": this.changeField.bind(this)}, "")
+]),
+    h("ext-label", {"label": `Mais informações (HTML permitido)`, "linebreak": `1`}, [
+    h("textarea", {"class": `w-full`, "name": `presentation_html`, "rows": `8`, "oninput": this.changeField.bind(this)}, `${state.presentation_html}`)
+]),
+    h("ext-label", {"label": `Imagem ilustrativa (Mídia ID)`}, [
+    h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `cover_image_media_id`, "value": state.cover_image_media_id, "oninput": this.changeField.bind(this)}, ""),
+    h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtnClicked.bind(this)}, `Procurar`)
+]),
+    ((state.searchMedia.enabled) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
+    h("ext-label", {"label": `Carga horária`}, [
+    h("input", {"type": `number`, "min": `0.01`, "step": `0.01`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
+]),
+    h("ext-label", {"label": `Texto para o certificado`, "linebreak": `1`}, [
+    h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `450`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)
+]),
+    h("ext-label", {"label": `Mínimo de pontos necessário para aprovação`}, [
+    h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
+]),
+    h("h2", {}, `Aulas`),
+    ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "live_meeting_url": lesson.live_meeting_url, "live_meeting_datetime": lesson.live_meeting_datetime, "video_host": lesson.video_host, "video_url": lesson.video_url, "presence_method": lesson.presence_method, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points, "timezone": state.timezone}, "")))),
+    h("button", {"type": `button`, "class": `btn`, "onclick": this.addLesson.bind(this)}, `Adicionar aula`),
+    h("h2", {}, `Categorias`),
+    h("ul", {"class": `list-disc pl-4`}, [
+    ((state.categoriesAvailable).map((cat) => (h("li", {}, [
+    h("label", {}, [
+    h("input", {"type": `checkbox`, "value": `${cat.id}`, "onchange": this.changeCategory.bind(this), "checked": state.categoriesIds.includes(cat.id)}, ""),
+` ${cat.title}
+                `
+])
+]))))
+]),
+    h("div", {"class": `text-center mt-4`}, [
+    h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
+])
+])]
+  }
+  get vstyle() {
+    return ({ state }) => h('style', {}, `
+    @import "./assets/twoutput.css"
+    
+  `)}
+}
+
+
+
+export default class extends Lego
+    {
+        state =
+        {
+            id: null,
+            name: '',
+            presentation_html: '',
+            cover_image_media_id: null,
+            hours: 0,
+            certificate_text: '',
+            min_points_required: 1,
+            is_visible: 1,
+            members_only: 0,
             
-      return rendered;
-    };
+            categoriesAvailable: [],
+            lessons: [],
+            categoriesIds: [],
+            lessonsChangesReport: { create: [], update: [], delete: [] },
+            searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' */},
 
-  
-    const state =
-    {
-        id: null,
-        name: '',
-        presentation_html: '',
-        cover_image_media_id: null,
-        hours: 0,
-        certificate_text: '',
-        min_points_required: 1,
-        is_visible: 1,
-        members_only: 0,
-        
-        categoriesAvailable: [],
-        lessons: [],
-        categoriesIds: [],
-        lessonsChangesReport: { create: [], update: [], delete: [] },
-        searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' */},
+            lessons_json: '[]',
+            categories_ids_json: '[]'
+        }
 
-        lessons_json: '[]',
-        categories_ids_json: '[]'
-    };
-
-    const methods =
-    {
         changeField(e)
         {
             if (e.target.type === 'checkbox')
                 this.render({ ...this.state, [e.target.name]: Number(e.target.checked) });
             else
                 this.render({ ...this.state, [e.target.name]: e.target.value });
-        },
+        }
 
         changeCategory(e)
         {
@@ -68,13 +102,13 @@
                 categoriesIdUpdated = categoriesIdUpdated.filter( id => id == e.target.value ? e.target.checked : true );
 
             this.render({ ...this.state, categoriesIds: categoriesIdUpdated });
-        },
+        }
 
         searchBtnClicked(e)
         {
             //this.fetchMedias();
             this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
-        },
+        }
 
         /*fetchMedias(page = 1, query = '')
         {
@@ -112,7 +146,7 @@
         setMediaId(id)
         {
             this.render({ ...this.state, cover_image_media_id: Number(id) });
-        },
+        }
 
         addLesson(e)
         {
@@ -127,11 +161,12 @@
                     live_meeting_datetime: '',
                     video_host: 'youtube',
                     video_url: '',
+                    presence_method: '$default',
                     completion_password: '',
                     completion_points: 1
                 }
             ]});
-        },
+        }
 
         removeLesson(index)
         {
@@ -145,7 +180,7 @@
                 .map( (l, newIndex) => ({...l, index: newIndex + 1 }) );
             
             this.render({ ...this.state, lessons: newLessons, lessonsChangesReport: lessonsChangesReportUpdated });
-        },
+        }
 
         moveLesson(index, direction)
         {
@@ -167,7 +202,7 @@
             const newLessons = this.state.lessons.map( (l, newIndex) => ({ ...l, index: newIndex + 1 }) );
 
             this.render({ ...this.state, lessons: newLessons });
-        },
+        }
 
         mutateLesson(index, field, value)
         {
@@ -177,8 +212,9 @@
             if (found)
                 found[field] = value;
 
-            this.render({ ...this.state, lessons: lessons });
-        },
+            this.state.lessons = lessons;
+            //this.render({ ...this.state, lessons: lessons });
+        }
 
         submit(e)
         {
@@ -236,88 +272,17 @@
                 {
                     if (json.success && json.data?.newId)
                         window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/courses/${json.data.newId}/edit`);
+                    else if (json.success)
+                        window.location.reload();
                 });
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
 
-    function setup()
-    {
-        this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
-        this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
-        this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
+        connected()
+        {
+            this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
+            this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
+            this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
+        }
     }
-
-
-  const __template = function({ state }) {
-    return [  
-    h("form", {"onsubmit": this.submit.bind(this)}, [
-      h("ext-label", {"label": `Visível (publicado)`, "reverse": `1`}, [
-        h("input", {"type": `checkbox`, "name": `is_visible`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_visible))}, "")
-      ]),
-      h("ext-label", {"label": `Exclusivo para associados`, "reverse": `1`}, [
-        h("input", {"type": `checkbox`, "name": `members_only`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.members_only))}, "")
-      ]),
-      h("ext-label", {"label": `Nome`}, [
-        h("input", {"type": `text`, "class": `w-full`, "name": `name`, "value": state.name, "oninput": this.changeField.bind(this)}, "")
-      ]),
-      h("ext-label", {"label": `Mais informações (HTML permitido)`, "linebreak": `1`}, [
-        h("textarea", {"class": `w-full`, "name": `presentation_html`, "rows": `8`, "oninput": this.changeField.bind(this)}, `${state.presentation_html}`)
-      ]),
-      h("ext-label", {"label": `Imagem ilustrativa (Mídia ID)`}, [
-        h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `cover_image_media_id`, "value": state.cover_image_media_id, "oninput": this.changeField.bind(this)}, ""),
-        h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtnClicked.bind(this)}, `Procurar`)
-      ]),
-      ((state.searchMedia.enabled) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
-      h("ext-label", {"label": `Carga horária`}, [
-        h("input", {"type": `number`, "min": `0.01`, "step": `0.01`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
-      ]),
-      h("ext-label", {"label": `Texto para o certificado`, "linebreak": `1`}, [
-        h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `450`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)
-      ]),
-      h("ext-label", {"label": `Mínimo de pontos necessário para aprovação`}, [
-        h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
-      ]),
-      h("h2", {}, `Aulas`),
-      ((state.lessons).map((lesson) => (h("edit-single-lesson", {"id": lesson.id, "index": lesson.index, "title": lesson.title, "presentation_html": lesson.presentation_html, "live_meeting_url": lesson.live_meeting_url, "live_meeting_datetime": lesson.live_meeting_datetime, "video_host": lesson.video_host, "video_url": lesson.video_url, "completion_password": lesson.completion_password, "completion_points": lesson.completion_points, "timezone": state.timezone}, "")))),
-      h("button", {"type": `button`, "class": `btn`, "onclick": this.addLesson.bind(this)}, `Adicionar aula`),
-      h("h2", {}, `Categorias`),
-      h("ul", {"class": `list-disc pl-4`}, [
-        ((state.categoriesAvailable).map((cat) => (h("li", {}, [
-          h("label", {}, [
-            h("input", {"type": `checkbox`, "value": `${cat.id}`, "onchange": this.changeCategory.bind(this), "checked": state.categoriesIds.includes(cat.id)}, ""),
-` ${cat.title}
-                `
-          ])
-        ]))))
-      ]),
-      h("div", {"class": `text-center mt-4`}, [
-        h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
-      ])
-    ])
-  ]
-  }
-
-  const __style = function({ state }) {
-    return h('style', {}, `
-      
-      
-    `)
-  }
-
-  // -- Lego Core
-  export default class Lego extends Component {
-    init() {
-      this.useShadowDOM = false
-      if(typeof state === 'object') this.__state = Object.assign({}, state, this.__state)
-      if(typeof methods === 'object') Object.keys(methods).forEach(methodName => this[methodName] = methods[methodName])
-      if(typeof connected === 'function') this.connected = connected
-      if(typeof setup === 'function') setup.bind(this)()
-    }
-    get vdom() { return __template }
-    get vstyle() { return __style }
-  }
-  // -- End Lego Core
-
-  

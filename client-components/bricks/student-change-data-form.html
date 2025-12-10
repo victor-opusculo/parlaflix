@@ -1,36 +1,36 @@
 <script>
-    const state = 
+    export default class extends Lego
     {
-        fullname: '',
-        email: '',
-        telephone: '',
-        institution: '',
-        instrole: '',
-        password: '',
-        password2: '',
-        timezone: '',
-        lgpdConsentCheck: false,
-        lgpdtermversion: 0,
-        lgpdTermText: '',
-        studentid: 0,
-        currpassword: '',
-        slotId: ''
-    };
+        state = 
+        {
+            fullname: '',
+            email: '',
+            telephone: '',
+            institution: '',
+            instrole: '',
+            password: '',
+            password2: '',
+            timezone: '',
+            lgpdConsentCheck: false,
+            lgpdtermversion: 0,
+            lgpdTermText: '',
+            studentid: 0,
+            currpassword: '',
+            slotId: ''
+        }
 
-    const methods =
-    {
         changeField(e)
         {
             if (e.target.type === 'checkbox')
                 this.render({ ...this.state, [ e.target.name ]: e.target.checked });
             else
                 this.render({ ...this.state, [ e.target.name ]: e.target.value });
-        },
+        }
 
         showLgpd()
         {
             document.getElementById('lgpdTermDialog')?.showModal();
-        },
+        }
 
         submit(e)
         {
@@ -63,7 +63,7 @@
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
+    }
 </script>
 
 <template>

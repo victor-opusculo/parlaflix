@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@polight/lego": "^1.10.1",
     "@tailwindcss/cli": "^4.0.6"
   }
 }

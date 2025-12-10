@@ -1,17 +1,17 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        availableDestinations: [],
-        back_to_url: "",
-        mode: "all",
-        setDestinations: [],
-        title: "",
-        message: "",
-        waiting: false
-    };
+        state =
+        {
+            availableDestinations: [],
+            back_to_url: "",
+            mode: "all",
+            setDestinations: [],
+            title: "",
+            message: "",
+            waiting: false
+        }
 
-    const methods = 
-    {
         onSubmit(e)
         {
             e.preventDefault();
@@ -46,12 +46,12 @@
                 Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason));
                 this.render({ ...this.state, waiting: false });
             });
-        },
+        }
 
         onModeChanged(e)
         {
             this.render({ ...this.state, mode: e.target.value, setDestinations: e.target.value === 'all' ? this.state.availableDestinations?.map((_, idx) => idx) : [] });
-        },
+        }
 
         onSetDestinationChanged(e)
         {
@@ -63,7 +63,7 @@
 
             newSetDest[setDestIndex] = e.target.value;
             this.render({ ...this.state, setDestinations: newSetDest });
-        },
+        }
 
         removeSetDestClick(e)
         {
@@ -74,7 +74,7 @@
                 return;
 
             this.render({ ...this.state, setDestinations: newSetDest.filter((_, idx) => idx !== setDestIndex) });
-        },
+        }
 
         addSetDest(e)
         {
@@ -82,20 +82,19 @@
             newSetDest.push(0);
 
             this.render({ ...this.state, setDestinations: newSetDest });
-        },
+        }
 
         changeField(e)
         {
             this.render({ ...this.state, [ e.target.name ]: e.target.value });
         }
-    };
 
-    function setup()
-    {
-        const avDests = JSON.parse(this.getAttribute("availableDestinationsJson") ?? '[]');
-        this.state = { ...this.state, availableDestinations: avDests, setDestinations: avDests.map((_, idx) => idx) };
+        connected()
+        {
+            const avDests = JSON.parse(this.getAttribute("availableDestinationsJson") ?? '[]');
+            this.state = { ...this.state, availableDestinations: avDests, setDestinations: avDests.map((_, idx) => idx) };
+        }
     }
-
 </script>
 
 <template>

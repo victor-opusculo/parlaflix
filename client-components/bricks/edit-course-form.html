@@ -1,36 +1,36 @@
 
 <script>
-    const state =
+    export default class extends Lego
     {
-        id: null,
-        name: '',
-        presentation_html: '',
-        cover_image_media_id: null,
-        hours: 0,
-        certificate_text: '',
-        min_points_required: 1,
-        is_visible: 1,
-        members_only: 0,
-        
-        categoriesAvailable: [],
-        lessons: [],
-        categoriesIds: [],
-        lessonsChangesReport: { create: [], update: [], delete: [] },
-        searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' */},
+        state =
+        {
+            id: null,
+            name: '',
+            presentation_html: '',
+            cover_image_media_id: null,
+            hours: 0,
+            certificate_text: '',
+            min_points_required: 1,
+            is_visible: 1,
+            members_only: 0,
+            
+            categoriesAvailable: [],
+            lessons: [],
+            categoriesIds: [],
+            lessonsChangesReport: { create: [], update: [], delete: [] },
+            searchMedia: { enabled: false /*, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' */},
 
-        lessons_json: '[]',
-        categories_ids_json: '[]'
-    };
+            lessons_json: '[]',
+            categories_ids_json: '[]'
+        }
 
-    const methods =
-    {
         changeField(e)
         {
             if (e.target.type === 'checkbox')
                 this.render({ ...this.state, [e.target.name]: Number(e.target.checked) });
             else
                 this.render({ ...this.state, [e.target.name]: e.target.value });
-        },
+        }
 
         changeCategory(e)
         {
@@ -41,13 +41,13 @@
                 categoriesIdUpdated = categoriesIdUpdated.filter( id => id == e.target.value ? e.target.checked : true );
 
             this.render({ ...this.state, categoriesIds: categoriesIdUpdated });
-        },
+        }
 
         searchBtnClicked(e)
         {
             //this.fetchMedias();
             this.render({ ...this.state, searchMedia: { ...this.state.searchMedia, enabled: !this.state.searchMedia.enabled } });
-        },
+        }
 
         /*fetchMedias(page = 1, query = '')
         {
@@ -85,7 +85,7 @@
         setMediaId(id)
         {
             this.render({ ...this.state, cover_image_media_id: Number(id) });
-        },
+        }
 
         addLesson(e)
         {
@@ -100,11 +100,12 @@
                     live_meeting_datetime: '',
                     video_host: 'youtube',
                     video_url: '',
+                    presence_method: '$default',
                     completion_password: '',
                     completion_points: 1
                 }
             ]});
-        },
+        }
 
         removeLesson(index)
         {
@@ -118,7 +119,7 @@
                 .map( (l, newIndex) => ({...l, index: newIndex + 1 }) );
             
             this.render({ ...this.state, lessons: newLessons, lessonsChangesReport: lessonsChangesReportUpdated });
-        },
+        }
 
         moveLesson(index, direction)
         {
@@ -140,7 +141,7 @@
             const newLessons = this.state.lessons.map( (l, newIndex) => ({ ...l, index: newIndex + 1 }) );
 
             this.render({ ...this.state, lessons: newLessons });
-        },
+        }
 
         mutateLesson(index, field, value)
         {
@@ -150,8 +151,9 @@
             if (found)
                 found[field] = value;
 
-            this.render({ ...this.state, lessons: lessons });
-        },
+            this.state.lessons = lessons;
+            //this.render({ ...this.state, lessons: lessons });
+        }
 
         submit(e)
         {
@@ -209,17 +211,19 @@
                 {
                     if (json.success && json.data?.newId)
                         window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/admin/panel/courses/${json.data.newId}/edit`);
+                    else if (json.success)
+                        window.location.reload();
                 });
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
 
-    function setup()
-    {
-        this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
-        this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
-        this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
+        connected()
+        {
+            this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
+            this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
+            this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
+        }
     }
 </script>
 
@@ -265,6 +269,7 @@
             :live_meeting_datetime="lesson.live_meeting_datetime"
             :video_host="lesson.video_host"
             :video_url="lesson.video_url"
+            :presence_method="lesson.presence_method"
             :completion_password="lesson.completion_password"
             :completion_points="lesson.completion_points"
             :timezone="state.timezone"

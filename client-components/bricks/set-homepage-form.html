@@ -1,26 +1,27 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        page_id: null,
-        remove: false,
-        searchPages: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
-    };
 
-    const methods =
-    {
+        state =
+        {
+            page_id: null,
+            remove: false,
+            searchPages: { enabled: false, pageNum: 1, dataRows: [], allCount: 0, resultsOnPage: 20, q: '' },
+        }
+
         changeField(e)
         {
             if (e.target.type == 'checkbox')
                 this.render({ ...this.state, [ e.target.name ]: e.target.checked });
             else
                 this.render({ ...this.state, [e.target.name]: e.target.value });
-        },
+        }
 
         searchBtnClicked(e)
         {
             this.fetchPages();
             this.render({ ...this.state, searchPages: { ...this.state.searchPages, enabled: !this.state.searchPages.enabled } });
-        },
+        }
 
         fetchPages(page = 1, query = '')
         {
@@ -42,22 +43,22 @@
                 }
             });
 
-        },
+        }
 
         pagePageChange(page = 1)
         {
             this.fetchPages(page, this.state.searchPages.q);
-        },
+        }
 
         searchKeyword(query = '')
         {
             this.fetchPages(this.state.searchPages.pageNum, query);
-        },
+        }
 
         setPageId(id)
         {
             this.render({ ...this.state, page_id: Number(id) });
-        },
+        }
 
         submit(e)
         {
@@ -83,7 +84,7 @@
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
         }
-    };
+    }
 </script>
 
 <template>

@@ -1,13 +1,13 @@
 
 <script>
-    const state = 
-    { 
-        password: "",
-        email: "" 
-    };
-
-    const methods = 
+    export default class extends Lego
     {
+        state = 
+        { 
+            password: "",
+            email: "" 
+        }
+
         submit(e)
         {
             e.preventDefault();
@@ -20,18 +20,18 @@
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
 
             return true;
-        },
+        }
 
         changeEmail(e)
         {
             this.render({ ...this.state, email: e.target.value });
-        },
+        }
 
         changePassword(e)
         {
             this.render({ ...this.state, password: e.target.value }); 
         }
-    };
+    }
 </script>
 
 <template>

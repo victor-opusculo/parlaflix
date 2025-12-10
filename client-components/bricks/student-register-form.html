@@ -1,44 +1,44 @@
 
 <script>
-    const state =
+    export default class extends Lego
     {
-        fullname: '',
-        email: '',
-        telephone: '',
-        institution: '',
-        instrole: '',
-        password: '',
-        password2: '',
-        timezone: 'America/Sao_Paulo',
-        is_abel_member: false,
-        lgpdConsentCheck: false,
-        lgpdtermversion: 0,
-        lgpdTermText: '',
-        slotId: '',
-        waiting: false
-    };
+        state =
+        {
+            fullname: '',
+            email: '',
+            telephone: '',
+            institution: '',
+            instrole: '',
+            password: '',
+            password2: '',
+            timezone: 'America/Sao_Paulo',
+            is_abel_member: false,
+            lgpdConsentCheck: false,
+            lgpdtermversion: 0,
+            lgpdTermText: '',
+            slotId: '',
+            waiting: false
+        }
 
-    const methods =
-    {
         fieldChanged(e)
         {
             this.render({ ...this.state, [ e.target.name ]: e.target.value });
-        },
+        }
 
         consentChecked(e)
         {
             this.render({ ...this.state, lgpdConsentCheck: e.target.checked });
-        },
+        }
 
         memberChecked(e)
         {
             this.render({ ...this.state, is_abel_member: e.target.checked });
-        },
+        }
 
         showLgpd()
         {
             document.getElementById('lgpdTermDialog')?.showModal();
-        },
+        }
 
         submit(e)
         {
@@ -66,7 +66,7 @@
             .finally(() => this.render({ ...this.state, waiting: false }));
             
         }
-    };
+    }
 </script>
 
 <template>

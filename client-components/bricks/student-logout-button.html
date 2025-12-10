@@ -1,6 +1,6 @@
 
 <script>
-    const methods =
+    export default class extends Lego
     {
         logout()
         {
@@ -10,7 +10,7 @@
             .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('/student/login', {}))
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
+    }
 
 </script>
 <template>

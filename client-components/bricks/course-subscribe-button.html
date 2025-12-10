@@ -1,12 +1,13 @@
 
 <script>
-    const state = 
+    export default class extends Lego
     {
-        courseid: null
-    }
+        state = 
+        {
+            courseid: null
+        }
 
-    const methods =
-    {
+    
         onClick()
         {
             if (!this.state.courseid) return;
@@ -17,7 +18,7 @@
             .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess('student/panel/subscription'))
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
+    }
 </script>
 
 <template>

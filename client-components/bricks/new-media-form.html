@@ -1,16 +1,16 @@
 <script>
-    const state = 
+    export default class extends Lego
     {
-        id: 0,
-        waiting: false,
-        name: '',
-        description: '',
-        filename: null,
-        files: null
-    };
+        state = 
+        {
+            id: 0,
+            waiting: false,
+            name: '',
+            description: '',
+            filename: null,
+            files: null
+        }
 
-    const methods = 
-    {
         changeField(e)
         {
             if (e.target.getAttribute('data-fieldname') === 'filename')
@@ -19,7 +19,7 @@
             }
 
             this.render({ ...this.state, [e.target.getAttribute('data-fieldname')]: e.target.value });
-        },
+        }
 
         submit(e)
         {
@@ -54,7 +54,7 @@
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
         }
-    };
+    }
 </script>
 
 <template>

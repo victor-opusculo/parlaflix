@@ -1,17 +1,18 @@
 
 <script>
-    const state =
+    export default class extends Lego
     {
-        searchkeywords: '',
-        searchcallback: null
-    };
+        state =
+        {
+            searchkeywords: '',
+            searchcallback: null
+        }
 
-    const methods =
-    {
+    
         changeInput(e)
         {
             this.render({ ...this.state, searchkeywords: e.target.value });
-        },
+        }
 
         keydown(e)
         {
@@ -20,14 +21,14 @@
                 e.preventDefault();
                 this.buttonClicked();
             }
-        },
+        }
 
         buttonClicked(e)
         {
             if (typeof this.state.searchcallback === "function")
                 this.state.searchcallback(this.state.searchkeywords);
         }
-    };
+    }
 </script>
 
 <template>

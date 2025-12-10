@@ -1,23 +1,22 @@
 <script>
-
-    const state =
+    export default class extends Lego
     {
-        lessonId: null,
-        availableSubscriptions: [],
-        selectedOption: null,
-    };
+        state =
+        {
+            lessonId: null,
+            availableSubscriptions: [],
+            selectedOption: null,
+        }
 
-    const methods = 
-    {
         openDialog()
         {
             document.getElementById("diagMarkPresence")?.showModal();
-        },
+        }
 
         closeDialog()
         {
             document.getElementById("diagMarkPresence")?.close();
-        },
+        }
 
         onSubmit(e)
         {
@@ -41,21 +40,21 @@
                     window.location.reload();
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
-        },
+        }
 
         changeOption(e)
         {
             this.render({ ...this.state, selectedOption: this.state.availableSubscriptions.find(opt => opt.id == e.target.value)});
         }
-    };
 
-    function setup()
-    {
-        this.state = { 
-            ...this.state, 
-            availableSubscriptions: JSON.parse(this.getAttribute("available_subscriptions") || '[]'),
-            lessonId: Number.parseInt(this.getAttribute("lesson_id"))
-        };
+        connected()
+        {
+            this.state = { 
+                ...this.state, 
+                availableSubscriptions: JSON.parse(this.getAttribute("available_subscriptions") || '[]'),
+                lessonId: Number.parseInt(this.getAttribute("lesson_id"))
+            };
+        }
     }
 </script>
 

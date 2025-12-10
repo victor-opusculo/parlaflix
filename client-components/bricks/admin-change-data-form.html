@@ -1,41 +1,41 @@
 <script>
-    const state = 
+    export default class extends Lego
     {
-        fullname: '',
-        email: '',
-        password: '',
-        password2: '',
-        adminid: 0,
-        currpassword: '',
-        slotId: ''
-    };
+        state = 
+        {
+            fullname: '',
+            email: '',
+            password: '',
+            password2: '',
+            adminid: 0,
+            currpassword: '',
+            slotId: ''
+        }
 
-    const methods =
-    {
         nameChanged(e)
         {
             this.render({ ...this.state, fullname: e.target.value });
-        },
+        }
 
         emailChanged(e)
         {
             this.render({ ...this.state, email: e.target.value });
-        },
+        }
 
         currpasswordChanged(e)
         {
             this.render({ ...this.state, currpassword: e.target.value });
-        },
+        }
 
         passwordChanged(e)
         {
             this.render({ ...this.state, password: e.target.value });
-        },
+        }
 
         password2Changed(e)
         {
             this.render({ ...this.state, password2: e.target.value });
-        },
+        }
 
         submit(e)
         {

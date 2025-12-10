@@ -1,35 +1,35 @@
 <script>
-    const state =
+    export default class extends Lego
     {
-        set_id_field_callback: _ => void 0,
-        search_keywords: '',
-        page_num: 1,
-        total_items: 0,
-        num_results_on_page: 10,
-        data_rows: [],
+        state =
+        {
+            set_id_field_callback: _ => void 0,
+            search_keywords: '',
+            page_num: 1,
+            total_items: 0,
+            num_results_on_page: 10,
+            data_rows: [],
 
-        media_to_upload: null
-    }
+            media_to_upload: null
+        }
 
-    const methods = 
-    {
         searchAction(query)
         {
             this.render({ ...this.state, page_num: 1, search_keywords: query });
             this.fetchMedia();
-        },
+        }
 
         selectMediaFromDataGrid(id)
         {
             if (typeof this.state.set_id_field_callback === "function")
                 this.state.set_id_field_callback(id);
-        },
+        }
 
         changePageAction(toPage)
         {
             this.render({ ...this.state, page_num: toPage });
             this.fetchMedia();
-        },
+        }
 
         fetchMedia()
         {
@@ -51,12 +51,12 @@
                     this.render({ ...this.state, page_num: this.state.page_num, data_rows: transformed, total_items: json.data.allCount, search_keywords: this.state.search_keywords } );
                 }
             });
-        },
+        }
 
         newMediaFileChanged(e)
         {
             this.render({ ...this.state, media_to_upload: e.target.files[0] ?? null });
-        },
+        }
 
         quickUploadMedia()
         {
@@ -84,12 +84,12 @@
                 });
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)))
-        },
-    }
+        }
 
-    function setup()
-    {
-        this.fetchMedia();
+        connected()
+        {
+            this.fetchMedia();
+        }
     }
 </script>
 

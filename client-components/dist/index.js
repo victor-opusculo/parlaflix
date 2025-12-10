@@ -1,92 +1,92 @@
-import AdminChangeDataForm from './admin-change-data-form.js'
-customElements.define('admin-change-data-form', AdminChangeDataForm)
+import markStudentPresence from './mark-student-presence.js'
+customElements.define('mark-student-presence', markStudentPresence)
 
-import AdminLoginForm from './admin-login-form.js'
-customElements.define('admin-login-form', AdminLoginForm)
+import certificateAuthForm from './certificate-auth-form.js'
+customElements.define('certificate-auth-form', certificateAuthForm)
 
-import AdminLogoutButton from './admin-logout-button.js'
-customElements.define('admin-logout-button', AdminLogoutButton)
+import editCourseForm from './edit-course-form.js'
+customElements.define('edit-course-form', editCourseForm)
 
-import AdminSettingsForm from './admin-settings-form.js'
-customElements.define('admin-settings-form', AdminSettingsForm)
+import studentChangeDataForm from './student-change-data-form.js'
+customElements.define('student-change-data-form', studentChangeDataForm)
 
-import BasicSearchField from './basic-search-field.js'
-customElements.define('basic-search-field', BasicSearchField)
+import loadingSpinner from './loading-spinner.js'
+customElements.define('loading-spinner', loadingSpinner)
 
-import CertificateAuthForm from './certificate-auth-form.js'
-customElements.define('certificate-auth-form', CertificateAuthForm)
+import basicSearchField from './basic-search-field.js'
+customElements.define('basic-search-field', basicSearchField)
 
-import ClientPaginator from './client-paginator.js'
-customElements.define('client-paginator', ClientPaginator)
+import editCategoryForm from './edit-category-form.js'
+customElements.define('edit-category-form', editCategoryForm)
 
-import CourseSubscribeButton from './course-subscribe-button.js'
-customElements.define('course-subscribe-button', CourseSubscribeButton)
+import extLabel from './ext-label.js'
+customElements.define('ext-label', extLabel)
 
-import DataGrid from './data-grid.js'
-customElements.define('data-grid', DataGrid)
+import deleteEntityForm from './delete-entity-form.js'
+customElements.define('delete-entity-form', deleteEntityForm)
 
-import DeleteEntityForm from './delete-entity-form.js'
-customElements.define('delete-entity-form', DeleteEntityForm)
+import setHomepageForm from './set-homepage-form.js'
+customElements.define('set-homepage-form', setHomepageForm)
 
-import EditCategoryForm from './edit-category-form.js'
-customElements.define('edit-category-form', EditCategoryForm)
+import newMediaForm from './new-media-form.js'
+customElements.define('new-media-form', newMediaForm)
 
-import EditCourseForm from './edit-course-form.js'
-customElements.define('edit-course-form', EditCourseForm)
+import mediaClientSelect from './media-client-select.js'
+customElements.define('media-client-select', mediaClientSelect)
 
-import EditPageForm from './edit-page-form.js'
-customElements.define('edit-page-form', EditPageForm)
+import studentRegisterForm from './student-register-form.js'
+customElements.define('student-register-form', studentRegisterForm)
 
-import EditSingleLesson from './edit-single-lesson.js'
-customElements.define('edit-single-lesson', EditSingleLesson)
+import editPageForm from './edit-page-form.js'
+customElements.define('edit-page-form', editPageForm)
 
-import EditStudentForm from './edit-student-form.js'
-customElements.define('edit-student-form', EditStudentForm)
+import dataGrid from './data-grid.js'
+customElements.define('data-grid', dataGrid)
 
-import ExtLabel from './ext-label.js'
-customElements.define('ext-label', ExtLabel)
+import editStudentForm from './edit-student-form.js'
+customElements.define('edit-student-form', editStudentForm)
 
-import FiveCoursesLatest from './five-courses-latest.js'
-customElements.define('five-courses-latest', FiveCoursesLatest)
+import sendSubscribersEmail from './send-subscribers-email.js'
+customElements.define('send-subscribers-email', sendSubscribersEmail)
 
-import LoadingSpinner from './loading-spinner.js'
-customElements.define('loading-spinner', LoadingSpinner)
+import adminChangeDataForm from './admin-change-data-form.js'
+customElements.define('admin-change-data-form', adminChangeDataForm)
 
-import MarkStudentPresence from './mark-student-presence.js'
-customElements.define('mark-student-presence', MarkStudentPresence)
+import studentLoginForm from './student-login-form.js'
+customElements.define('student-login-form', studentLoginForm)
 
-import MediaClientSelect from './media-client-select.js'
-customElements.define('media-client-select', MediaClientSelect)
+import studentRecoverPassword from './student-recover-password.js'
+customElements.define('student-recover-password', studentRecoverPassword)
 
-import NewMediaForm from './new-media-form.js'
-customElements.define('new-media-form', NewMediaForm)
+import adminLoginForm from './admin-login-form.js'
+customElements.define('admin-login-form', adminLoginForm)
 
-import SendSubscribersEmail from './send-subscribers-email.js'
-customElements.define('send-subscribers-email', SendSubscribersEmail)
+import clientPaginator from './client-paginator.js'
+customElements.define('client-paginator', clientPaginator)
 
-import SetCertificateBgForm from './set-certificate-bg-form.js'
-customElements.define('set-certificate-bg-form', SetCertificateBgForm)
+import adminSettingsForm from './admin-settings-form.js'
+customElements.define('admin-settings-form', adminSettingsForm)
 
-import SetHomepageForm from './set-homepage-form.js'
-customElements.define('set-homepage-form', SetHomepageForm)
+import fiveCoursesLatest from './five-courses-latest.js'
+customElements.define('five-courses-latest', fiveCoursesLatest)
 
-import StudentChangeDataForm from './student-change-data-form.js'
-customElements.define('student-change-data-form', StudentChangeDataForm)
+import setCertificateBgForm from './set-certificate-bg-form.js'
+customElements.define('set-certificate-bg-form', setCertificateBgForm)
 
-import StudentLessonPasswordSubmitter from './student-lesson-password-submitter.js'
-customElements.define('student-lesson-password-submitter', StudentLessonPasswordSubmitter)
+import studentLogoutButton from './student-logout-button.js'
+customElements.define('student-logout-button', studentLogoutButton)
 
-import StudentLoginForm from './student-login-form.js'
-customElements.define('student-login-form', StudentLoginForm)
+import studentSurveyForm from './student-survey-form.js'
+customElements.define('student-survey-form', studentSurveyForm)
 
-import StudentLogoutButton from './student-logout-button.js'
-customElements.define('student-logout-button', StudentLogoutButton)
+import adminLogoutButton from './admin-logout-button.js'
+customElements.define('admin-logout-button', adminLogoutButton)
 
-import StudentRecoverPassword from './student-recover-password.js'
-customElements.define('student-recover-password', StudentRecoverPassword)
+import courseSubscribeButton from './course-subscribe-button.js'
+customElements.define('course-subscribe-button', courseSubscribeButton)
 
-import StudentRegisterForm from './student-register-form.js'
-customElements.define('student-register-form', StudentRegisterForm)
+import editSingleLesson from './edit-single-lesson.js'
+customElements.define('edit-single-lesson', editSingleLesson)
 
-import StudentSurveyForm from './student-survey-form.js'
-customElements.define('student-survey-form', StudentSurveyForm)
+import studentLessonPasswordSubmitter from './student-lesson-password-submitter.js'
+customElements.define('student-lesson-password-submitter', studentLessonPasswordSubmitter)

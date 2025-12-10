@@ -53,7 +53,7 @@ abstract class Connection
 
     private static function getDatabaseConfig() : array
 	{
-		$configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/parlaflix_config.ini", true);
+		$configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/../parlaflix_config.ini", true);
 		return $configs['database'];
 	}
 

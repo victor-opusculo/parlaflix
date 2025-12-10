@@ -1,16 +1,16 @@
 
 <script>
-    const state =
+    export default class extends Lego
     {
-        subscription_id: null,
-        filledStar: null,
-        emptyStar: null,
-        pointsGiven: 0,
-        message: ""
-    };
+        state =
+        {
+            subscription_id: null,
+            filledStar: null,
+            emptyStar: null,
+            pointsGiven: 0,
+            message: ""
+        }
 
-    const methods =
-    {
         submit(e)
         {
             e.preventDefault();
@@ -32,26 +32,26 @@
                     window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/student/panel/subscription/${this.state.subscription_id}`);
             })
             .catch(console.error);
-        },
+        }
 
         starClicked(e)
         {
             const points = Number.parseInt(e.target.getAttribute('data-points'));
             this.render({ ...this.state, pointsGiven: points });
-        },
+        }
 
         onInputChange(e)
         {
             this.render({ ...this.state, [e.target.name]: e.target.value });
         }
-    };
 
-    function setup()
-    {
-        const filledStar =  Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_filled.png');
-        const emptyStar = Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_empty.png');
+        connected()
+        {
+            const filledStar =  Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_filled.png');
+            const emptyStar = Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_empty.png');
 
-        this.state = { ...this.state, filledStar, emptyStar };
+            this.state = { ...this.state, filledStar, emptyStar };
+        }
     }
 </script>
 
