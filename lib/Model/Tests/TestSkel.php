@@ -3,7 +3,9 @@
 namespace VictorOpusculo\Parlaflix\Lib\Model\Tests;
 
 use Exception;
+use JsonException;
 use mysqli;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
 use VOpus\PhpOrm\DataEntity;
@@ -38,16 +40,52 @@ class TestSkel extends DataEntity
         parent::__construct($initialValues);
     }
 
-    protected string $databaseTable = 'tests_skel';
-    protected string $formFieldPrefixName = 'tests_skel';
+    public const DB_TABLE = 'tests_skel';
+
+    protected string $databaseTable = self::DB_TABLE;
+    protected string $formFieldPrefixName = self::DB_TABLE;
     protected array $primaryKeys = ['id']; 
 
     public private(set) ?Lesson $lesson = null;
+
+    public function getFromLessonId(mysqli $conn) : self
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearWhereClauses()
+        ->clearValues()
+        ->addWhereClause("{$this->getWhereQueryColumnName('lesson_id')} = ?")
+        ->addValue('i', $this->lesson_id->unwrapOr(0));
+
+        $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
+
+        if (isset($dr))
+            return $this->newInstanceFromDataRowFromDatabase($dr);
+        else
+            throw new DatabaseEntityNotFound("Modelo de questionário não encontrado!", $this->databaseTable);
+    }
 
     public function fetchLesson(mysqli $conn) : self
     {
         $this->lesson = new Lesson([ 'id' => $this->lesson_id->unwrapOr(0) ])->getSingle($conn);
         return $this;
+    }
+
+    public function buildStructure() : TestData
+    {
+        try
+        {
+            $json = $this->test_data->unwrapOr('{}');
+            $struct = TestData::buildFromJson($json);
+            return $struct;
+        }
+        catch (JsonException $e)
+        {
+            throw new InvalidConfigurationException("JSON de questionário inválido!");
+        }
+        catch (Exception $e)
+        {
+            throw $e;
+        }
     }
 }
 

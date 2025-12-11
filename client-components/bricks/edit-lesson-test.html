@@ -1,0 +1,95 @@
+
+<script>
+    export default class extends Lego
+    {
+        state =
+        {
+            id: null,
+            lesson_id: null,
+            name: 'Questionário sem nome',
+            presentation_text: '',
+            test_data: { questions: [] },
+            min_percent_for_approval: 70
+        }
+
+        changeField(e)
+        {
+            this.render({ ...this.state, [e.target.name]: e.target.value });
+        }
+
+        addQuestion()
+        {
+            this.render({ ...this.state, test_data: { ...this.test_data, questions: [ ...this.test_data.questions, this.questionDefault() ] }})
+        }
+
+        addOption(questIndex)
+        {
+            const question = this.test_data.questions.at(questIndex);
+            const options = question?.options;
+
+            if (options)
+            {
+                options.push(this.optionDefault());
+                question.options = options;
+
+                const questions = this.test_data.questions.with(questIndex, question);
+                this.render({ ...this.state, test_data: { ...this.test_data, questions } });
+            }
+        }
+
+        submit(e)
+        {
+            e.preventDefault();
+
+        }
+
+        connected()
+        {
+            if (this.hasAttribute('test-data-json') && this.getAttribute('test-data-json'))
+                this.render({ ...this.state, test_data: JSON.parse(this.getAttribute('test-data-json')) });
+        }
+
+        questionDefault()
+        {
+            return { 
+                pictureMediaId: null,
+                text: '',
+                options: [],
+                correctAnswers: [],
+                studentAnswers: null
+            };
+        }
+
+        optionDefault()
+        {
+            return {
+                pictureMediaId: null,
+                text: ''
+            };
+        }
+    }
+</script>
+
+<template>
+    <form @submit="submit">
+        <fieldset>
+            <legend>Informações do Questionário</legend>
+            <ext-label label="Nome"><input type="text" name="name" :value="state.name" @change="changeField" required/></ext-label>
+            <ext-label label="Texto introdutório" linebreak>
+                <textarea class="w-full" type="text" name="presentation_text" :value="state.presentation_text" @change="changeField" rows="5"></textarea>
+            </ext-label>
+            <ext-label label="Nota mínima para aprovação"><input type="number" min="0" max="100" step="1" name="min_percent_for_approval" :value="state.min_percent_for_approval" @change="changeField" required/> %</ext-label>
+        </fieldset>
+        <fieldset>
+            <legend>Questões</legend>
+            <ol :if="Array.isArray(state.test_data.questions)" class="list-decimal ml-4">
+                <li :for="quest, qi in state.test_data.questions">
+
+                </li>
+            </ol>
+
+            <button class="btn" type="button">Adicionar</button>
+        </fieldset>
+
+    </form>
+</template>
