@@ -8,6 +8,8 @@ use mysqli;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
+use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Media\Media;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataObjectProperty;
 use VOpus\PhpOrm\DataProperty;
@@ -49,6 +51,30 @@ class TestSkel extends DataEntity
 
     public private(set) ?Lesson $lesson = null;
 
+    public function exists(mysqli $conn) : bool
+    {
+        $selector = new SqlSelector()
+        ->addSelectColumn("COUNT({$this->getSelectQueryColumnName("id")})")
+        ->setTable($this->databaseTable)
+        ->addWhereClause("{$this->getWhereQueryColumnName("id")} = ?")
+        ->addValue('i', $this->id->unwrapOr(0));
+
+        $count = $selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return $count > 0;
+    }
+
+    public function existsByLessonId(mysqli $conn) : bool
+    {
+        $selector = new SqlSelector()
+        ->addSelectColumn("COUNT({$this->getSelectQueryColumnName("lesson_id")})")
+        ->setTable($this->databaseTable)
+        ->addWhereClause("{$this->getWhereQueryColumnName("lesson_id")} = ?")
+        ->addValue('i', $this->lesson_id->unwrapOr(0));
+
+        $count = $selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return $count > 0;
+    }
+
     public function getFromLessonId(mysqli $conn) : self
     {
         $selector = $this->getGetSingleSqlSelector()
@@ -71,17 +97,31 @@ class TestSkel extends DataEntity
         return $this;
     }
 
-    public function buildStructure() : TestData
+    public function buildStructure(?mysqli $conn) : TestData
     {
         try
         {
             $json = $this->test_data->unwrapOr('{}');
             $struct = TestData::buildFromJson($json);
+
+            if (isset($conn))
+                foreach ($struct->questions as $quest)
+                {
+                    if ($quest->pictureMediaId)
+                        $quest->setPictureExt(new Media([ 'id' => $quest->pictureMediaId ])->getSingle($conn)->file_extension->unwrapOr(''));
+
+                    foreach ($quest->options as $opt)
+                    {
+                        if ($opt->pictureMediaId)
+                            $opt->setPictureExt(new Media([ 'id' => $opt->pictureMediaId ])->getSingle($conn)->file_extension->unwrapOr(''));
+                    }
+                }
+
             return $struct;
         }
         catch (JsonException $e)
         {
-            throw new InvalidConfigurationException("JSON de questionário inválido!");
+            throw new Exception("JSON de questionário inválido!");
         }
         catch (Exception $e)
         {

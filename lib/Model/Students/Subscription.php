@@ -32,6 +32,19 @@ class Subscription extends DataEntity
 
     public ?Course $course;
 
+    public function idBelongsToStudent(mysqli $conn) : bool
+    {
+        $selector = new SqlSelector()
+        ->setTable($this->databaseTable)
+        ->addSelectColumn("COUNT({$this->getSelectQueryColumnName('id')})")
+        ->addWhereClause("{$this->getWhereQueryColumnName('id')} = ?")
+        ->addWhereClause(" AND {$this->getWhereQueryColumnName('student_id')} = ?")
+        ->addValues("ii", [ $this->id->unwrapOr(0), $this->student_id->unwrapOr(0) ]);
+
+        $count = (int)$selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        return $count > 0;
+    }
+
     public function getSingleWithProgressData(mysqli $conn) : self
     {
         $selector = $this->getGetSingleSqlSelector()

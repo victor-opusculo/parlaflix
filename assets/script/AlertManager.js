@@ -71,9 +71,19 @@ Parlaflix.Alerts ??=
 
         if (jsonDecoded.success)
             return this.push(this.types.success, jsonDecoded.success).then(ret => [ret, jsonDecoded ]);
-    }
+    },
+
+    pushError(alertMessage)
+    {
+        return err =>
+        {
+            this.push(this.types.error, alertMessage);
+            console.error(err);
+        };
+    },
 };
 
 Parlaflix.Alerts.prepareButton = Parlaflix.Alerts.prepareButton.bind(Parlaflix.Alerts);
 Parlaflix.Alerts.pushFromJsonResult = Parlaflix.Alerts.pushFromJsonResult.bind(Parlaflix.Alerts);
+Parlaflix.Alerts.pushError = Parlaflix.Alerts.pushError.bind(Parlaflix.Alerts);
 Object.freeze(Parlaflix.Alerts.types);

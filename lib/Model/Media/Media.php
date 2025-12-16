@@ -11,7 +11,14 @@ use VictorOpusculo\Parlaflix\Lib\Model\Media\Upload\MediaUpload;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\SqlSelector;
+use VOpus\PhpOrm\Option;
 
+/**
+ * @property Option<int> id
+ * @property Option<string> name
+ * @property Option<string> description
+ * @property Option<string> file_extension
+ */
 final class Media extends DataEntity
 {
     public function __construct(?array $initialValues = null)

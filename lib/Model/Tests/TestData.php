@@ -14,6 +14,17 @@ class TestData
         return json_encode($this);
     }
 
+    public function stripAnswers() : self
+    {
+        foreach ($this->questions as $q)
+        {
+            foreach ($q->options as $opt)
+                $opt->isCorrect = null;
+        }
+
+        return $this;
+    }
+
     public static function build(array $testDataFromJson) : self
     {
         $new = new self();

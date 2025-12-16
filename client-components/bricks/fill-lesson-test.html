@@ -1,0 +1,103 @@
+
+<script>
+    export default class extends Lego
+    {
+        state =
+        {
+            id: null,
+            subscription_id: null, 
+            lesson_id: null,
+            student_id: null,
+            test_data: { questions: [] },
+
+            answers: []
+        }
+
+        buildAnswer(e)
+        {
+            const checked = e.target.checked ?? false;
+            const qi = Number.parseInt(e.target.dataset.qi);
+            const oi = Number.parseInt(e.target.dataset.oi);
+            const question = this.state.test_data.questions.at(qi);
+
+            const oldAnswer = this.state.answers.at(qi);
+            const newAnswer = question.mulipleAnswers ? [ ...oldAnswer ].with(oi, checked) : Array.from({ length: oldAnswer.length }).fill(false).with(oi, checked);
+
+            this.render({ ...this.state, answers: this.state.answers.with(qi, newAnswer) });
+        }
+
+        submit(e)
+        {
+            e.preventDefault();
+
+            const data = this.state;
+
+            import(Parlaflix.functionUrl(`/student/panel/subscription`))
+            .then(({ receiveTestAnswers }) => receiveTestAnswers(data))
+            //.then(console.log);
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(([ret, jsonDecoded]) =>
+            {
+                if (jsonDecoded.success)
+                    window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl(`/student/panel/subscription/${this.state.subscription_id}`);
+            })
+            .catch(Parlaflix.Alerts.pushError("Erro ao enviar respostas!"));
+        }
+
+        connected()
+        {
+            if (this.querySelector(`[name="test-data-json"]`))
+            {
+                const TestDataJson = this.querySelector(`[name="test-data-json"]`).innerText;
+                const testData = JSON.parse(TestDataJson);
+                const answersArray = [];
+
+                for (const quest of testData.questions)
+                    answersArray.push(Array.from({ length: quest.options.length || 0 }).fill(false));
+
+                this.render({ ...this.state, test_data: testData, answers: answersArray });
+            }    
+        }
+    }
+
+    const genPictureUrl = (id, ext) =>
+    {
+        return Parlaflix.Helpers.URLGenerator.generateFileUrl(`/uploads/media/${id}.${ext}`);
+    };
+
+    const doesQuestionHaveMultipleAnswers = (quest) =>
+    {
+        return quest.mulipleAnswers;
+    }
+</script>
+
+<template>
+    <form @submit="submit">
+        <fieldset class="fieldset">
+            <legend>Questões</legend>
+            <ol class="list-decimal pl-8">
+                <li :for="quest, qi in state.test_data.questions">
+                    <div class="whitespace-pre-line mb-2">${quest.text}</div>
+                    <div :if="quest.pictureMediaId" class="mb-2 text-center">
+                        <img src="${genPictureUrl(quest.pictureMediaId, quest.pictureMediaExt)}" class="max-h-[300px] h-auto w-auto"/>
+                    </div>
+                    <div>
+                        <ol class="list-[lower-alpha] pl-4">
+                            <li :for="opt, oi in quest.options">
+                                <label>
+                                    <input type="${doesQuestionHaveMultipleAnswers(quest) ? 'checkbox' : 'radio'}" name="quest${qi}_options_input" :required="!doesQuestionHaveMultipleAnswers(quest)" data-qi="${qi}" data-oi="${oi}" @change="buildAnswer" value="${oi}" />
+                                    ${opt.text}
+                                    <img :if="opt.pictureMediaId" src="${genPictureUrl(opt.pictureMediaId, opt.pictureMediaExt)}" class="max-h-[150px] h-auto w-auto"/>
+                                </label>
+                            </li>
+                        </ol>
+                    </div>
+                </li>
+            </ol>
+        </fieldset>
+
+        <div class="mt-2 text-center">
+            <button class="btn" type="submit">Enviar</button>
+        </div>
+    </form>
+</template>

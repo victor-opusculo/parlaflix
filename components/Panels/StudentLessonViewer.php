@@ -4,7 +4,10 @@ namespace VictorOpusculo\Parlaflix\Components\Panels;
 use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
+use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
+use VictorOpusculo\Parlaflix\Lib\Model\Courses\PresenceMethod;
+use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\PComp\Component;
 
 use function VictorOpusculo\PComp\Prelude\component;
@@ -14,6 +17,7 @@ use function VictorOpusculo\PComp\Prelude\text;
 
 class StudentLessonViewer extends Component
 {
+    protected Subscription $subscription;
     protected Lesson $lesson;
     protected bool $isPasswordCorrect = false;
 
@@ -47,12 +51,25 @@ class StudentLessonViewer extends Component
             ),
             
             $this->lesson->passedLiveMeetingDate()
-                ?   tag('fieldset', class: 'fieldset', children:
-                    [
-                        tag('legend', children: text("Marcar presença/visualização")),
-                        component(Label::class, label: 'Pontuação da aula', labelBold: true, children: text($this->lesson->completion_points->unwrapOr(''))),
-                        tag('student-lesson-password-submitter', student_id: $_SESSION['user_id'] ?? 0, lesson_id: $this->lesson->id->unwrapOr(0), iscorrect: $this->isPasswordCorrect ? 1 : 0)
-                    ])
+                ? tag('fieldset', class: 'fieldset', children:
+                [
+                    tag('legend', children: text("Marcar presença/visualização")),
+                    component(Label::class, label: 'Pontuação da aula', labelBold: true, children: text($this->lesson->completion_points->unwrapOr(''))),
+
+                    PresenceMethod::satisfiesPassword($this->lesson->presence_method->unwrapOr(''))
+                        ? tag('student-lesson-password-submitter', student_id: $_SESSION['user_id'] ?? 0, lesson_id: $this->lesson->id->unwrapOr(0), iscorrect: $this->isPasswordCorrect ? 1 : 0)
+                        : null,
+
+                    PresenceMethod::satisfiesTest($this->lesson->presence_method->unwrapOr(''))
+                        ? component(Label::class, label: "Questionário", children:
+                            tag('a', 
+                                class: 'btn', 
+                                href: URLGenerator::generatePageUrl("/student/panel/subscription/fill_test", [ 'lesson_id' => $this->lesson->id->unwrapOr(0), 'back_to_subscription' => $this->subscription->id->unwrapOr(0) ]),
+                                children: text("Preencher")
+                            )
+                        )
+                        : null
+                ])
                 : null
             
         ];

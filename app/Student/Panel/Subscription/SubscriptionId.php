@@ -197,7 +197,7 @@ final class SubscriptionId extends Component
                             isset($this->loadedLesson) 
                                 ? [
                                     tag('h2', children: text("{$this->loadedLesson->index->unwrapOr(0)}. {$this->loadedLesson->title->unwrapOr('Aula')}")),
-                                    component(StudentLessonViewer::class, lesson: $this->loadedLesson, isPasswordCorrect: $this->isPasswordCorrect)
+                                    component(StudentLessonViewer::class, subscription: $this->subscription, lesson: $this->loadedLesson, isPasswordCorrect: $this->isPasswordCorrect)
                                 ]
                                 : text('Selecione uma aula')
                         ]

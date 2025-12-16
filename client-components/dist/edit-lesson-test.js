@@ -60,8 +60,10 @@ class Lego extends Component {
 ]) : ''),
     h("button", {"type": `button`, "class": `btn mt-2`, "data-qi": `${qi}`, "onclick": this.addOption.bind(this)}, `+ Alternativa`)
 ]),
-    h("div", {"class": `text-right`}, [
-    h("button", {"type": `button`, "class": `btn my-2`, "data-qi": `${qi}`, "onclick": this.removeQuestion.bind(this)}, `× Remover questão`)
+    h("div", {"class": `text-right my-2`}, [
+    h("button", {"type": `button`, "class": `btn min-w-[32px] mr-2`, "data-qi": `${qi}`, "data-direction": `up`, "onclick": this.moveQuestion.bind(this)}, `↑`),
+    h("button", {"type": `button`, "class": `btn min-w-[32px] mr-2`, "data-qi": `${qi}`, "data-direction": `down`, "onclick": this.moveQuestion.bind(this)}, `↓`),
+    h("button", {"type": `button`, "class": `btn mr-2`, "data-qi": `${qi}`, "onclick": this.removeQuestion.bind(this)}, `× Remover questão`)
 ]),
     h("hr", {}, "")
 ]))))
@@ -99,6 +101,44 @@ export default class extends Lego
         changeField(e)
         {
             this.render({ ...this.state, [e.target.name]: e.target.value });
+        }
+
+        moveQuestion(e)
+        {
+            const questIndex = Number.parseInt(e.target.dataset.qi);
+            const dir = e.target.dataset.direction;
+
+            switch (dir)
+            {
+                case "up":
+                    if (questIndex <= 0) 
+                        break;
+
+                    {
+                        const prevQuestion = this.state.test_data.questions.at(questIndex - 1);
+                        const thisQuestion = this.state.test_data.questions.at(questIndex);
+                        const newQuestions = this.state.test_data.questions
+                            .with(questIndex - 1, thisQuestion)
+                            .with(questIndex, prevQuestion);
+
+                        this.render({ ...this.state, test_data: { ...this.state.test_data, questions: newQuestions } });
+                    }
+                    break;
+                case "down":
+                    if (questIndex >= this.state.test_data.questions.length - 1) 
+                        break;
+
+                    {
+                        const nextQuestion = this.state.test_data.questions.at(questIndex + 1);
+                        const thisQuestion = this.state.test_data.questions.at(questIndex);
+                        const newQuestions = this.state.test_data.questions
+                            .with(questIndex + 1, thisQuestion)
+                            .with(questIndex, nextQuestion);
+
+                        this.render({ ...this.state, test_data: { ...this.state.test_data, questions: newQuestions } });
+                    }
+                    break;
+            }
         }
 
         addQuestion()
@@ -249,11 +289,45 @@ export default class extends Lego
             }
         }
 
+        checkQuestionsHaveCorrectAnswers()
+        {
+            return this.state.test_data.questions.every(quest => quest.options.find(opt => opt.isCorrect) ? true : false);
+        }
+
+        checkQuestionsHaveOptions()
+        {
+            return this.state.test_data.questions.every(quest => quest.options.length > 0);
+        }
+
         submit(e)
         {
             e.preventDefault();
 
-            console.log(this.state.test_data);
+            if (!this.checkQuestionsHaveOptions())
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "Todas as questões devem ter pelo menos uma alternativa!");
+                return false;
+            }
+
+            if (!this.checkQuestionsHaveCorrectAnswers())
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "Todas as questões devem ter pelo menos uma alternativa definida como correta!");
+                return false;
+            }
+
+
+            const { searchPictureEnabled, ...data} = this.state;
+            const courseId = this.getAttribute('course_id') || 0;
+
+            import(Parlaflix.functionUrl(`/admin/panel/courses/${courseId}`))
+            .then(({ saveTestSkel }) => saveTestSkel(data))
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(([ret, jsonDecoded]) =>
+            {
+                if (jsonDecoded.newId)
+                    window.location.reload();
+            })
+            .catch(Parlaflix.Alerts.pushError("Erro ao salvar questionário!"));
         }
 
         connected()

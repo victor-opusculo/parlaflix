@@ -1,13 +1,17 @@
 <?php
 namespace VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId;
 
+use VictorOpusculo\Parlaflix\Components\Data\DataGrid;
 use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
 use VictorOpusculo\Parlaflix\Components\Panels\ConvenienceLinks;
+use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
+use VictorOpusculo\Parlaflix\Lib\Helpers\LessonTests;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
+use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestCompleted;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
 use VictorOpusculo\PComp\HeadManager;
@@ -31,6 +35,18 @@ final class View extends Component
             ->setCryptKey(Connection::getCryptoKey())
             ->getSingleWithProgressData($conn)
             ->fetchCourse($conn);
+
+            $testsCompleted = new TestCompleted([ 'subscription_id' => $this->subscriptionId ])->getAllFromSubscription($conn);
+            array_walk($testsCompleted, fn(TestCompleted $t) => $t->fetchLesson($conn));
+
+            $this->testsCompleted = array_map(fn(TestCompleted $test) =>
+            [
+                'ID' => $test->id->unwrapOr("***"),
+                'Aula' => $test->lesson->title->unwrapOr("***"),
+                'Nota' => number_format(LessonTests::calculateGrade(LessonTests::calculateCorrectAnswers($test->buildStructure())), 1, ",", ".") . "%",
+                'Resultado' => $test->is_approved->unwrapOr("***") ? "Aprovado" : "Reprovado"
+            ], $testsCompleted);
+
         }
         catch (\Exception $e)
         {
@@ -39,6 +55,7 @@ final class View extends Component
     }
 
     protected $subscriptionId;
+    private array $testsCompleted = [];
     private ?Subscription $subscription = null;
 
     protected function markup(): Component|array|null
@@ -71,6 +88,17 @@ final class View extends Component
                 ? tag('a', class: 'btn', href: URLGenerator::generateScriptUrl('certificate/generate_admin.php', [ 'subscription_id' => $this->subscription->id->unwrapOr(0) ]), children: text('Gerar')  )
                 : text('Não disponível')  
             ),
+
+            tag('fieldset', class: 'fieldset', children:
+            [
+                tag('legend', children: text("Respostas de questionários")),
+                component(DataGrid::class, 
+                    dataRows: $this->testsCompleted, 
+                    rudButtonsFunctionParamName: 'ID',
+                    detailsButtonURL: URLGenerator::generatePageUrl("/admin/panel/tests_completed/{param}"),
+                    deleteButtonURL: URLGenerator::generatePageUrl("/admin/panel/tests_completed/{param}/delete")
+                )
+            ]),
 
             component(ConvenienceLinks::class, deleteUrl: URLGenerator::generatePageUrl("/admin/panel/subscriptions/{$this->subscription->id->unwrapOr(0)}/delete"))
 

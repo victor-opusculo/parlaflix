@@ -11,6 +11,9 @@ class Lego extends Component {
     h("ext-label", {"label": `Visível (publicado)`, "reverse": `1`}, [
     h("input", {"type": `checkbox`, "name": `is_visible`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_visible))}, "")
 ]),
+    h("ext-label", {"label": `Externo (realizado em outra plataforma)`, "reverse": `1`}, [
+    h("input", {"type": `checkbox`, "name": `is_external`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_external))}, "")
+]),
     h("ext-label", {"label": `Exclusivo para associados`, "reverse": `1`}, [
     h("input", {"type": `checkbox`, "name": `members_only`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.members_only))}, "")
 ]),
@@ -73,6 +76,7 @@ export default class extends Lego
             certificate_text: '',
             min_points_required: 1,
             is_visible: 1,
+            is_external: 0,
             members_only: 0,
             
             categoriesAvailable: [],

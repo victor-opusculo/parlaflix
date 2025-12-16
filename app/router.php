@@ -40,7 +40,10 @@ return
             [
                 '/' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\Home::class,
                 '/new_survey' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\NewSurvey::class,
-                '/[subscriptionId]' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\SubscriptionId::class
+                '/fill_test' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\FillTest::class,
+                '/[subscriptionId]' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\SubscriptionId::class,
+                '__functions' => \VictorOpusculo\Parlaflix\App\Student\Panel\Subscription\Functions::class,
+
             ]
         ]
     ],
@@ -106,7 +109,8 @@ return
                             '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Surveys\SurveyId\View::class,
                             '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Surveys\SurveyId\Delete::class
                         ]
-                    ]
+                    ],
+                    '__functions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Functions::class
                 ]
             ],
             '/lessons' => fn() =>
@@ -148,6 +152,15 @@ return
                 [
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId\View::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Subscriptions\SubscriptionId\Delete::class
+                ]
+            ],
+            '/tests_completed' => fn() =>
+            [
+                '/[testCompletedId]' => fn () => 
+                [
+                    '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId\Home::class,
+                    '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId\Delete::class,
+                    '__functions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestcompletedId\Functions::class
                 ]
             ],
             '/settings' => fn() =>

@@ -19,6 +19,44 @@
             this.render({ ...this.state, [e.target.name]: e.target.value });
         }
 
+        moveQuestion(e)
+        {
+            const questIndex = Number.parseInt(e.target.dataset.qi);
+            const dir = e.target.dataset.direction;
+
+            switch (dir)
+            {
+                case "up":
+                    if (questIndex <= 0) 
+                        break;
+
+                    {
+                        const prevQuestion = this.state.test_data.questions.at(questIndex - 1);
+                        const thisQuestion = this.state.test_data.questions.at(questIndex);
+                        const newQuestions = this.state.test_data.questions
+                            .with(questIndex - 1, thisQuestion)
+                            .with(questIndex, prevQuestion);
+
+                        this.render({ ...this.state, test_data: { ...this.state.test_data, questions: newQuestions } });
+                    }
+                    break;
+                case "down":
+                    if (questIndex >= this.state.test_data.questions.length - 1) 
+                        break;
+
+                    {
+                        const nextQuestion = this.state.test_data.questions.at(questIndex + 1);
+                        const thisQuestion = this.state.test_data.questions.at(questIndex);
+                        const newQuestions = this.state.test_data.questions
+                            .with(questIndex + 1, thisQuestion)
+                            .with(questIndex, nextQuestion);
+
+                        this.render({ ...this.state, test_data: { ...this.state.test_data, questions: newQuestions } });
+                    }
+                    break;
+            }
+        }
+
         addQuestion()
         {
             this.render({ ...this.state, test_data: { ...this.state.test_data, questions: [ ...this.state.test_data.questions, this.questionDefault() ] }})
@@ -167,11 +205,45 @@
             }
         }
 
+        checkQuestionsHaveCorrectAnswers()
+        {
+            return this.state.test_data.questions.every(quest => quest.options.find(opt => opt.isCorrect) ? true : false);
+        }
+
+        checkQuestionsHaveOptions()
+        {
+            return this.state.test_data.questions.every(quest => quest.options.length > 0);
+        }
+
         submit(e)
         {
             e.preventDefault();
 
-            console.log(this.state.test_data);
+            if (!this.checkQuestionsHaveOptions())
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "Todas as questões devem ter pelo menos uma alternativa!");
+                return false;
+            }
+
+            if (!this.checkQuestionsHaveCorrectAnswers())
+            {
+                Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, "Todas as questões devem ter pelo menos uma alternativa definida como correta!");
+                return false;
+            }
+
+
+            const { searchPictureEnabled, ...data} = this.state;
+            const courseId = this.getAttribute('course_id') || 0;
+
+            import(Parlaflix.functionUrl(`/admin/panel/courses/${courseId}`))
+            .then(({ saveTestSkel }) => saveTestSkel(data))
+            .then(Parlaflix.Alerts.pushFromJsonResult)
+            .then(([ret, jsonDecoded]) =>
+            {
+                if (jsonDecoded.newId)
+                    window.location.reload();
+            })
+            .catch(Parlaflix.Alerts.pushError("Erro ao salvar questionário!"));
         }
 
         connected()
@@ -288,8 +360,10 @@
                         <button type="button" class="btn mt-2" data-qi="${qi}" @click="addOption">+ Alternativa</button>
                     </div>
 
-                    <div class="text-right">
-                        <button type="button" class="btn my-2" data-qi="${qi}" @click="removeQuestion">&times; Remover questão</button>
+                    <div class="text-right my-2">
+                        <button type="button" class="btn min-w-[32px] mr-2" data-qi="${qi}" data-direction="up" @click="moveQuestion">&#8593;</button>
+                        <button type="button" class="btn min-w-[32px] mr-2" data-qi="${qi}" data-direction="down" @click="moveQuestion">&#8595;</button>
+                        <button type="button" class="btn mr-2" data-qi="${qi}" @click="removeQuestion">&times; Remover questão</button>
                     </div>
                     <hr/>
                 </li>

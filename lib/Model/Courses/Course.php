@@ -21,6 +21,7 @@ use VOpus\PhpOrm\Option;
  * @property Option<string> certificate_text
  * @property Option<int> min_points_required
  * @property Option<int> is_visible
+ * @property Option<int> is_external 
  * @property Option<int> members_only
  * @property Option<string> created_at
  */
@@ -38,6 +39,7 @@ class Course extends DataEntity
             'certificate_text' => new DataProperty('certificate_text', fn() => null, DataProperty::MYSQL_STRING),
             'min_points_required' => new DataProperty('min_points_required', fn() => 0, DataProperty::MYSQL_INT),
             'is_visible' => new DataProperty('is_visible', fn() => 0, DataProperty::MYSQL_INT),
+            'is_external' => new DataProperty('is_external', fn() => 0, DataProperty::MYSQL_INT),
             'members_only' => new DataProperty('members_only', fn() => 0, DataProperty::MYSQL_INT),
             'created_at' => new DataProperty('created_at', fn() => gmdate('Y-m-d H:i:s'), DataProperty::MYSQL_STRING)
         ];
