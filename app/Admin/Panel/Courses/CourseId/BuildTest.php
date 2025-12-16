@@ -5,6 +5,7 @@ use VictorOpusculo\Parlaflix\Components\Data\DateTimeTranslator;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
 use VictorOpusculo\Parlaflix\Components\Panels\DeleteEntityForm;
+use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
@@ -29,6 +30,9 @@ final class BuildTest extends Component
         $conn = Connection::get();
         try
         {
+            if (isset($_GET['lesson_id']))
+                $this->lessonId = $_GET['lesson_id'] ?? 0;
+
             if (!Connection::isId($this->lessonId))
                 throw new \Exception('ID inválido!');
 
@@ -60,9 +64,18 @@ final class BuildTest extends Component
         return isset($this->lesson) ? component(DefaultPageFrame::class, children:
         [
             tag('h1', children: text('Editar questionário')),
-            component(Label::class, label: 'Curso', children: text($this->lesson->course->name->unwrapOr('***'))),
-            component(Label::class, label: 'Aula', children: text($this->lesson->title->unwrapOr('***'))),
-            component(Label::class, label: 'Nº da aula', children: text($this->lesson->index->unwrapOr('***'))),
+            component(Label::class, labelBold: true, label: 'Curso', children: text($this->lesson->course->name->unwrapOr('***'))),
+            component(Label::class, labelBold: true, label: 'Aula', children: text($this->lesson->title->unwrapOr('***'))),
+            component(Label::class, labelBold: true, label: 'Nº da aula', children: text($this->lesson->index->unwrapOr('***'))),
+
+            tag('edit-lesson-test',
+                ...['test-data-json' => Data::hscq($this->skel?->test_data->unwrapOrElse(fn() => TestData::empty()->toJson()) ?? TestData::empty()->toJson() )],
+                id: $this->skel?->id->unwrapOr('') ?? '',
+                lesson_id: $this->lesson?->id->unwrapOr('') ?? '',
+                name: Data::hscq($this->skel?->name->unwrapOr('') ?? "Questionário novo"),
+                presentation_text: Data::hscq($this->skel?->presentation_text->unwrapOr('') ?? ""),
+                min_percent_for_approval: Data::hscq($this->skel?->min_percent_for_approval->unwrapOr(TestSkel::DEFAULT_MIN_PERCENT) ?? TestSkel::DEFAULT_MIN_PERCENT),
+            )
         ]) 
         :
         null;

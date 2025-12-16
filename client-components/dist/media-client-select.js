@@ -30,7 +30,7 @@ export default class extends Lego
     {
         state =
         {
-            set_id_field_callback: _ => void 0,
+            set_id_field_callback: id => this.dispatchEvent(new CustomEvent("set-id-field-callback", { detail: { id } })),
             search_keywords: '',
             page_num: 1,
             total_items: 0,

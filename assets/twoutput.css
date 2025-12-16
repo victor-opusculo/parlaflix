@@ -680,6 +680,12 @@
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
+  .w-\[32px\] {
+    width: 32px;
+  }
+  .w-\[64px\] {
+    width: 64px;
+  }
   .w-\[100px\] {
     width: 100px;
   }
@@ -716,6 +722,9 @@
   .w-screen {
     width: 100vw;
   }
+  .max-w-\[64px\] {
+    max-width: 64px;
+  }
   .max-w-\[300px\] {
     max-width: 300px;
   }
@@ -734,14 +743,14 @@
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
   }
+  .min-w-\[64px\] {
+    min-width: 64px;
+  }
   .min-w-\[300px\] {
     min-width: 300px;
   }
   .min-w-\[32px\] {
     min-width: 32px;
-  }
-  .min-w-\[64px\] {
-    min-width: 64px;
   }
   .min-w-\[350px\] {
     min-width: 350px;
@@ -787,6 +796,9 @@
   }
   .resize {
     resize: both;
+  }
+  .list-\[lower-alpha\] {
+    list-style-type: lower-alpha;
   }
   .list-decimal {
     list-style-type: decimal;

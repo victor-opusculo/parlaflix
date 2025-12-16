@@ -22,6 +22,11 @@ class TestData
         return $new;
     }
 
+    public static function empty() : self
+    {
+        return new self();
+    }
+
     public static function buildFromJson(string $json) : self
     {
         $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);

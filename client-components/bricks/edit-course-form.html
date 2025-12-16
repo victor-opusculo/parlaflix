@@ -82,7 +82,7 @@
             this.fetchMedias(this.state.searchMedia.pageNum, query);
         },*/
 
-        setMediaId(id)
+        setMediaId({ detail: { id } })
         {
             this.render({ ...this.state, cover_image_media_id: Number(id) });
         }
@@ -247,7 +247,7 @@
         </ext-label>
         <media-client-select
             :if="state.searchMedia.enabled"
-            :set_id_field_callback="this.setMediaId.bind(this)"
+            @set-id-field-callback="setMediaId"
         ></media-client-select>
         <ext-label label="Carga horária">
             <input type="number" min="0.01" step="0.01" name="hours" :value="state.hours" @input="changeField" />

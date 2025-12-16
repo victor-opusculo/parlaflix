@@ -1,6 +1,88 @@
 
-<script>
-    export default class extends Lego
+// Lego version 1.10.1
+import { h, Component } from 'https://cdn.jsdelivr.net/npm/@polight/lego@1.10.1/dist/lego.min.js'
+
+class Lego extends Component {
+  useShadowDOM = true
+
+  get vdom() {
+    return ({ state }) => [
+  h("form", {"onsubmit": this.submit.bind(this)}, [
+    h("fieldset", {"class": `fieldset`}, [
+    h("legend", {}, `Informações do Questionário`),
+    h("ext-label", {"label": `Nome`},     h("input", {"type": `text`, "name": `name`, "value": state.name, "onchange": this.changeField.bind(this), "required": ``}, "")),
+    h("ext-label", {"label": `Texto introdutório`, "linebreak": ``}, [
+    h("textarea", {"class": `w-full`, "type": `text`, "name": `presentation_text`, "value": state.presentation_text, "onchange": this.changeField.bind(this), "rows": `5`}, "")
+]),
+    h("ext-label", {"label": `Nota mínima para aprovação`}, [
+    h("input", {"type": `number`, "min": `0`, "max": `100`, "step": `1`, "name": `min_percent_for_approval`, "value": state.min_percent_for_approval, "onchange": this.changeField.bind(this), "required": ``}, ""),
+` %`
+])
+]),
+    h("fieldset", {"class": `fieldset`}, [
+    h("legend", {}, `Questões`),
+    ((Array.isArray(state.test_data.questions)) ? h("ol", {"class": `list-decimal pl-8`}, [
+    ((state.test_data.questions).map((quest, qi) => (h("li", {"class": `list-item`}, [
+    h("ext-label", {"label": `Enunciado`, "linebreak": ``}, [
+    h("textarea", {"data-qfield": `text`, "data-qi": `${qi}`, "value": quest.text, "rows": `5`, "class": `w-full`, "onchange": this.mutateQuestion.bind(this), "required": ``}, "")
+]),
+    h("div", {"class": `ml-2`}, [
+    h("label", {}, [
+`Imagem anexa (opcional):
+                            `,
+    h("input", {"type": `number`, "min": `1`, "step": `1`, "onchange": this.mutateQuestion.bind(this), "value": quest.pictureMediaId || ''}, "")
+]),
+    h("button", {"type": `button`, "class": `btn ml-2`, "data-qi": `${qi}`, "onclick": this.searchPictureQuestion.bind(this)}, `Procurar`),
+    ((this.isSearchingPicture(['question', qi])) ? h("media-client-select", {"@set-id-field-callback": this.searchPictureQuestionCallback.bind(this)}, "") : '')
+]),
+    h("div", {"class": `mt-4`}, [
+    h("span", {"class": `font-bold block`}, `Alternativas:`),
+    ((Array.isArray(quest.options)) ? h("ol", {"class": `list-[lower-alpha] pl-4`}, [
+    ((quest.options).map((opt, oi) => (h("li", {"class": `list-item mb-2`}, [
+    h("div", {"class": `flex flex-row`}, [
+    h("input", {"class": `grow mr-2`, "type": `text`, "data-qi": `${qi}`, "data-oi": `${oi}`, "data-ofield": `text`, "value": opt.text, "onchange": this.mutateOption.bind(this)}, ""),
+    h("button", {"type": `button`, "class": `shrink btn mr-2`, "data-qi": `${qi}`, "data-oi": `${oi}`, "onclick": this.searchPictureOption.bind(this)}, `Figura: ${opt.pictureMediaId || 'Nenhuma'}`),
+    h("label", {"class": `shrink mr-2`}, [
+    h("input", {"type": `checkbox`, "data-qi": `${qi}`, "data-oi": `${oi}`, "checked": opt.isCorrect, "onchange": this.mutateCorrectAnswers.bind(this)}, ""),
+` correta
+                                    `
+]),
+    h("button", {"type": `button`, "class": `shrink btn min-w-[32px]`, "data-qi": `${qi}`, "data-oi": `${oi}`, "onclick": this.removeOption.bind(this)}, `×`),
+    h("dialog", {"id": `quest${qi}_opt${oi}_search_picdiag`, "class": `md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800 m-auto`}, [
+    ((this.isSearchingPicture(['option', qi, oi])) ? h("media-client-select", {"@set-id-field-callback": this.searchPictureOptionCallback.bind(this)}, "") : ''),
+    h("div", {"class": `text-center mt-4`}, [
+    h("button", {"type": `button`, "class": `btn mr-2`, "data-qi": `${qi}`, "data-oi": `${oi}`, "onclick": this.closeSearchPicDiag.bind(this)}, `Fechar`),
+    h("button", {"type": `button`, "class": `btn`, "data-qi": `${qi}`, "data-oi": `${oi}`, "data-preset": ``, "onclick": this.closeSearchPicDiag.bind(this)}, `Nenhuma`)
+])
+])
+])
+]))))
+]) : ''),
+    h("button", {"type": `button`, "class": `btn mt-2`, "data-qi": `${qi}`, "onclick": this.addOption.bind(this)}, `+ Alternativa`)
+]),
+    h("div", {"class": `text-right`}, [
+    h("button", {"type": `button`, "class": `btn my-2`, "data-qi": `${qi}`, "onclick": this.removeQuestion.bind(this)}, `× Remover questão`)
+]),
+    h("hr", {}, "")
+]))))
+]) : ''),
+    h("button", {"class": `btn my-2`, "type": `button`, "onclick": this.addQuestion.bind(this)}, `+ Adicionar questão`)
+]),
+    h("div", {"class": `text-center mt-4`}, [
+    h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
+])
+])]
+  }
+  get vstyle() {
+    return ({ state }) => h('style', {}, `
+    @import "./assets/twoutput.css"
+    
+  `)}
+}
+
+
+
+export default class extends Lego
     {
         state =
         {
@@ -229,78 +311,3 @@
             this.setOptionPicture(qi, oi, id || null);
         }
     }
-</script>
-
-<template>
-    <form @submit="submit">
-        <fieldset class="fieldset">
-            <legend>Informações do Questionário</legend>
-            <ext-label label="Nome"><input type="text" name="name" :value="state.name" @change="changeField" required/></ext-label>
-            <ext-label label="Texto introdutório" linebreak>
-                <textarea class="w-full" type="text" name="presentation_text" :value="state.presentation_text" @change="changeField" rows="5"></textarea>
-            </ext-label>
-            <ext-label label="Nota mínima para aprovação"><input type="number" min="0" max="100" step="1" name="min_percent_for_approval" :value="state.min_percent_for_approval" @change="changeField" required/> %</ext-label>
-        </fieldset>
-        <fieldset class="fieldset">
-            <legend>Questões</legend>
-            <ol :if="Array.isArray(state.test_data.questions)" class="list-decimal pl-8">
-                <li :for="quest, qi in state.test_data.questions" class="list-item">
-                    <ext-label label="Enunciado" linebreak>
-                        <textarea data-qfield="text" data-qi="${qi}" :value="quest.text" rows="5" class="w-full" @change="mutateQuestion" required></textarea>
-                    </ext-label>
-
-                    <div class="ml-2">
-                        <label>Imagem anexa (opcional):
-                            <input type="number" min="1" step="1" @change="mutateQuestion" :value="quest.pictureMediaId || ''"/>
-                        </label>
-                        <button type="button" class="btn ml-2" data-qi="${qi}" @click="searchPictureQuestion">Procurar</button>
-                        <media-client-select 
-                            :if="this.isSearchingPicture(['question', qi])"
-                            @set-id-field-callback="searchPictureQuestionCallback"
-                        ></media-client-select>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <span class="font-bold block">Alternativas:</span> 
-                        <ol :if="Array.isArray(quest.options)" class="list-[lower-alpha] pl-4">
-                            <li :for="opt, oi in quest.options" class="list-item mb-2">
-                                <div class="flex flex-row">
-                                    <input class="grow mr-2" type="text" data-qi="${qi}" data-oi="${oi}" data-ofield="text" :value="opt.text" @change="mutateOption" />
-                                    <button type="button" class="shrink btn mr-2" data-qi="${qi}" data-oi="${oi}" @click="searchPictureOption">Figura: ${opt.pictureMediaId || 'Nenhuma'}</button>
-                                    <label class="shrink mr-2">
-                                        <input type="checkbox" data-qi="${qi}" data-oi="${oi}" :checked="opt.isCorrect" @change="mutateCorrectAnswers"/> correta
-                                    </label>
-                                    <button type="button" class="shrink btn min-w-[32px]" data-qi="${qi}" data-oi="${oi}" @click="removeOption">&times;</button>
-
-                                    <dialog id="quest${qi}_opt${oi}_search_picdiag" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800 m-auto">
-                                        <media-client-select 
-                                            :if="this.isSearchingPicture(['option', qi, oi])" 
-                                            @set-id-field-callback="searchPictureOptionCallback"
-                                        ></media-client-select>
-                                        <div class="text-center mt-4">
-                                            <button type="button" class="btn mr-2" data-qi="${qi}" data-oi="${oi}" @click="closeSearchPicDiag">Fechar</button>
-                                            <button type="button" class="btn" data-qi="${qi}" data-oi="${oi}" data-preset="" @click="closeSearchPicDiag">Nenhuma</button>
-                                        </div>
-                                    </dialog>
-                                </div>
-                            </li>
-                        </ol>
-                        <button type="button" class="btn mt-2" data-qi="${qi}" @click="addOption">+ Alternativa</button>
-                    </div>
-
-                    <div class="text-right">
-                        <button type="button" class="btn my-2" data-qi="${qi}" @click="removeQuestion">&times; Remover questão</button>
-                    </div>
-                    <hr/>
-                </li>
-            </ol>
-
-            <button class="btn my-2" type="button" @click="addQuestion">+ Adicionar questão</button>
-        </fieldset>
-
-        <div class="text-center mt-4">
-            <button type="submit" class="btn">Salvar</button>
-        </div>
-    </form>
-    
-</template>

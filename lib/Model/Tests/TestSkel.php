@@ -34,13 +34,14 @@ class TestSkel extends DataEntity
             'name' => new DataProperty('name', fn() => "Teste sem nome", DataProperty::MYSQL_STRING, false),
             'presentation_text' => new DataProperty('presentation_text', fn() => null, DataProperty::MYSQL_STRING, false),
             'test_data' => new DataProperty('test_data', fn() => "{}", DataProperty::MYSQL_STRING, false),
-            'min_percent_for_approval' => new DataProperty('min_percent_for_approval', fn() => null, DataProperty::MYSQL_INT, false)
+            'min_percent_for_approval' => new DataProperty('min_percent_for_approval', fn() => self::DEFAULT_MIN_PERCENT, DataProperty::MYSQL_INT, false)
         ];
 
         parent::__construct($initialValues);
     }
 
     public const DB_TABLE = 'tests_skel';
+    public const DEFAULT_MIN_PERCENT = 70;
 
     protected string $databaseTable = self::DB_TABLE;
     protected string $formFieldPrefixName = self::DB_TABLE;

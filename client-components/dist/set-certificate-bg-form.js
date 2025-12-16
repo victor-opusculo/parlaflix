@@ -12,12 +12,12 @@ class Lego extends Component {
     h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `media_id`, "value": state.media_id, "oninput": this.changeField.bind(this)}, ""),
     h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtnClicked.bind(this)}, `Procurar`)
 ]),
-    ((state.searchMedia) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
+    ((state.searchMedia) ? h("media-client-select", {"@set-id-field-callback": this.setMediaId.bind(this)}, "") : ''),
     h("ext-label", {"label": `Imagem do verso (Mídia ID)`}, [
     h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `media2_id`, "value": state.media2_id, "oninput": this.changeField.bind(this)}, ""),
     h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtn2Clicked.bind(this)}, `Procurar`)
 ]),
-    ((state.searchMedia2) ? h("media-client-select", {"set_id_field_callback": this.setMedia2Id.bind(this)}, "") : ''),
+    ((state.searchMedia2) ? h("media-client-select", {"@set-id-field-callback": this.setMedia2Id.bind(this)}, "") : ''),
     h("div", {"class": `text-center mt-4`}, [
     h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
 ])
@@ -57,12 +57,12 @@ export default class extends Lego
             this.render({ ...this.state, searchMedia2: !this.state.searchMedia2 });
         }
 
-        setMediaId(id)
+        setMediaId({ detail: { id } })
         {
             this.render({ ...this.state, media_id: Number(id) });
         }
 
-        setMedia2Id(id)
+        setMedia2Id({ detail: { id } })
         {
             this.render({ ...this.state, media2_id: Number(id) });
         }

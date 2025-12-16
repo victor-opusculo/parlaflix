@@ -24,7 +24,7 @@ class Lego extends Component {
     h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `cover_image_media_id`, "value": state.cover_image_media_id, "oninput": this.changeField.bind(this)}, ""),
     h("button", {"type": `button`, "class": `btn ml-2`, "onclick": this.searchBtnClicked.bind(this)}, `Procurar`)
 ]),
-    ((state.searchMedia.enabled) ? h("media-client-select", {"set_id_field_callback": this.setMediaId.bind(this)}, "") : ''),
+    ((state.searchMedia.enabled) ? h("media-client-select", {"@set-id-field-callback": this.setMediaId.bind(this)}, "") : ''),
     h("ext-label", {"label": `Carga horária`}, [
     h("input", {"type": `number`, "min": `0.01`, "step": `0.01`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
 ]),
@@ -143,7 +143,7 @@ export default class extends Lego
             this.fetchMedias(this.state.searchMedia.pageNum, query);
         },*/
 
-        setMediaId(id)
+        setMediaId({ detail: { id } })
         {
             this.render({ ...this.state, cover_image_media_id: Number(id) });
         }

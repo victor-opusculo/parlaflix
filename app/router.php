@@ -97,6 +97,7 @@ return
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Delete::class,
                     '/view_subscriptions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\ViewSubscriptions::class,
                     '/send_email' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\SendEmail::class,
+                    '/build_test' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\BuildTest::class,
                     '/surveys' => fn() =>
                     [
                         '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId\Surveys\Home::class,

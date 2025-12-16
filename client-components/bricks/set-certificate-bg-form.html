@@ -24,12 +24,12 @@
             this.render({ ...this.state, searchMedia2: !this.state.searchMedia2 });
         }
 
-        setMediaId(id)
+        setMediaId({ detail: { id } })
         {
             this.render({ ...this.state, media_id: Number(id) });
         }
 
-        setMedia2Id(id)
+        setMedia2Id({ detail: { id } })
         {
             this.render({ ...this.state, media2_id: Number(id) });
         }
@@ -62,14 +62,14 @@
             <button type="button" class="btn ml-2" @click="searchBtnClicked">Procurar</button>
         </ext-label>
         <media-client-select :if="state.searchMedia"
-            :set_id_field_callback="this.setMediaId.bind(this)"
+            @set-id-field-callback="setMediaId"
         ></media-client-select>
         <ext-label label="Imagem do verso (Mídia ID)">
             <input type="number" min="1" step="1" name="media2_id" :value="state.media2_id" @input="changeField" />
             <button type="button" class="btn ml-2" @click="searchBtn2Clicked">Procurar</button>
         </ext-label>
         <media-client-select :if="state.searchMedia2"
-            :set_id_field_callback="this.setMedia2Id.bind(this)"
+            @set-id-field-callback="setMedia2Id"
         ></media-client-select>
         <div class="text-center mt-4">
             <button type="submit" class="btn">Salvar</button>

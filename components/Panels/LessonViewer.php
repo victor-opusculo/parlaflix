@@ -6,6 +6,7 @@ use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Lib\Helpers\Data;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Lesson;
+use VictorOpusculo\Parlaflix\Lib\Model\Courses\PresenceMethod;
 use VictorOpusculo\PComp\Component;
 
 use function VictorOpusculo\PComp\Prelude\component;
@@ -43,7 +44,23 @@ class LessonViewer extends Component
             component(Label::class, label: 'Vídeo', labelBold: true, lineBreak: true, children:
                 component(VideoRenderer::class, videoHost: $this->lesson->video_host->unwrapOr(''), videoCode: $this->lesson->video_url->unwrapOr(''))
             ),
-            component(Label::class, label: 'Senha para verificação de presença', labelBold: true, children: text($this->lesson->completion_password->unwrapOr(''))),
+
+            $this->lesson->presence_method->unwrapOr('') === PresenceMethod::Password->value
+            || $this->lesson->presence_method->unwrapOr('') === PresenceMethod::TestAndPassword->value
+                ? component(Label::class, label: 'Senha para verificação de presença', labelBold: true, children: text($this->lesson->completion_password->unwrapOr('')))
+                : null,
+
+            $this->lesson->presence_method->unwrapOr('') === PresenceMethod::Test->value
+            || $this->lesson->presence_method->unwrapOr('') === PresenceMethod::TestAndPassword->value
+                ? component(Label::class, label: 'Questionário', labelBold: true, children:
+                    tag('a', 
+                        class: 'btn', 
+                        href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->lesson->course_id->unwrapOr(0)}/build_test", [ 'lesson_id' => $this->lesson->id->unwrapOr(0) ]),
+                        children: text("Editar")
+                    )
+                )
+                : null,
+                
             component(Label::class, label: 'Pontos de verificação de presença', labelBold: true, children: text($this->lesson->completion_points->unwrapOr(''))),
             
             tag('a', class: 'btn my-4', href: URLGenerator::generatePageUrl("/admin/panel/lessons/{$this->lesson->id->unwrapOr(0)}/presences"), children: text("Ver presenças"))

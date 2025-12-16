@@ -9,8 +9,6 @@ class TestQuestion
     /** @var TestQuestionOption[] */
     public array $options = [];
 
-    /** @var int[] */
-    public array $correctAnswers = [];
 
     /** @var int[] */
     public ?array $studentAnswers = null;
@@ -19,7 +17,6 @@ class TestQuestion
     public function setPictureId(?int $id) : self { $this->pictureMediaId = $id; return $this; }
 
     public function setOptions(array $opts) : self { $this->options = $opts; return $this; }
-    public function setAnswers(array $answ) : self { $this->correctAnswers = $answ; return $this; }
     public function setStudentAnswers(?array $answ) : self { $this->studentAnswers = $answ; return $this; }
 
     public static function build(array $questionFromJson) : self
@@ -28,7 +25,6 @@ class TestQuestion
         $new->pictureMediaId = $questionFromJson['pictureMediaId'] ?? null;
         $new->text = $questionFromJson['text'] ?? "";
         $new->options = array_map([TestQuestionOption::class, 'build'], $questionFromJson['options'] ?? []);
-        $new->correctAnswers = $questionFromJson['correctAnswers'] ?? [];
 
         return $new;
     }

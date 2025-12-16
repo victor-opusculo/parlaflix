@@ -10,6 +10,9 @@ customElements.define('edit-course-form', editCourseForm)
 import studentChangeDataForm from './student-change-data-form.js'
 customElements.define('student-change-data-form', studentChangeDataForm)
 
+import editLessonTest from './edit-lesson-test.js'
+customElements.define('edit-lesson-test', editLessonTest)
+
 import loadingSpinner from './loading-spinner.js'
 customElements.define('loading-spinner', loadingSpinner)
 
