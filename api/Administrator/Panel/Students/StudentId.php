@@ -29,6 +29,7 @@ final class StudentId extends RouteHandler
             $data = $_POST['data'] ?? [];
 
             $isMember = $data['students:is_abel_member'] ?? false;
+            $newPassword = $data['students:newPassword'] ?? "";
 
             $student = (new Student([ 'id' => $this->studentId ]))
             ->setCryptKey(Connection::getCryptoKey())
@@ -38,10 +39,14 @@ final class StudentId extends RouteHandler
 
             $student->is_abel_member = $isMember ? 1 : 0;
 
+            if ($newPassword)
+                $student->hashPassword($newPassword);
+
             $result = $student->save($conn);
             if ($result['affectedRows'] > 0)
             {
                 LogEngine::writeLog("Estudante alterado. Estudante ID: " . $this->studentId);
+                LogEngine::writeLog("Estudante alterado. Senha nova.");
                 $this->json([ 'success' => "Estudante alterado com sucesso!" ]);
             }
             else

@@ -42,6 +42,9 @@ class Lego extends Component {
     ((Parlaflix.Time.TimeZones).map((dtz) => (h("option", {"value": dtz, "selected": dtz === state.timezone}, `${dtz}`))))
 ])
 ]),
+    h("ext-label", {"label": `Alterar senha`}, [
+    h("input", {"type": `text`, "placeholder": `Deixe em branco para manter a senha atual`, "maxlength": `140`, "class": `w-full`, "name": `newPassword`, "value": state.newPassword, "oninput": this.changeField.bind(this)}, "")
+]),
     h("div", {"class": `text-center`}, [
     h("button", {"type": `submit`, "class": `btn`}, `Salvar`)
 ])
@@ -67,7 +70,9 @@ export default class extends Lego
             institution: null,
             instrole: null,
             timezone: null,
-            is_abel_member: false
+            is_abel_member: false,
+
+            newPassword: ""
         }
 
         changeField(e)
@@ -102,6 +107,6 @@ export default class extends Lego
 
         connected()
         {
-            this.state = { ...this.state, is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) };
+            this.render({  is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) });
         }
     }

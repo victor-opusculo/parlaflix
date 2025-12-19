@@ -83,7 +83,7 @@ class TestCompleted extends DataEntity
         ->addWhereClause(" AND {$this->getWhereQueryColumnName('is_approved')} = 1 ")
         ->addValues('ii', [ $this->subscription_id->unwrap(), $this->lesson_id->unwrap() ]);
 
-        $dr = $selector->run($conn, SqlSelector::RETURN_FIRST_COLUMN_VALUE);
+        $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
 
         if (isset($dr))
             return $this->newInstanceFromDataRowFromDatabase($dr);

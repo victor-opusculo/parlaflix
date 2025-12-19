@@ -80,6 +80,6 @@ export default class extends Lego
             const filledStar =  Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_filled.png');
             const emptyStar = Parlaflix.Helpers.URLGenerator.generateFileUrl('assets/pics/star_empty.png');
 
-            this.state = { ...this.state, filledStar, emptyStar };
+            this.render({ filledStar, emptyStar });
         }
     }

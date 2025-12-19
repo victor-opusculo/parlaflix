@@ -5,7 +5,8 @@ Parlaflix.Alerts ??=
     {
         error: 'error',
         info: 'info',
-        success: 'success'
+        success: 'success',
+        question: 'question'
     },
 
     prepareButton(...btnValue)
@@ -21,11 +22,11 @@ Parlaflix.Alerts ??=
         {
             if (btnValue.includes(btn.value))
             {
-                btn.className = 'btn';
+                btn.classList.remove('hidden');
                 btn.focus();
             }
             else
-                btn.className = 'hidden btn';
+                btn.classList.add('hidden');
         }
     },
 
@@ -53,6 +54,11 @@ Parlaflix.Alerts ??=
                     title.innerText = "Sucesso!";
                     messageEl.innerText = message;
                     this.prepareButton('ok');
+                    break;
+                case this.types.question: 
+                    title.innerText = "Pergunta";
+                    messageEl.innerText = message;
+                    this.prepareButton('yes', 'no');
                     break;
             }
 
@@ -83,6 +89,7 @@ Parlaflix.Alerts ??=
     },
 };
 
+Parlaflix.Alerts.push = Parlaflix.Alerts.push.bind(Parlaflix.Alerts);
 Parlaflix.Alerts.prepareButton = Parlaflix.Alerts.prepareButton.bind(Parlaflix.Alerts);
 Parlaflix.Alerts.pushFromJsonResult = Parlaflix.Alerts.pushFromJsonResult.bind(Parlaflix.Alerts);
 Parlaflix.Alerts.pushError = Parlaflix.Alerts.pushError.bind(Parlaflix.Alerts);

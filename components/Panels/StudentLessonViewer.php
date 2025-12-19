@@ -12,6 +12,7 @@ use VictorOpusculo\PComp\Component;
 
 use function VictorOpusculo\PComp\Prelude\component;
 use function VictorOpusculo\PComp\Prelude\rawText;
+use function VictorOpusculo\PComp\Prelude\scTag;
 use function VictorOpusculo\PComp\Prelude\tag;
 use function VictorOpusculo\PComp\Prelude\text;
 
@@ -20,6 +21,7 @@ class StudentLessonViewer extends Component
     protected Subscription $subscription;
     protected Lesson $lesson;
     protected bool $isPasswordCorrect = false;
+    protected bool $isTestCorrect = false;
 
     protected function markup(): Component|array|null
     {
@@ -62,13 +64,23 @@ class StudentLessonViewer extends Component
 
                     PresenceMethod::satisfiesTest($this->lesson->presence_method->unwrapOr(''))
                         ? component(Label::class, label: "Questionário", children:
-                            tag('a', 
+                            !$this->isTestCorrect
+                            ? tag('a', 
                                 class: 'btn', 
                                 href: URLGenerator::generatePageUrl("/student/panel/subscription/fill_test", [ 'lesson_id' => $this->lesson->id->unwrapOr(0), 'back_to_subscription' => $this->subscription->id->unwrapOr(0) ]),
                                 children: text("Preencher")
-                            )
+                              )
+                            : tag('span', class: 'italic', children:
+                            [
+                                scTag('img', class: 'inline mr-2', src: URLGenerator::generateFileUrl("/assets/pics/check.png"), width: 32),
+                                text("O questionário foi concluído e você foi aprovado!")
+                            ])
                         )
-                        : null
+                        : null,
+
+                    PresenceMethod::satisfiesAuto($this->lesson->presence_method->unwrapOr(''))
+                        ? tag('span', class: 'italic ml-2', children: text("Presença automática, não há necessidade de marcá-la."))
+                        : null,
                 ])
                 : null
             

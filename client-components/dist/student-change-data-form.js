@@ -7,7 +7,7 @@ class Lego extends Component {
 
   get vdom() {
     return ({ state }) => [
-  h("form", {"class": `mx-auto max-w-[700px]`, "onsubmit": this.submit.bind(this)}, [
+  h("form", {"class": `mx-auto max-w-[700px] ${state.darkMode ? 'dark' : ''}`, "onsubmit": this.submit.bind(this)}, [
     h("ext-label", {"label": `Nome completo`}, [
     h("input", {"type": `text`, "required": ``, "class": `w-full`, "maxlength": `140`, "name": `fullname`, "value": state.fullname, "oninput": this.changeField.bind(this)}, "")
 ]),
@@ -53,7 +53,7 @@ class Lego extends Component {
     h("button", {"class": `btn`, "type": `submit`}, `Alterar dados`)
 ])
 ]),
-  h("dialog", {"id": `lgpdTermDialog`, "class": `md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800`}, [
+  h("dialog", {"id": `lgpdTermDialog`, "class": `md:w-[700px] w-screen h-screen m-auto backdrop:bg-gray-700/60 p-4 ${state.darkMode ? 'bg-neutral-800' : 'bg-neutral-100'}`}, [
     h("form", {"id": `lgpdTermForm`, "method": `dialog`}, [
     h("slot", {"id": `${state.slotId}`}, ""),
     h("div", {"class": `text-center my-4`}, [
@@ -88,7 +88,9 @@ export default class extends Lego
             lgpdTermText: '',
             studentid: 0,
             currpassword: '',
-            slotId: ''
+            slotId: '',
+
+            darkMode: false
         }
 
         changeField(e)
@@ -101,7 +103,7 @@ export default class extends Lego
 
         showLgpd()
         {
-            document.getElementById('lgpdTermDialog')?.showModal();
+            this.shadowRoot.getElementById('lgpdTermDialog')?.showModal();
         }
 
         submit(e)
@@ -134,5 +136,14 @@ export default class extends Lego
                 Parlaflix.Alerts.pushFromJsonResult(json);
             })
             .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+        }
+
+        connected()
+        {
+            const document = window.document.documentElement;
+            if (document && document.classList.contains('dark'))
+                this.render({ darkMode: true });
+
+            document.addEventListener('dark-mode-toggle', e => this.render({ darkMode: e.detail.dark ?? false }));
         }
     }

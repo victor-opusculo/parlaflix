@@ -16,41 +16,29 @@ use VictorOpusculo\PComp\Context;
 use VictorOpusculo\PComp\HeadManager;
 
 use function VictorOpusculo\PComp\Prelude\component;
-use function VictorOpusculo\PComp\Prelude\scTag;
 use function VictorOpusculo\PComp\Prelude\tag;
 use function VictorOpusculo\PComp\Prelude\text;
 
-final class Home extends Component
+final class ViewLogs extends Component
 {
     protected function setUp()
     {
-        HeadManager::$title = "Configurações";
-        $conn = Connection::get();
-        try
-        {
-            $sett = (new MainInboxMail)->getSingle($conn);
-            $this->mainEmail = $sett->value->unwrapOr("");
-        }
-        catch (\Exception $e)
-        {
-        }
-    }
+        HeadManager::$title = "Ver logs do sistema";
 
-    private string $mainEmail = "";
+        $logs = __DIR__ . "/../../../../log";
+        $files = glob("$logs/*");
+
+        $this->files = array_map(fn(string $fp) => basename($fp), $files);
+    }
+    
+    private array $files = [];
 
     protected function markup(): Component|array|null
     {
         return component(DefaultPageFrame::class, children:
         [
-            tag('h1', children: text('Configurações')),
-            tag('admin-settings-form', main_inbox_mail: Data::hscq($this->mainEmail)),
-
-            scTag('hr'),
-
-            tag('div', class: "mt-4", children:
-            [
-                tag('a', class: 'btn', href: URLGenerator::generatePageUrl("/admin/panel/settings/view_logs"), children: text("Logs do sistema"))
-            ])
+            tag('h1', children: text("Ver logs do sistema")),
+            tag('admin-log-view', children: tag('span', name: 'files', children: text(implode("|", $this->files))))
         ]);
     }
 }

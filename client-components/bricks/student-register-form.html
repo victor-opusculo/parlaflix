@@ -17,7 +17,9 @@
             lgpdtermversion: 0,
             lgpdTermText: '',
             slotId: '',
-            waiting: false
+            waiting: false,
+
+            darkMode: false,
         }
 
         fieldChanged(e)
@@ -37,7 +39,7 @@
 
         showLgpd()
         {
-            document.getElementById('lgpdTermDialog')?.showModal();
+            this.shadowRoot.getElementById('lgpdTermDialog')?.showModal();
         }
 
         submit(e)
@@ -66,11 +68,20 @@
             .finally(() => this.render({ ...this.state, waiting: false }));
             
         }
+
+        connected()
+        {
+            const document = window.document.documentElement;
+            if (document && document.classList.contains('dark'))
+                this.render({ darkMode: true });
+
+            document.addEventListener('dark-mode-toggle', e => this.render({ darkMode: e.detail.dark ?? false }));
+        }
     }
 </script>
 
 <template>
-    <form class="mx-auto max-w-[700px]" @submit="submit">
+    <form class="mx-auto max-w-[700px] ${state.darkMode ? 'dark' : ''}" @submit="submit">
         <ext-label label="Nome completo">
             <input type="text" required class="w-full" maxlength="140" name="fullname" :value="state.fullname" @input="fieldChanged"/>
         </ext-label>
@@ -111,7 +122,7 @@
             <button class="btn" type="submit" :disabled="state.waiting">${state.waiting ? 'Aguarde...' : 'Concluir'}</button>
         </div>
     </form>
-    <dialog id="lgpdTermDialog" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 bg-neutral-100 dark:bg-neutral-800 m-auto">
+    <dialog id="lgpdTermDialog" class="md:w-[700px] w-screen h-screen backdrop:bg-gray-700/60 p-4 m-auto ${state.darkMode ? 'bg-neutral-800' : 'bg-neutral-100'}">
         <form id="lgpdTermForm" method="dialog">
             <slot id="${state.slotId}"></slot>
             <div class="text-center my-4">

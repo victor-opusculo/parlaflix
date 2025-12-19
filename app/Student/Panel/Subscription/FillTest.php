@@ -53,6 +53,11 @@ final class FillTest extends Component
             if ($maxed)
                 throw new Exception("Você atingiu o limite de tentativas!");
 
+            $approvedTest = new TestCompleted([ 'subscription_id' => $subscription->id->unwrap(), 'lesson_id' => $this->lesson->id->unwrap() ])->getStudentApprovedTest($conn);
+
+            if ($approvedTest)
+                throw new Exception("Você já foi aprovado neste questionário");
+
             $this->skel = new TestSkel([ 'lesson_id' => $this->lessonId ])
             ->getFromLessonId($conn);
 

@@ -43,7 +43,8 @@ final class GetCourses extends RouteHandler
                     "hours" => (float)$c->hours->unwrapOr(0), 
                     "imageUrl" => $imageUrl, 
                     "subscriptionNumber" => $c->getOtherProperties()->subscriptionNumber ?? 0,
-                    "surveyPoints" => $c->surveysAveragePoints
+                    "surveyPoints" => $c->surveysAveragePoints,
+                    "isExternal" => $c->is_external->unwrapOr(0) ? true : false
                 ];
 
             }, $courses);

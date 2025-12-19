@@ -54,10 +54,10 @@ final class ExportCourseSubscriptions extends RouteHandler
             $header = array_keys($procData[0]);
 
             fwrite($output, "\xEF\xBB\xBF" . PHP_EOL);
-            fputcsv($output, $header, ";");
+            fputcsv($output, $header, ";", '"', "\\");
 
             foreach($procData as $row)
-                fputcsv($output, $row, ";");
+                fputcsv($output, $row, ";", '"', "\\");
 
             fclose($output);
         }

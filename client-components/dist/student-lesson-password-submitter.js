@@ -8,12 +8,19 @@ class Lego extends Component {
   get vdom() {
     return ({ state }) => [
   ((!state.is_correct) ? h("form", {"onsubmit": this.submit.bind(this)}, [
-    h("ext-label", {"label": `Senha desta aula`}, [
+    h("ext-label", {"label": `Senha`}, [
     h("input", {"type": `text`, "name": `given_password`, "value": state.given_password, "oninput": this.changeField.bind(this), "required": ``, "class": `w-[calc(100%-120px)] mr-2`, "maxlength": `100`}, ""),
     h("button", {"type": `submit`, "class": `btn`}, `Validar`)
 ])
 ]) : ''),
-  ((state.is_correct) ? h("p", {}, `Você já marcou presença/visualização desta aula.`) : '')]
+  ((state.is_correct) ? h("ext-label", {"label": `Senha`}, [
+    h("span", {"class": `italic`}, [
+    h("img", {"class": `inline mr-2`, "src": `${Parlaflix.Helpers.URLGenerator.generateFileUrl('/assets/pics/check.png')}`, "width": `32`}, ""),
+`
+            Você já inseriu a senha correta
+        `
+])
+]) : '')]
   }
   get vstyle() {
     return ({ state }) => h('style', {}, `
@@ -66,6 +73,6 @@ export default class extends Lego
 
         connected()
         {
-            this.state.is_correct = Boolean(Number(this.getAttribute('iscorrect') ?? 0));
+            this.render({ ...this.state, is_correct: Boolean(Number(this.getAttribute('iscorrect') ?? 0)) });
         }
     }

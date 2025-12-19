@@ -160,12 +160,14 @@ return
                 [
                     '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId\Home::class,
                     '/delete' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId\Delete::class,
-                    '__functions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestcompletedId\Functions::class
+                    '__functions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId\Functions::class
                 ]
             ],
             '/settings' => fn() =>
             [
-                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Settings\Home::class
+                '/' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Settings\Home::class,
+                '/view_logs' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Settings\ViewLogs::class,
+                '__functions' => \VictorOpusculo\Parlaflix\App\Admin\Panel\Settings\Functions::class
             ]
         ]
     ],

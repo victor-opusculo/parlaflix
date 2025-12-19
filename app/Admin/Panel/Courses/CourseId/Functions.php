@@ -2,6 +2,7 @@
 namespace VictorOpusculo\Parlaflix\App\Admin\Panel\Courses\CourseId;
 
 use Exception;
+use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestData;
 use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestSkel;
@@ -36,6 +37,9 @@ class Functions extends BaseFunctionsClass
                     ->fillPropertiesFromDataRow($dataFull)
                     ->save($conn);
 
+                    if ($updateResult['affectedRows'] > 0)
+                        LogEngine::writeLog("Questionário editado: Aula ID: $lessonId");
+
                     return $updateResult['affectedRows'] > 0 
                         ? [ 'success' => "Questionário salvo com sucesso!" ] 
                         : [ 'info' => 'Nenhum dado alterado' ];
@@ -45,6 +49,12 @@ class Functions extends BaseFunctionsClass
                     $insertResult = new TestSkel([ 'lesson_id' => $lessonId ])
                     ->fillPropertiesFromDataRow($dataFull)
                     ->save($conn);
+
+                    if ($insertResult['newId'])
+                        LogEngine::writeLog("Questionário criado: Novo ID: {$insertResult['newId']}");
+                    else
+                        LogEngine::writeErrorLog("Ao criar questionário: ID novo não retornado.");
+
 
                     return $insertResult['newId'] 
                         ? [ 'success' => "Questionário criado com sucesso!", 'newId' => $insertResult['newId'] ]
@@ -56,6 +66,7 @@ class Functions extends BaseFunctionsClass
         }
         catch (Exception $e)
         {
+            LogEngine::writeErrorLog("Ao criar questionário: {$e->getMessage()}");
             return [ 'error' => $e->getMessage() ];
         }
     }

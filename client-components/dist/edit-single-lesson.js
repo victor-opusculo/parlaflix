@@ -50,9 +50,13 @@ class Lego extends Component {
     h("input", {"type": `radio`, "data-fieldn": ``, "data-fieldname": `presence_method`, "name": `presence_method_idx${state.index}`, "value": `${presenceMethod.test}`, "required": ``, "checked": state.presence_method === presenceMethod.test, "oninput": this.changeField.bind(this)}, ""),
 ` Questionário`
 ]),
-    h("label", {}, [
+    h("label", {"class": `mr-4`}, [
     h("input", {"type": `radio`, "data-fieldname": `presence_method`, "name": `presence_method_idx${state.index}`, "value": `${presenceMethod.test_and_password}`, "required": ``, "checked": state.presence_method === presenceMethod.test_and_password, "oninput": this.changeField.bind(this)}, ""),
 ` Senha e Questionário`
+]),
+    h("label", {}, [
+    h("input", {"type": `radio`, "data-fieldname": `presence_method`, "name": `presence_method_idx${state.index}`, "value": `${presenceMethod.auto}`, "required": ``, "checked": state.presence_method === presenceMethod.auto, "oninput": this.changeField.bind(this)}, ""),
+` Automático`
 ])
 ]),
     ((state.presence_method === presenceMethod.password || state.presence_method === presenceMethod.test_and_password) ? h("ext-label", {"label": `Senha para atestar visualização da aula`}, [
@@ -62,7 +66,7 @@ class Lego extends Component {
     h("strong", {"class": `italic`}, `Cadastre o questionário pela página de visualização deste curso`)
 ]) : ''),
     h("ext-label", {"label": `Pontos pela visualização da aula`}, [
-    h("input", {"type": `number`, "min": `1`, "step": `1`, "data-fieldname": `completion_points`, "value": state.completion_points, "required": ``, "oninput": this.changeField.bind(this)}, "")
+    h("input", {"type": `number`, "min": `0`, "step": `1`, "data-fieldname": `completion_points`, "value": state.completion_points, "required": ``, "oninput": this.changeField.bind(this)}, "")
 ]),
     h("div", {"class": `text-right`}, [
     h("button", {"type": `button`, "class": `btn min-w-[64px] mr-2`, "onclick": this.moveUpClicked.bind(this), "data-lesson-index": `${state.index}`}, `↑`),
@@ -85,6 +89,8 @@ const presenceMethod =
         password: 'password',
         test: 'test',
         test_and_password: 'test_and_password',
+        auto: 'auto',
+        never: 'never',
 
         default()
         {
@@ -177,12 +183,25 @@ const presenceMethod =
 
         connected()
         {
-            const date = this.getAttribute('live_meeting_datetime') ? new Date(this.getAttribute('live_meeting_datetime')) : new Date();
-            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, 0)}-${String(date.getDate()).padStart(2, 0)}`;
-            const timeStr = `${String(date.getHours()).padStart(2, 0)}:${String(date.getMinutes()).padStart(2, 0)}:${String(date.getSeconds()).padStart(2, 0)}`;
+            const date = this.getAttribute('live_meeting_datetime') ? new Date(this.getAttribute('live_meeting_datetime')) : null;
+            const dateStr = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, 0)}-${String(date.getDate()).padStart(2, 0)}` : '';
+            const timeStr = date ? `${String(date.getHours()).padStart(2, 0)}:${String(date.getMinutes()).padStart(2, 0)}:${String(date.getSeconds()).padStart(2, 0)}` : '';
 
-            this.state.liveMeetingDate = dateStr;
-            this.state.liveMeetingTime = timeStr;
-            this.state.presence_method = this.getAttribute('presence_method') && this.getAttribute('presence_method') === "$default" ? presenceMethod.default() : this.getAttribute('presence_method');
+            const newPresenceMethod = this.state.presence_method
+                ? (this.state.presence_method === "$default"
+                    ? presenceMethod.default()
+                    : this.state.presence_method
+                )
+                : (this.getAttribute('presence_method') === "$default" || !this.getAttribute('presence_method')
+                    ? presenceMethod.default()
+                    : this.getAttribute('presence_method')
+                );
+
+            this.render({
+                liveMeetingDate: dateStr,
+                liveMeetingTime: timeStr,
+                presence_method: newPresenceMethod
+            });
+            document.querySelector('edit-course-form').mutateLesson(this.state.index, 'presence_method', newPresenceMethod);
         }
     }

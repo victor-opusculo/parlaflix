@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use mysqli;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
+use VictorOpusculo\Parlaflix\Lib\Model\Courses\PresenceMethod;
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
@@ -30,7 +31,8 @@ class Subscription extends DataEntity
     protected string $formFieldPrefixName = 'student_subscriptions';
     protected array $primaryKeys = ['id'];
 
-    public ?Course $course;
+    public private(set) ?Course $course;
+    public private(set) ?Student $student;
 
     public function idBelongsToStudent(mysqli $conn) : bool
     {
@@ -50,13 +52,13 @@ class Subscription extends DataEntity
         $selector = $this->getGetSingleSqlSelector()
         ->addSelectColumn("AES_DECRYPT(students.full_name, '{$this->encryptionKey}') AS studentName")
         ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
-        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id");
+        ->addJoin(self::getProgressDataJoinTableSql());
 
         $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
 
@@ -92,13 +94,13 @@ class Subscription extends DataEntity
         ->clearWhereClauses()
         ->addSelectColumn("AES_DECRYPT(students.full_name, '{$this->encryptionKey}') AS studentName")
         ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
-        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id");
+        ->addJoin(self::getProgressDataJoinTableSql());
 
         if (mb_strlen($searchKeywords) > 3)
         {
@@ -161,15 +163,17 @@ class Subscription extends DataEntity
 
     public function getMultipleFromStudent(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, ?int $categoryId = null, ?bool $includeOnlyMembers = false) : array
     {
+        print_r($this->id->unwrapOr(0));
+
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
         ->clearWhereClauses()
-        ->addSelectColumn("COUNT(DISTINCT course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN courses_categories_join ON courses_categories_join.course_id = {$this->databaseTable}.course_id")
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)))
         ->addWhereClause("{$this->getWhereQueryColumnName('student_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0));
 
@@ -237,11 +241,11 @@ class Subscription extends DataEntity
         ->clearWhereClauses()
         ->addSelectColumn("AES_DECRYPT(students.full_name, '{$this->encryptionKey}') AS studentName")
         ->addSelectColumn("AES_DECRYPT(students.email, '{$this->encryptionKey}') AS studentEmail")
-        ->addSelectColumn("COUNT(DISTINCT course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
+        ->addJoin(self::getProgressDataJoinTableSql())
         ->addWhereClause("{$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->course_id->getValue()->unwrapOr(0));
 
@@ -280,15 +284,14 @@ class Subscription extends DataEntity
     {
         $selector = $this->getGetSingleSqlSelector()
         ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
-        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
+        ->addJoin(self::getProgressDataJoinTableSql())
         ->addWhereClause("AND {$this->getWhereQueryColumnName('student_id')} = ?")
-        ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
-        ->setGroupBy("{$this->databaseTable}.id");
+        ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0));
 
         $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
         if (isset($dr))
@@ -303,12 +306,12 @@ class Subscription extends DataEntity
         ->clearValues()
         ->clearWhereClauses()
         ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
-        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
+        ->addJoin(self::getProgressDataJoinTableSql())
         ->addWhereClause($this->getWhereQueryColumnName('student_id') . ' = ?')
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
         ->setGroupBy("{$this->databaseTable}.id");
@@ -348,12 +351,14 @@ class Subscription extends DataEntity
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
         ->clearWhereClauses()
+        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addSelectColumn("SUM(course_lessons.completion_points) AS maxPoints")
-        ->addSelectColumn("sum(if(student_lesson_passwords.is_correct = 1, course_lessons.completion_points, 0)) as studentPoints")
+        ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
+        ->addJoin(self::getProgressDataJoinTableSql())
         ->addWhereClause("{$this->getWhereQueryColumnName('student_id')} = ?")
         ->addWhereClause(" AND {$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
@@ -374,11 +379,11 @@ class Subscription extends DataEntity
         ->addSelectColumn("AES_DECRYPT(students.full_name, '{$this->encryptionKey}') AS studentName")
         ->addSelectColumn("AES_DECRYPT(students.email, '{$this->encryptionKey}') AS studentEmail")
         ->addSelectColumn("JSON_UNQUOTE(JSON_EXTRACT(Convert(AES_DECRYPT(students.other_data, '{$this->encryptionKey}') using 'utf8mb4'), '$.telephone')) AS studentTelephone")
-        ->addSelectColumn("COUNT(DISTINCT course_lessons.id) AS lessonCount")
-        ->addSelectColumn("count(DISTINCT student_lesson_passwords.id) as doneLessonCount")
+        ->addSelectColumn("COUNT(course_lessons.id) AS lessonCount")
+        ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin("LEFT JOIN student_lesson_passwords ON student_lesson_passwords.lesson_id = course_lessons.id AND student_lesson_passwords.student_id = {$this->databaseTable}.student_id")
+        ->addJoin(self::getProgressDataJoinTableSql())
         ->addWhereClause("{$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->course_id->getValue()->unwrapOr(0));
 
@@ -411,7 +416,45 @@ class Subscription extends DataEntity
         {
             $this->course = (new Course([ 'id' => $this->properties->course_id->getValue()->unwrapOr(0) ]))->getSingle($conn);
         }
-        catch (Exception $e) {}
+        catch (Exception) {}
         return $this;
+    }
+
+    public function fetchStudent(mysqli $conn) : self
+    {
+        try
+        {
+            $this->student = (new Student([ 'id' => $this->properties->student_id->getValue()->unwrapOr(0) ]))
+            ->setCryptKey($this->encryptionKey)
+            ->getSingle($conn);
+        }
+        catch (Exception) {}
+        return $this;
+    }
+
+    private static function getProgressDataJoinTableSql() : string
+    {
+        $passwordPresenceMethods = PresenceMethod::sqlListPassword();
+        $testPresenceMethods = PresenceMethod::sqlListTest();
+        $neverPresenceMethod = PresenceMethod::sqlListNever();
+
+        return <<<SQL
+        left join
+            (
+                select 
+                ss.course_id cid,
+                cl.id clid, 
+                cl.completion_points,
+                if(cl.presence_method in ($passwordPresenceMethods), sum(slp.is_correct) >= 1, 1) as pass_correct, 
+                if(cl.presence_method in ($testPresenceMethods), sum(tc.is_approved) >= 1, 1) as test_correct, 
+                if(cl.presence_method in ($neverPresenceMethod), 0, 1) as auto_correct
+                from student_subscriptions ss 
+                inner join course_lessons cl on cl.course_id = ss.course_id 
+                left join student_lesson_passwords slp on slp.lesson_id = cl.id
+                left join tests_completed tc on tc.lesson_id  = cl.id
+                group by cl.id
+                having pass_correct and test_correct and auto_correct
+            ) as lessons_results on lessons_results.clid = course_lessons.id 
+        SQL;
     }
 }

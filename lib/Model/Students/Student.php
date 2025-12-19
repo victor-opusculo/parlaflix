@@ -12,6 +12,17 @@ use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\Option;
 use VOpus\PhpOrm\SqlSelector;
 
+/**
+ * @property Option<int> id
+ * @property Option<string> email
+ * @property Option<string> full_name
+ * @property Option<object{telephone:Option<string>,institution:Option<string>,instRole:Option<string>}> other_data
+ * @property Option<string> password_hash
+ * @property Option<string> timezone
+ * @property Option<int> is_abel_member
+ * @property Option<int> lgpd_term_version
+ * @property Option<string> lgpd_term
+ */
 class Student extends DataEntity
 {
     public function __construct(?array $initialValues = null)

@@ -7,6 +7,9 @@ customElements.define('edit-category-form', editCategoryForm)
 import clientPaginator from './client-paginator.js'
 customElements.define('client-paginator', clientPaginator)
 
+import unsubscribeCourse from './unsubscribe-course.js'
+customElements.define('unsubscribe-course', unsubscribeCourse)
+
 import deleteEntityForm from './delete-entity-form.js'
 customElements.define('delete-entity-form', deleteEntityForm)
 
@@ -63,6 +66,9 @@ customElements.define('student-register-form', studentRegisterForm)
 
 import studentRecoverPassword from './student-recover-password.js'
 customElements.define('student-recover-password', studentRecoverPassword)
+
+import adminLogView from './admin-log-view.js'
+customElements.define('admin-log-view', adminLogView)
 
 import adminChangeDataForm from './admin-change-data-form.js'
 customElements.define('admin-change-data-form', adminChangeDataForm)

@@ -2,6 +2,7 @@
 namespace VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId;
 
 use Exception;
+use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestCompleted;
 use VictorOpusculo\PComp\Rpc\BaseFunctionsClass;
@@ -26,12 +27,19 @@ final class Functions extends BaseFunctionsClass
             $result = $test->delete($conn);
 
             if ($result['affectedRows'] > 0)
+            {
+                LogEngine::writeLog("Questionário respondido excluído. ID: $id");
                 return [ 'success' => "Teste respondido excluído com sucesso!" ];
+            }
             else
+            {
+                LogEngine::writeErrorLog("Ao excluir questionário respondido de ID: $id");
                 return [ 'error' => "Erro ao excluir o teste" ];
+            }
         }
         catch (Exception $e)
         {
+            LogEngine::writeErrorLog("Ao excluir questionário respondido de ID: $id | {$e->getMessage()}");
             return [ 'error' => $e->getMessage() ];
         }
     }

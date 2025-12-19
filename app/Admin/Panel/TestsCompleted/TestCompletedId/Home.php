@@ -4,6 +4,7 @@ namespace VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestcompletedI
 use Exception;
 use VictorOpusculo\Parlaflix\Components\Label;
 use VictorOpusculo\Parlaflix\Components\Layout\DefaultPageFrame;
+use VictorOpusculo\Parlaflix\Components\Panels\ConvenienceLinks;
 use VictorOpusculo\Parlaflix\Lib\Helpers\LessonTests;
 use VictorOpusculo\Parlaflix\Lib\Helpers\URLGenerator;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
@@ -40,6 +41,9 @@ final class Home extends Component
 
             $this->test->lesson->fetchCourse($conn);
             $this->testStruct = $this->test->buildStructure();
+            $this->test->subscription
+            ->setCryptKey(Connection::getCryptoKey())
+            ->fetchStudent($conn);
         }
         catch (\Exception $e)
         {
@@ -59,6 +63,7 @@ final class Home extends Component
             tag('h1', children: text("Ver questionário respondido")),
 
             component(Label::class, labelBold: true, label: "ID", children: text($this->test->id->unwrapOr("***"))),
+            component(Label::class, labelBold: true, label: "Estudante", children: text($this->test->subscription->student->full_name->unwrapOr("***"))),
             component(Label::class, labelBold: true, label: "Curso", children: 
                 tag('a', class: 'link', href: URLGenerator::generatePageUrl("/admin/panel/courses/{$this->test->lesson->course_id->unwrapOr(0)}"), children:
                     text($this->test->lesson->course->name->unwrapOr("***"))
@@ -105,7 +110,9 @@ final class Home extends Component
                         scTag('hr')
                     ])
                 , $this->testStruct->questions)
-            )
+            ),
+
+            component(ConvenienceLinks::class, deleteUrl: URLGenerator::generatePageUrl("/admin/panel/tests_completed/{$this->testCompletedId}/delete"))
         ])
         : null;
     }

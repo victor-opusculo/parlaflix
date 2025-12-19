@@ -8,14 +8,23 @@ class Lego extends Component {
   get vdom() {
     return ({ state }) => [
   h("form", {"onsubmit": this.submit.bind(this)}, [
-    h("ext-label", {"label": `Visível (publicado)`, "reverse": `1`}, [
-    h("input", {"type": `checkbox`, "name": `is_visible`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_visible))}, "")
+    h("label", {"class": `block`}, [
+    h("input", {"type": `checkbox`, "name": `is_visible`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_visible))}, ""),
+`
+            Visível (publicado)
+        `
 ]),
-    h("ext-label", {"label": `Externo (realizado em outra plataforma)`, "reverse": `1`}, [
-    h("input", {"type": `checkbox`, "name": `is_external`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_external))}, "")
+    h("label", {"class": `block`}, [
+    h("input", {"type": `checkbox`, "name": `is_external`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.is_external))}, ""),
+`
+            Externo (realizado em outra plataforma)
+        `
 ]),
-    h("ext-label", {"label": `Exclusivo para associados`, "reverse": `1`}, [
-    h("input", {"type": `checkbox`, "name": `members_only`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.members_only))}, "")
+    h("label", {"class": `block`}, [
+    h("input", {"type": `checkbox`, "name": `members_only`, "value": `1`, "onchange": this.changeField.bind(this), "checked": Boolean(Number(state.members_only))}, ""),
+`
+            Exclusivo para associados
+        `
 ]),
     h("ext-label", {"label": `Nome`}, [
     h("input", {"type": `text`, "class": `w-full`, "name": `name`, "value": state.name, "oninput": this.changeField.bind(this)}, "")
@@ -32,7 +41,7 @@ class Lego extends Component {
     h("input", {"type": `number`, "min": `0.01`, "step": `0.01`, "name": `hours`, "value": state.hours, "oninput": this.changeField.bind(this)}, "")
 ]),
     h("ext-label", {"label": `Texto para o certificado`, "linebreak": `1`}, [
-    h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `450`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)
+    h("textarea", {"class": `w-full`, "name": `certificate_text`, "rows": `4`, "maxlength": `550`, "oninput": this.changeField.bind(this)}, `${state.certificate_text}`)
 ]),
     h("ext-label", {"label": `Mínimo de pontos necessário para aprovação`}, [
     h("input", {"type": `number`, "min": `1`, "step": `1`, "name": `min_points_required`, "value": state.min_points_required, "oninput": this.changeField.bind(this)}, "")
@@ -285,8 +294,11 @@ export default class extends Lego
 
         connected()
         {
-            this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
-            this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
-            this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
+            this.render({ 
+                ...this.state,
+                lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'),
+                categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]'),
+                categoriesIds: JSON.parse(this.getAttribute('categories_ids_json') || '[]')
+            });
         }
     }

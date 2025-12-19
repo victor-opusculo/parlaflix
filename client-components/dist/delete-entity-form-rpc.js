@@ -37,7 +37,7 @@ export default class extends Lego
         {
             e.preventDefault();
 
-            import(Parlaflix.functionUrl(this.state.functionsurl))
+            import(this.state.functionsurl)
             .then(mod => mod[this.state.deletefnname]())
             .then(Parlaflix.Alerts.pushFromJsonResult)
             .then(Parlaflix.Helpers.URLGenerator.goToPageOnSuccess(this.state.gobacktourl, {}))

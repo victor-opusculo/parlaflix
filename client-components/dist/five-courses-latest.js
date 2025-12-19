@@ -27,9 +27,9 @@ class Lego extends Component {
     h("div", {"class": `absolute bottom-0 left-0 right-0 z-10 dark:bg-neutral-700/80 bg-neutral-300/80 p-2 text-center`}, [
     h("div", {}, `${course.name}`),
     h("div", {"class": `text-[0.7rem]`}, `${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}`),
-    h("div", {"class": `stars5Mask w-[100px] h-[24px] inline-block text-center`}, [
+    ((!course.isExternal) ? h("div", {"class": `stars5Mask w-[100px] h-[24px] inline-block text-center`}, [
     h("progress", {"class": `w-full h-full starProgressBar inline`, "min": `0`, "max": `5`, "value": `${course.surveyPoints}`}, "")
-]),
+]) : ''),
     h("div", {"class": `btn`}, `Inscreva-se!`)
 ])
 ]))))
@@ -47,6 +47,8 @@ class Lego extends Component {
 
 export default class extends Lego
     {
+        useShadowDOM = false;
+        
         state =
         {
             data: [],

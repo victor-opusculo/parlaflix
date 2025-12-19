@@ -12,6 +12,7 @@ use VictorOpusculo\Parlaflix\Lib\Model\Courses\Survey;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\StudentLessonPassword;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
+use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestCompleted;
 use VictorOpusculo\PComp\Component;
 use VictorOpusculo\PComp\Context;
 use VictorOpusculo\PComp\HeadManager;
@@ -69,10 +70,13 @@ final class SubscriptionId extends Component
                     $slp = $studentLessPass->getSingleByStudentAndLessonId($conn);
                     $this->isPasswordCorrect = (bool)$slp->is_correct->unwrapOr(0);
                 }
+
+                $studentLessTest = new TestCompleted([ 'lesson_id' => $this->loadedLesson->id->unwrapOr(0), 'subscription_id' => $this->subscription->id->unwrapOr(0) ])->getStudentApprovedTest($conn);
+                $this->isTestCorrect = $studentLessTest ? true : false;
             }
 
-            ScriptManager::registerScript("subscriptionLessonsListScript", 
-                "window.addEventListener('load', function()
+            ScriptManager::registerScript("subscriptionLessonsListScript", <<<JAVASCRIPT
+                window.addEventListener('load', function()
                 {
                     let showLessonList = true;
                     const btn = document.getElementById('subscriptionLessonsListToggleButton');
@@ -95,7 +99,8 @@ final class SubscriptionId extends Component
                             document.getElementById('subscriptionCurrentLesson').classList.remove('hidden');
                         }
                     };
-                })"
+                })
+                JAVASCRIPT
             );
         }
         catch (\Exception $e)
@@ -109,6 +114,7 @@ final class SubscriptionId extends Component
     private ?Subscription $subscription = null;
     private ?Lesson $loadedLesson = null;
     private bool $isPasswordCorrect = false;
+    private bool $isTestCorrect = false;
     private bool $canSendNewSurvey = false;
 
     protected function markup(): Component|array|null
@@ -131,7 +137,7 @@ final class SubscriptionId extends Component
                     component(FlexSeparator::class),
                     tag('span', class: 'text-lg font-bold flex items-center max-w-[300px]', children: text($this->subscription->course->name->unwrapOr("***"))),
                     component(FlexSeparator::class),
-                    tag('div', children:
+                    tag('div', class: 'grow', children:
                     [
                         component(Label::class, labelBold: true, label: "Progresso", children:
                         [
@@ -173,7 +179,13 @@ final class SubscriptionId extends Component
                             ? component(Label::class, labelBold: true, label: "Avaliação", children:
                                 tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/panel/subscription/new_survey', [ 'subscription_id' => $this->subscription->id->unwrapOr(0) ]), children: text('Envie sua opinião sobre este curso!'))
                             )
-                            : null
+                            : null,
+
+                        !$this->approved
+                            ? tag('div', class: 'text-right mt-4', children:
+                                tag('unsubscribe-course', subscription_id: $this->subscription->id->unwrapOr(0))
+                            )
+                            : null,
                     ])
                 ]),
                             
@@ -197,7 +209,7 @@ final class SubscriptionId extends Component
                             isset($this->loadedLesson) 
                                 ? [
                                     tag('h2', children: text("{$this->loadedLesson->index->unwrapOr(0)}. {$this->loadedLesson->title->unwrapOr('Aula')}")),
-                                    component(StudentLessonViewer::class, subscription: $this->subscription, lesson: $this->loadedLesson, isPasswordCorrect: $this->isPasswordCorrect)
+                                    component(StudentLessonViewer::class, subscription: $this->subscription, lesson: $this->loadedLesson, isPasswordCorrect: $this->isPasswordCorrect, isTestCorrect: $this->isTestCorrect)
                                 ]
                                 : text('Selecione uma aula')
                         ]

@@ -114,23 +114,28 @@ final class View extends Component
                     ),
                     component(Label::class, label: 'Carga horária', labelBold: true, children: text(Data::formatCourseHourNumber($this->course->hours->unwrapOr(0)) . "h")),
                     component(Label::class, label: 'Categoria(s)', labelBold: true, children: text(array_reduce($this->course->categoriesJoints, fn($carry, $j) => ($carry ? $carry . ', ' : '') . $j->getOtherProperties()->title, null))),
-                    component(Label::class, label: 'Avaliações', labelBold: true, children:
-                    [
-                        tag('div', class: 'stars5Mask w-[200px] h-[42px] inline-block mr-4', children:
-                            tag('progress', class: 'w-full h-full starProgressBar', min: 0, max: 5, value: $this->surveysAveragePoints)
-                        ),
-                        text('('),
-                        tag('a', class: 'link', href: URLGenerator::generatePageUrl("/info/course/{$this->courseId}/surveys"), children: text("Ver avaliações")),
-                        text(')')
-                    ]),
+                    
+                    !$this->course->is_external->unwrapOr(0)
+                        ? component(Label::class, label: 'Avaliações', labelBold: true, children:
+                        [
+                            tag('div', class: 'stars5Mask w-[200px] h-[42px] inline-block mr-4', children:
+                                tag('progress', class: 'w-full h-full starProgressBar', min: 0, max: 5, value: $this->surveysAveragePoints)
+                            ),
+                            text('('),
+                            tag('a', class: 'link', href: URLGenerator::generatePageUrl("/info/course/{$this->courseId}/surveys"), children: text("Ver avaliações")),
+                            text(')')
+                        ])
+                        : null,
 
-                    $this->studentLoggedIn
-                        ? ($this->studentAlreadySubscribed
-                            ? tag('p', class: 'text-center font-bold p-8', children: text('Você já está inscrito neste curso.'))
-                            : tag('course-subscribe-button', courseid: $this->course->id->unwrap()))
-                        : tag('div', class: 'text-center p-8', children:
-                                tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/login', [ 'back_to' => $_GET['page'] ]), children: text('Inscrever-se'))
-                    ),
+                    $this->course->is_external->unwrapOr(0)
+                        ? tag('p', class: 'text-center font-bold p-8', children: text('Este curso é feito em outra plataforma. Leia a descrição acima.'))
+                        : ($this->studentLoggedIn
+                                ? ($this->studentAlreadySubscribed
+                                    ? tag('p', class: 'text-center font-bold p-8', children: text('Você já está inscrito neste curso.'))
+                                    : tag('course-subscribe-button', courseid: $this->course->id->unwrap()))
+                                : tag('div', class: 'text-center p-8', children:
+                                        tag('a', class: 'btn', href: URLGenerator::generatePageUrl('/student/login', [ 'back_to' => $_GET['page'] ]), children: text('Inscrever-se'))
+                        )),
 
                     tag('div', class: 'text-center', children: 
                         tag('button', class: 'btn', type: 'button', id: 'share', children:

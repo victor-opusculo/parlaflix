@@ -10,7 +10,9 @@
             institution: null,
             instrole: null,
             timezone: null,
-            is_abel_member: false
+            is_abel_member: false,
+
+            newPassword: ""
         }
 
         changeField(e)
@@ -45,7 +47,7 @@
 
         connected()
         {
-            this.state = { ...this.state, is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) };
+            this.render({  is_abel_member: Boolean(Number(this.getAttribute("is_abel_member") ?? 0)) });
         }
     }
 </script>
@@ -77,6 +79,10 @@
             <select @change="changeField" name="timezone">
                 <option :for="dtz in Parlaflix.Time.TimeZones" :value="dtz" :selected="dtz === state.timezone">${dtz}</option>
             </select>
+        </ext-label>
+
+        <ext-label label="Alterar senha">
+            <input type="text" placeholder="Deixe em branco para manter a senha atual" maxlength="140" class="w-full" name="newPassword" :value="state.newPassword" @input="changeField" />
         </ext-label>
         <div class="text-center">
             <button type="submit" class="btn">Salvar</button>

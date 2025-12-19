@@ -5,18 +5,19 @@ require __DIR__ . "/../../../../lib/Middlewares/StudentLoginCheck.php";
 
 use Exception;
 use VictorOpusculo\Parlaflix\Lib\Helpers\LessonTests;
+use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
 use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestCompleted;
 use VictorOpusculo\Parlaflix\Lib\Model\Tests\TestSkel;
 use VictorOpusculo\PComp\Rpc\BaseFunctionsClass;
+use VictorOpusculo\PComp\Rpc\HttpGetMethod;
 use VictorOpusculo\PComp\Rpc\ReturnsContentType;
 
 final class Functions extends BaseFunctionsClass
 {
     protected array $middlewares = ['\VictorOpusculo\Parlaflix\Lib\Middlewares\studentLoginCheck'];
 
-    //#[ReturnsContentType('text/plain', 'text')]
     public function receiveTestAnswers(array $data) : array
     {
         $conn = Connection::get();
@@ -59,13 +60,48 @@ final class Functions extends BaseFunctionsClass
             $gradeFormated = number_format($grade, 1, ",", ".");
             if ($result['newId'])
             {
+                LogEngine::writeLog("Estudante enviou resposta de questionário. Novo ID: {$result['newId']} | Inscrição ID: {$subs->id->unwrapOr("***")}");
                 return [ 'success' => "Questionário enviado! Você foi $userResult com {$gradeFormated}% de acerto." ];
             }
             else
+            {
+                LogEngine::writeErrorLog("Ao enviar resposta de questionário. Novo ID faltando | Inscrição ID: {$subs->id->unwrapOr("***")}");
                 return [ 'error' => "Erro ao salvar o questionário!" ];
+            }
         }
         catch (Exception $e)
         {
+            LogEngine::writeErrorLog("Ao enviar resposta de questionário. Estudante ID: {$_SESSION['user_id']}");
+            return [ 'error' => $e->getMessage() ];
+        }
+    }
+
+    #[HttpGetMethod]
+    public function removeSubscription(array $query) : array
+    {
+        $conn = Connection::get();
+        try
+        {
+            [ 'id' => $subscriptionId ] = $query;
+            $studentId = $_SESSION['user_id'] ?? 0;
+
+            $subs = new Subscription([ 'id' => $subscriptionId, 'student_id' => $studentId ])->getSingleFromStudent($conn);
+
+            $result = $subs->delete($conn);
+            if ($result['affectedRows'] > 0)
+            {
+                LogEngine::writeLog("Inscrição removida pelo próprio estudante. Inscrição ID: $subscriptionId | Estudante ID: $studentId");
+                return [ 'success' => "Inscrição removida com sucesso!" ];
+            }
+            else
+            {
+                LogEngine::writeErrorLog("Ao remover inscrição pelo próprio estudante. Estudante ID: {$_SESSION['user_id']}");
+                return [ 'error' => "Erro ao excluir inscrição" ];
+            }
+        }
+        catch (Exception $e)
+        {
+            LogEngine::writeErrorLog("Ao remover inscrição pelo próprio estudante. Estudante ID: {$_SESSION['user_id']}");
             return [ 'error' => $e->getMessage() ];
         }
     }

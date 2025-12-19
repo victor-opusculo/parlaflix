@@ -221,24 +221,31 @@
 
         connected()
         {
-            this.state.lessons = JSON.parse(this.getAttribute('lessons_json') || '[]');
-            this.state.categoriesAvailable = JSON.parse(this.getAttribute('categories_available_json') || '[]');
-            this.state.categoriesIds = JSON.parse(this.getAttribute('categories_ids_json') || '[]');
+            this.render({ 
+                ...this.state,
+                lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'),
+                categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]'),
+                categoriesIds: JSON.parse(this.getAttribute('categories_ids_json') || '[]')
+            });
         }
     }
 </script>
 
 <template>
     <form @submit="submit">
-        <ext-label label="Visível (publicado)" reverse="1">
+
+        <label class="block">
             <input type="checkbox" name="is_visible" value="1" @change="changeField" :checked="Boolean(Number(state.is_visible))" />
-        </ext-label>
-        <ext-label label="Externo (realizado em outra plataforma)" reverse="1">
+            Visível (publicado)
+        </label>
+        <label class="block">
             <input type="checkbox" name="is_external" value="1" @change="changeField" :checked="Boolean(Number(state.is_external))" />
-        </ext-label>
-        <ext-label label="Exclusivo para associados" reverse="1">
+            Externo (realizado em outra plataforma)
+        </label>
+        <label class="block">
             <input type="checkbox" name="members_only" value="1" @change="changeField" :checked="Boolean(Number(state.members_only))" />
-        </ext-label>
+            Exclusivo para associados
+        </label>
         <ext-label label="Nome">
             <input type="text" class="w-full" name="name" :value="state.name" @input="changeField"/>
         </ext-label>
@@ -257,7 +264,7 @@
             <input type="number" min="0.01" step="0.01" name="hours" :value="state.hours" @input="changeField" />
         </ext-label>
         <ext-label label="Texto para o certificado" linebreak="1">
-            <textarea class="w-full" name="certificate_text" rows="4" maxlength="450" @input="changeField">${state.certificate_text}</textarea>
+            <textarea class="w-full" name="certificate_text" rows="4" maxlength="550" @input="changeField">${state.certificate_text}</textarea>
         </ext-label>
         <ext-label label="Mínimo de pontos necessário para aprovação">
             <input type="number" min="1" step="1" name="min_points_required" :value="state.min_points_required" @input="changeField" />

@@ -692,14 +692,14 @@
   .w-\[1em\] {
     width: 1em;
   }
-  .w-\[8rem\] {
-    width: 8rem;
-  }
   .w-\[200px\] {
     width: 200px;
   }
   .w-\[2rem\] {
     width: 2rem;
+  }
+  .w-\[8rem\] {
+    width: 8rem;
   }
   .w-\[400px\] {
     width: 400px;
@@ -740,14 +740,14 @@
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
   }
+  .min-w-\[64px\] {
+    min-width: 64px;
+  }
   .min-w-\[300px\] {
     min-width: 300px;
   }
   .min-w-\[32px\] {
     min-width: 32px;
-  }
-  .min-w-\[64px\] {
-    min-width: 64px;
   }
   .min-w-\[350px\] {
     min-width: 350px;
@@ -866,6 +866,9 @@
   .bg-neutral-300\/80 {
     background-color: color-mix(in oklab, var(--color-neutral-300) 80%, transparent);
   }
+  .bg-neutral-800 {
+    background-color: var(--color-neutral-800);
+  }
   .bg-violet-200 {
     background-color: var(--color-violet-200);
   }
@@ -922,6 +925,9 @@
   }
   .align-middle {
     vertical-align: middle;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
   }
   .text-base {
     font-size: var(--text-base);

@@ -8,16 +8,19 @@ final class DarkModeToggler extends Component
 {
     protected function setUp()
     {
-        ScriptManager::registerScript('darkModeTogglerScript', 
-            "window.addEventListener('load', () => 
+        ScriptManager::registerScript('darkModeTogglerScript', <<<JAVASCRIPT
+            window.addEventListener('load', () => 
             {
                 document.getElementById('darkModeToggler').checked = window.localStorage.darkMode === '1';
                 document.getElementById('darkModeToggler').onchange = event => 
                 {
                     document.documentElement.classList.toggle('dark'); 
+                    const hasDark = document.documentElement.classList.contains('dark');
+                    document.documentElement.dispatchEvent(new CustomEvent('dark-mode-toggle', { detail: { dark: hasDark }}));
                     window.localStorage.darkMode = event.target.checked ? '1' : '0';
                 };
-            });");
+            });
+        JAVASCRIPT);
     } 
 
     protected function markup(): Component|array|null

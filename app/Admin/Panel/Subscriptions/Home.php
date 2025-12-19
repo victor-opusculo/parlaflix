@@ -74,7 +74,6 @@ final class Home extends Component
                 dataRows: $this->subscriptions,
                 rudButtonsFunctionParamName: 'ID',
                 detailsButtonURL: URLGenerator::generatePageUrl('/admin/panel/subscriptions/{param}'),
-                editButtonURL: URLGenerator::generatePageUrl('/admin/panel/subscriptions/{param}/edit'),
                 deleteButtonURL: URLGenerator::generatePageUrl('/admin/panel/subscriptions/{param}/delete'),
             ),
 

@@ -1,0 +1,30 @@
+
+<script>
+    export default class extends Lego
+    {
+        state = { subscription_id: null }
+
+        submit(e)
+        {
+            Parlaflix.Alerts.push(Parlaflix.Alerts.types.question, "Tem certeza de que deseja remover sua inscrição neste curso? Qualquer dado de presença será removido também.")
+            .then(returnValue => returnValue === 'yes')
+            .then(confirm => 
+            {
+                if (confirm)
+                    import(Parlaflix.functionUrl("/student/panel/subscription"))
+                    .then(({ removeSubscription }) => removeSubscription({ id: this.state.subscription_id }))
+                    .then(Parlaflix.Alerts.pushFromJsonResult)
+                    .then(([ret, jsonDecoded]) =>
+                    {
+                        if (jsonDecoded.success)
+                            window.location.href = Parlaflix.Helpers.URLGenerator.generatePageUrl("/student/panel/subscription/");
+                    })
+                    .catch(Parlaflix.Alerts.pushError("Erro ao solicitar remoção!"));
+            });
+        }
+    }
+</script>
+
+<template>
+    <button type="button" class="btn" @click="submit">Cancelar inscrição</button>
+</template>

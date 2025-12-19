@@ -2,6 +2,8 @@
 <script>
     export default class extends Lego
     {
+        useShadowDOM = false;
+        
         state =
         {
             data: [],
@@ -91,7 +93,8 @@
                 <div class="absolute bottom-0 left-0 right-0 z-10 dark:bg-neutral-700/80 bg-neutral-300/80 p-2 text-center">
                     <div>${course.name}</div>
                     <div class="text-[0.7rem]">${course.hours}h ${course.subscriptionNumber ? ' - ' + course.subscriptionNumber + ' inscritos' : ''}</div> 
-                    <div class="stars5Mask w-[100px] h-[24px] inline-block text-center">
+                    
+                    <div :if="!course.isExternal" class="stars5Mask w-[100px] h-[24px] inline-block text-center">
                         <progress class="w-full h-full starProgressBar inline" min="0" max="5" value="${course.surveyPoints}"></progress>
                     </div>
                     <div class="btn">Inscreva-se!</div> 

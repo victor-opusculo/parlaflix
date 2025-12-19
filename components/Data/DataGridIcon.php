@@ -12,7 +12,7 @@ class DataGridIcon implements DataGridCellValue
 	public ?int $width;
 	public ?int $height;
 	
-	public function __construct(string $filePathFromSystemDir, string $altText, string $title = null, int $width = null, int $height = null)
+	public function __construct(string $filePathFromSystemDir, string $altText, ?string $title = null, ?int $width = null, ?int $height = null)
 	{
 		$this->file = $filePathFromSystemDir;
 		$this->altText = $altText;

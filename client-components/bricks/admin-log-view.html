@@ -1,0 +1,53 @@
+
+<script>
+    export default class extends Lego
+    {
+        state = { selectedItem: null, availableFiles: [], loadedFile: "", darkMode: false }
+        
+        changeFile(e)
+        {
+            this.render({ selectedItem: e.target.value })
+        }
+
+        connected()
+        {
+            const afs = String(this.querySelector("[name='files']")?.innerText);
+            const arrAfs = afs.split("|");
+            this.render({ availableFiles: arrAfs });
+
+            const document = window.document.documentElement;
+            if (document && document.classList.contains('dark'))
+                this.render({ darkMode: true });
+
+            document.addEventListener('dark-mode-toggle', e => this.render({ darkMode: e.detail.dark ?? false }));
+        
+        }
+
+        submit(e)
+        {
+            e.preventDefault();
+
+            if (this.state.selectedItem)
+                import(Parlaflix.functionUrl("/admin/panel/settings"))
+                .then(({ fetchLog }) => fetchLog({ file: this.state.selectedItem }))
+                .then(content => this.render({ loadedFile: content }))
+                .catch(reason => Parlaflix.Alerts.push(Parlaflix.Alerts.types.error, String(reason)));
+        }
+    }
+</script>
+
+<template>
+    <form @submit="submit" class="${state.darkMode ? 'dark' : ''}">
+        <div class="my-2">
+            <label>
+                Arquivo:
+                <select required @change="changeFile">
+                    <option value="">-- Selecione --</option>
+                    <option :for="file in state.availableFiles" value="${file}" :checked="state.selectedItem">${file}</option>
+                </select>
+            </label>
+            <button type="submit" class="btn ml-2">Carregar</button>
+        </div>
+    </form>
+    <textarea readonly :if="state.loadedFile" class="w-full font-mono" rows="20" :value="state.loadedFile"></textarea>
+</template>

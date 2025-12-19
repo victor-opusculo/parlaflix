@@ -39,6 +39,12 @@ final class CourseId extends RouteHandler
             exit;
         }
 
+        if ($course->is_external->unwrapOr(0))
+        {
+            $this->json([ 'error' => 'Este curso é feito em outra plataforma' ], 500);
+            exit;
+        }
+
         $studentGetter = (new Student([ 'id' => $_SESSION['user_id'] ]));
         $studentGetter->setCryptKey(Connection::getCryptoKey());
         $student = $studentGetter->getSingle($conn);

@@ -4,6 +4,8 @@
         password: 'password',
         test: 'test',
         test_and_password: 'test_and_password',
+        auto: 'auto',
+        never: 'never',
 
         default()
         {
@@ -96,13 +98,26 @@
 
         connected()
         {
-            const date = this.getAttribute('live_meeting_datetime') ? new Date(this.getAttribute('live_meeting_datetime')) : new Date();
-            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, 0)}-${String(date.getDate()).padStart(2, 0)}`;
-            const timeStr = `${String(date.getHours()).padStart(2, 0)}:${String(date.getMinutes()).padStart(2, 0)}:${String(date.getSeconds()).padStart(2, 0)}`;
+            const date = this.getAttribute('live_meeting_datetime') ? new Date(this.getAttribute('live_meeting_datetime')) : null;
+            const dateStr = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, 0)}-${String(date.getDate()).padStart(2, 0)}` : '';
+            const timeStr = date ? `${String(date.getHours()).padStart(2, 0)}:${String(date.getMinutes()).padStart(2, 0)}:${String(date.getSeconds()).padStart(2, 0)}` : '';
 
-            this.state.liveMeetingDate = dateStr;
-            this.state.liveMeetingTime = timeStr;
-            this.state.presence_method = this.getAttribute('presence_method') && this.getAttribute('presence_method') === "$default" ? presenceMethod.default() : this.getAttribute('presence_method');
+            const newPresenceMethod = this.state.presence_method
+                ? (this.state.presence_method === "$default"
+                    ? presenceMethod.default()
+                    : this.state.presence_method
+                )
+                : (this.getAttribute('presence_method') === "$default" || !this.getAttribute('presence_method')
+                    ? presenceMethod.default()
+                    : this.getAttribute('presence_method')
+                );
+
+            this.render({
+                liveMeetingDate: dateStr,
+                liveMeetingTime: timeStr,
+                presence_method: newPresenceMethod
+            });
+            document.querySelector('edit-course-form').mutateLesson(this.state.index, 'presence_method', newPresenceMethod);
         }
     }
 </script>
@@ -136,7 +151,8 @@
             Tipo de marcação de presença/conclusão:
             <label class="mr-4"><input type="radio" data-fieldname="presence_method" name="presence_method_idx${state.index}" value="${presenceMethod.password}" required :checked="state.presence_method === presenceMethod.password" @input="changeField" /> Senha</label>
             <label class="mr-4"><input type="radio" data-fieldn data-fieldname="presence_method" name="presence_method_idx${state.index}" value="${presenceMethod.test}" required :checked="state.presence_method === presenceMethod.test" @input="changeField" /> Questionário</label>
-            <label><input type="radio" data-fieldname="presence_method" name="presence_method_idx${state.index}" value="${presenceMethod.test_and_password}" required :checked="state.presence_method === presenceMethod.test_and_password" @input="changeField" /> Senha e Questionário</label>
+            <label class="mr-4"><input type="radio" data-fieldname="presence_method" name="presence_method_idx${state.index}" value="${presenceMethod.test_and_password}" required :checked="state.presence_method === presenceMethod.test_and_password" @input="changeField" /> Senha e Questionário</label>
+            <label><input type="radio" data-fieldname="presence_method" name="presence_method_idx${state.index}" value="${presenceMethod.auto}" required :checked="state.presence_method === presenceMethod.auto" @input="changeField" /> Automático</label>
         </div>
         <ext-label :if="state.presence_method === presenceMethod.password || state.presence_method === presenceMethod.test_and_password" label="Senha para atestar visualização da aula">
             <input type="text" data-fieldname="completion_password" :value="state.completion_password" required @input="changeField" class="w-full" />
@@ -145,7 +161,7 @@
             <strong class="italic">Cadastre o questionário pela página de visualização deste curso</strong>
         </ext-label>
         <ext-label label="Pontos pela visualização da aula">
-            <input type="number" min="1" step="1" data-fieldname="completion_points" :value="state.completion_points" required @input="changeField" />
+            <input type="number" min="0" step="1" data-fieldname="completion_points" :value="state.completion_points" required @input="changeField" />
         </ext-label>
         <div class="text-right">
             <button type="button" class="btn min-w-[64px] mr-2" @click="moveUpClicked" data-lesson-index="${state.index}">&uarr;</button>
