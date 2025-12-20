@@ -295,7 +295,6 @@ export default class extends Lego
         connected()
         {
             this.render({ 
-                ...this.state,
                 lessons: JSON.parse(this.getAttribute('lessons_json') || '[]'),
                 categoriesAvailable: JSON.parse(this.getAttribute('categories_available_json') || '[]'),
                 categoriesIds: JSON.parse(this.getAttribute('categories_ids_json') || '[]')

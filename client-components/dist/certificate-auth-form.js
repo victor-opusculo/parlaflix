@@ -88,7 +88,7 @@ export default class extends Lego
 
         connected()
         {
-            this.state = { ...this.state, code: this.getAttribute("code") ?? null, date: this.getAttribute("date") ?? null, time: this.getAttribute("time") ?? null };
+            this.render({ code: this.getAttribute("code") ?? null, date: this.getAttribute("date") ?? null, time: this.getAttribute("time") ?? null });
                     
             if (this.state.code && this.state.date && this.state.time)
                 this.onSubmit(undefined);

@@ -149,6 +149,6 @@ export default class extends Lego
         connected()
         {
             const avDests = JSON.parse(this.getAttribute("availableDestinationsJson") ?? '[]');
-            this.state = { ...this.state, availableDestinations: avDests, setDestinations: avDests.map((_, idx) => idx) };
+            this.render({ ...this.state, availableDestinations: avDests, setDestinations: avDests.map((_, idx) => idx) });
         }
     }

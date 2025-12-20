@@ -82,10 +82,9 @@ export default class extends Lego
 
         connected()
         {
-            this.state = { 
-                ...this.state, 
+            this.render({ 
                 availableSubscriptions: JSON.parse(this.getAttribute("available_subscriptions") || '[]'),
                 lessonId: Number.parseInt(this.getAttribute("lesson_id"))
-            };
+            });
         }
     }
