@@ -32,7 +32,7 @@ class Lego extends Component {
   }
   get vstyle() {
     return ({ state }) => h('style', {}, `
-    @import "./assets/twoutput.css"
+    @import "/--file/assets/twoutput.css"
     
   `)}
 }
