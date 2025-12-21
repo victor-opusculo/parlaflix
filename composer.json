@@ -43,9 +43,8 @@
 	"repositories":
 	[
 		{
-			"type": "path",
-			"url": "../../PComp",
-			"options": { "symlink": false }
+			"type": "vcs",
+			"url": "https://github.com/victor-opusculo/p-comp.git"
 		}
 	]
 }
