@@ -66,15 +66,17 @@ class StudentOtp extends DataEntity
 
     public static function sendEmail(string $otp, string $studentEmail, string $studentName) : void
     {
+
         $configs = Data::getMailConfigs();
         $mail = new PHPMailer();
+
 
         $mail->IsSMTP(); // Define que a mensagem ser� SMTP
         $mail->Host = $configs['host']; // Seu endere�o de host SMTP
         $mail->SMTPAuth = true; // Define que ser� utilizada a autentica��o -  Mantenha o valor "true"
         $mail->Port = $configs['port']; // Porta de comunica��o SMTP - Mantenha o valor "587"
         $mail->SMTPSecure = false; // Define se � utilizado SSL/TLS - Mantenha o valor "false"
-        $mail->SMTPAutoTLS = false; // Define se, por padr�o, ser� utilizado TLS - Mantenha o valor "false"
+        $mail->SMTPAutoTLS = true; // Define se, por padr�o, ser� utilizado TLS - Mantenha o valor "false"
         $mail->Username = $configs['username']; // Conta de email existente e ativa em seu dom�nio
         $mail->Password = $configs['password']; // Senha da sua conta de email
         // DADOS DO REMETENTE
