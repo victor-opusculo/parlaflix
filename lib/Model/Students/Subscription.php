@@ -163,8 +163,6 @@ class Subscription extends DataEntity
 
     public function getMultipleFromStudent(mysqli $conn, string $searchKeywords, string $orderBy, int $page, int $numResultsOnPage, ?int $categoryId = null, ?bool $includeOnlyMembers = false) : array
     {
-        print_r($this->id->unwrapOr(0));
-
         $selector = $this->getGetSingleSqlSelector()
         ->clearValues()
         ->clearWhereClauses()
