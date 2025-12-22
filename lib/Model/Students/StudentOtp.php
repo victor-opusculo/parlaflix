@@ -75,8 +75,8 @@ class StudentOtp extends DataEntity
         $mail->Host = $configs['host']; // Seu endere�o de host SMTP
         $mail->SMTPAuth = true; // Define que ser� utilizada a autentica��o -  Mantenha o valor "true"
         $mail->Port = $configs['port']; // Porta de comunica��o SMTP - Mantenha o valor "587"
-        $mail->SMTPSecure = false; // Define se � utilizado SSL/TLS - Mantenha o valor "false"
-        $mail->SMTPAutoTLS = true; // Define se, por padr�o, ser� utilizado TLS - Mantenha o valor "false"
+        $mail->SMTPSecure = 'tls'; // Define se � utilizado SSL/TLS - Mantenha o valor "false"
+        //$mail->SMTPAutoTLS = true; // Define se, por padr�o, ser� utilizado TLS - Mantenha o valor "false"
         $mail->Username = $configs['username']; // Conta de email existente e ativa em seu dom�nio
         $mail->Password = $configs['password']; // Senha da sua conta de email
         // DADOS DO REMETENTE
