@@ -70,7 +70,8 @@ class StudentOtp extends DataEntity
         $configs = Data::getMailConfigs();
         $mail = new PHPMailer();
 
-
+        $mail->Timeout = 15;
+        $mail->SMTPDebug = 2;
         $mail->IsSMTP(); // Define que a mensagem ser� SMTP
         $mail->Host = $configs['host']; // Seu endere�o de host SMTP
         $mail->SMTPAuth = true; // Define que ser� utilizada a autentica��o -  Mantenha o valor "true"
