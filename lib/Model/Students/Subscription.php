@@ -11,7 +11,14 @@ use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
 use VOpus\PhpOrm\Exceptions\DatabaseEntityNotFound;
 use VOpus\PhpOrm\SqlSelector;
+use VOpus\PhpOrm\Option;
 
+/**
+ * @property Option<int> id
+ * @property Option<int> student_id
+ * @property Option<int> course_id
+ * @property Option<string> datetime
+ */
 class Subscription extends DataEntity
 {
     public function __construct(?array $initialValues = null)
@@ -58,7 +65,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql());
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)));
 
         $dr = $selector->run($conn, SqlSelector::RETURN_SINGLE_ASSOC);
 
@@ -100,7 +107,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql());
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)));
 
         if (mb_strlen($searchKeywords) > 3)
         {
@@ -243,7 +250,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql())
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)))
         ->addWhereClause("{$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->course_id->getValue()->unwrapOr(0));
 
@@ -287,7 +294,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql())
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)))
         ->addWhereClause("AND {$this->getWhereQueryColumnName('student_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0));
 
@@ -309,7 +316,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("sum(lessons_results.completion_points) as studentPoints")
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql())
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)))
         ->addWhereClause($this->getWhereQueryColumnName('student_id') . ' = ?')
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
         ->setGroupBy("{$this->databaseTable}.id");
@@ -356,7 +363,7 @@ class Subscription extends DataEntity
         ->addJoin("INNER JOIN courses ON courses.id = {$this->databaseTable}.course_id")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql())
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)))
         ->addWhereClause("{$this->getWhereQueryColumnName('student_id')} = ?")
         ->addWhereClause(" AND {$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->student_id->getValue()->unwrapOr(0))
@@ -381,7 +388,7 @@ class Subscription extends DataEntity
         ->addSelectColumn("count(lessons_results.clid) as doneLessonCount")
         ->addJoin("INNER JOIN students ON students.id = {$this->databaseTable}.student_id")
         ->addJoin("LEFT JOIN course_lessons ON course_lessons.course_id = {$this->databaseTable}.course_id")
-        ->addJoin(self::getProgressDataJoinTableSql())
+        ->addJoin(self::getProgressDataJoinTableSql($this->id->unwrapOr(0)))
         ->addWhereClause("{$this->getWhereQueryColumnName('course_id')} = ?")
         ->addValue('i', $this->properties->course_id->getValue()->unwrapOr(0));
 
@@ -430,7 +437,7 @@ class Subscription extends DataEntity
         return $this;
     }
 
-    private static function getProgressDataJoinTableSql() : string
+    private static function getProgressDataJoinTableSql(int $subsId) : string
     {
         $passwordPresenceMethods = PresenceMethod::sqlListPassword();
         $testPresenceMethods = PresenceMethod::sqlListTest();
@@ -443,14 +450,15 @@ class Subscription extends DataEntity
                 ss.course_id cid,
                 cl.id clid, 
                 cl.completion_points,
-                if(cl.presence_method in ($passwordPresenceMethods), sum(slp.is_correct) >= 1, 1) as pass_correct, 
-                if(cl.presence_method in ($testPresenceMethods), sum(tc.is_approved) >= 1, 1) as test_correct, 
+                if(cl.presence_method in ($passwordPresenceMethods), slp.is_correct >= 1, 1) as pass_correct, 
+                if(cl.presence_method in ($testPresenceMethods), tc.is_approved >= 1, 1) as test_correct, 
                 if(cl.presence_method in ($neverPresenceMethod), 0, 1) as auto_correct
                 from student_subscriptions ss 
                 inner join course_lessons cl on cl.course_id = ss.course_id 
-                left join student_lesson_passwords slp on slp.lesson_id = cl.id
+                left join student_lesson_passwords slp on slp.lesson_id = cl.id and slp.student_id = ss.student_id
                 left join tests_completed tc on tc.lesson_id  = cl.id
-                group by cl.id
+                WHERE ss.id = $subsId
+                group by clid
                 having pass_correct and test_correct and auto_correct
             ) as lessons_results on lessons_results.clid = course_lessons.id 
         SQL;
