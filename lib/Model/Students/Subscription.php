@@ -451,8 +451,8 @@ class Subscription extends DataEntity
                 cl.id clid, 
                 cl.completion_points,
                 ss.student_id,
-                if(cl.presence_method in ($passwordPresenceMethods), slp.is_correct >= 1, 1) as pass_correct, 
-                if(cl.presence_method in ($testPresenceMethods), tc.is_approved >= 1, 1) as test_correct, 
+                if(cl.presence_method in ($passwordPresenceMethods), sum(slp.is_correct) >= 1, 1) as pass_correct, 
+                if(cl.presence_method in ($testPresenceMethods), sum(tc.is_approved) >= 1, 1) as test_correct, 
                 if(cl.presence_method in ($neverPresenceMethod), 0, 1) as auto_correct
                 from student_subscriptions ss 
                 inner join course_lessons cl on cl.course_id = ss.course_id 
