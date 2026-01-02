@@ -450,6 +450,7 @@ class Subscription extends DataEntity
                 ss.course_id cid,
                 cl.id clid, 
                 cl.completion_points,
+                ss.student_id,
                 if(cl.presence_method in ($passwordPresenceMethods), slp.is_correct >= 1, 1) as pass_correct, 
                 if(cl.presence_method in ($testPresenceMethods), tc.is_approved >= 1, 1) as test_correct, 
                 if(cl.presence_method in ($neverPresenceMethod), 0, 1) as auto_correct
