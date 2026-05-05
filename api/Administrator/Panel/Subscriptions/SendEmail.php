@@ -31,8 +31,8 @@ final class SendEmail extends RouteHandler
             $mail->Host = $configs['host'];
             $mail->SMTPAuth = true; 
             $mail->Port = $configs['port'];
-            $mail->SMTPSecure = false; 
-            $mail->SMTPAutoTLS = false;
+            $mail->SMTPSecure = 'tls'; 
+            //$mail->SMTPAutoTLS = false;
             $mail->Username = $configs['username'];
             $mail->Password = $configs['password'];
 
