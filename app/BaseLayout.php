@@ -26,7 +26,7 @@ final class BaseLayout extends Component
                 [
                     tag('div', class: 'flex flex-row items-center', children:
                     [
-                        scTag('img', class:'inline-block mr-4', width: 128, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.svg')),          
+                        scTag('img', class:'inline-block mr-4', width: 196, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.png')),          
                         tag('a', class:'inline-block align-center', href: "https://www.portalabel.org.br", children: scTag('img', width: 200, src: URLGenerator::generateFileUrl('assets/pics/abel_dark.png')),)
                         
                     ]),
@@ -52,7 +52,7 @@ final class BaseLayout extends Component
 
             tag('footer', class: 'flex flex-col md:flex-row justify-center items-center h-[132px] mt-4 bg-black py-4 md:px-8 px-4 text-white', children: 
             [
-                scTag('img', class: 'inline-block mr-4', width: 64, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.svg')),
+                scTag('img', class: 'inline-block mr-4', width: 128, src: URLGenerator::generateFileUrl('assets/pics/parlaflix_dark.png')),
                 tag('div', children: 
                 [
                     text("Parlaflix - Plataforma EAD da "),
