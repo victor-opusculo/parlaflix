@@ -3,7 +3,12 @@ namespace VictorOpusculo\Parlaflix\Lib\Model\Settings;
 
 use VOpus\PhpOrm\DataEntity;
 use VOpus\PhpOrm\DataProperty;
+use VOpus\PhpOrm\Option;
 
+/**
+ * @property Option<"DEFAULT_LGPD_TERM_TEXT"> name
+ * @property Option<string> value
+ */
 class LgpdTermText extends DataEntity
 {
     public function __construct($initialValues = null)

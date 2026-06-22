@@ -4,11 +4,16 @@
     "type": "project",
 	"config": {
         "platform": {
-            "php": "8.1"
+            "php": "8.4"
+        },
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "require-dev": {
-        "robmorgan/phinx": "*"
+        "robmorgan/phinx": "*",
+        "pestphp/pest": "^4.3",
+        "pestphp/pest-plugin-browser": "^4.1"
     },
     "license": "MIT",
     "authors": [

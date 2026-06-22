@@ -9,3 +9,5 @@ node_modules
 
 uploads/media/*
 !uploads/media/.gitkeep
+
+tests/Browser/Screenshots

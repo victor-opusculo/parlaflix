@@ -12,8 +12,18 @@ abstract class Connection
     public static function create() : mysqli
     {
         $configs = self::getDatabaseConfig(); 
-		
-		$serverName = $configs['servername'];
+        return self::createBase($configs);
+    }
+
+    public static function createTest() : mysqli
+    {
+        $configs = self::getDatabaseConfigTest(); 
+        return self::createBase($configs);
+    }
+
+    private static function createBase(array $configs) : mysqli
+    {
+        $serverName = $configs['servername'];
 		$userName = $configs['username'];
 		$password = $configs['password'];
 		$dbname = $configs['dbname'];
@@ -35,15 +45,23 @@ abstract class Connection
 
     public static function get() : mysqli
     {
-        if (isset(self::$conn) && @self::$conn->ping())
+        if (isset(self::$conn))
             return self::$conn;
         else
             return self::create();
     }
 
+    public static function getTest() : mysqli
+    {
+        if (isset(self::$conn))
+            return self::$conn;
+        else
+            return self::createTest();
+    }
+
     public static function close()
     {
-        if (isset(self::$conn) && @self::$conn->ping()) self::$conn->close();
+        if (isset(self::$conn)) self::$conn->close();
     }
 
     public static function getCryptoKey() : string
@@ -51,9 +69,20 @@ abstract class Connection
 		return self::getDatabaseConfig()['crypto'];
 	}
 
+    public static function getCryptoKeyTest() : string
+	{
+		return self::getDatabaseConfigTest()['crypto'];
+	}
+
     private static function getDatabaseConfig() : array
 	{
 		$configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/../parlaflix_config.ini", true);
+		return $configs['database'];
+	}
+
+    private static function getDatabaseConfigTest() : array
+	{
+		$configs = parse_ini_file(__DIR__ . "/../../../../parlaflix_config.ini", true);
 		return $configs['database'];
 	}
 
