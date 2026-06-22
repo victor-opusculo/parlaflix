@@ -457,7 +457,7 @@ class Subscription extends DataEntity
                 from student_subscriptions ss 
                 inner join course_lessons cl on cl.course_id = ss.course_id 
                 left join student_lesson_passwords slp on slp.lesson_id = cl.id and slp.student_id = ss.student_id
-                left join tests_completed tc on tc.lesson_id  = cl.id
+                left join tests_completed tc on tc.lesson_id  = cl.id and tc.subscription_id = ss.id
                 group by clid, ss.student_id
                 having pass_correct and test_correct and auto_correct
             ) as lessons_results on lessons_results.clid = course_lessons.id and lessons_results.student_id = student_subscriptions.student_id
