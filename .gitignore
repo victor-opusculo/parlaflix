@@ -11,3 +11,5 @@ uploads/media/*
 !uploads/media/.gitkeep
 
 tests/Browser/Screenshots
+
+.env

@@ -39,7 +39,7 @@ class StudentSubscriptionCard extends Component
                         max: $this->subscription->getOtherProperties()->lessonCount ?? 1,
                         value: $this->subscription->getOtherProperties()->doneLessonCount ?? 0,
                     ),
-                    text(number_format((($this->subscription->getOtherProperties()->doneLessonCount ?? 0) / ($this->subscription->getOtherProperties()->lessonCount ?? 1)) * 100, 0) . '%')
+                    text(number_format((($this->subscription->getOtherProperties()->doneLessonCount ?? 0) / ($this->subscription->getOtherProperties()->lessonCount || 1)) * 100, 0) . '%')
                 ])
             ])
         ]);

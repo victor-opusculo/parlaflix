@@ -43,7 +43,7 @@ final class SendEmail extends RouteHandler
 
             // DADOS DO DESTINAT�RIO
             foreach ($destinations as $dest)
-                $mail->AddAddress($dest['email'], $dest['name']);
+                $mail->addBCC($dest['email'], $dest['name']);
     
             $mail->IsHTML(true); // Define que o e-mail ser� enviado como HTML
             $mail->CharSet = 'utf-8'; 

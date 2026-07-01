@@ -1,8 +1,11 @@
+
+process.loadEnvFile("./.env");
+
 export default {
     sourceDir: './client-components/bricks',
     targetDir: './client-components/dist',
     useShadowDOM: true,
-    preStyle: '@import "/--file/assets/twoutput.css"'
+    preStyle: process.env.NODE_ENV === 'development' ? '@import "/assets/twoutput.css"' : '@import "/--file/assets/twoutput.css"'
     /*preScript: ` 
     import { render } from './lego.min.js';
    

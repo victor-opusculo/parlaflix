@@ -146,7 +146,7 @@ final class SubscriptionId extends Component
                                 value: $this->subscription->getOtherProperties()->doneLessonCount ?? 0, 
                                 max: $this->subscription->getOtherProperties()->lessonCount ?? 1
                             ),
-                            tag('span', class: 'my-1', children: text((number_format(($this->subscription->getOtherProperties()->doneLessonCount ?? 0) / ($this->subscription->getOtherProperties()->lessonCount ?? 1) * 100, 2, ',')) . '%'))
+                            tag('span', class: 'my-1', children: text((number_format(($this->subscription->getOtherProperties()->doneLessonCount ?? 0) / ($this->subscription->getOtherProperties()->lessonCount || 1) * 100, 2, ',')) . '%'))
                         ]),
                         component(Label::class, labelBold: true, label: "Aulas vistas", children:
                         [

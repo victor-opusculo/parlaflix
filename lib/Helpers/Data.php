@@ -15,6 +15,12 @@ final class Data
         return $configs['regularmail'];
     }
 
+    public static function getTransactionalMailConfigs()
+    {
+        $configs = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/../parlaflix_config.ini", true);
+        return $configs['transactionalmail'];
+    }
+
     public static function truncateText(?string $string, int $maxLength) : string
     {
         if (!$string) return '';
