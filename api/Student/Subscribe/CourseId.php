@@ -5,9 +5,9 @@ use VictorOpusculo\Parlaflix\Lib\Helpers\LogEngine;
 use VictorOpusculo\Parlaflix\Lib\Helpers\UserTypes;
 use VictorOpusculo\Parlaflix\Lib\Model\Courses\Course;
 use VictorOpusculo\Parlaflix\Lib\Model\Database\Connection;
+use VictorOpusculo\Parlaflix\Lib\Model\Email\Queue;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Student;
 use VictorOpusculo\Parlaflix\Lib\Model\Students\Subscription;
-use VictorOpusculo\Parlaflix\Lib\Model\Students\SubscriptionEmail;
 use VictorOpusculo\PComp\RouteHandler;
 
 require_once __DIR__ . '/../../../lib/Middlewares/StudentLoginCheck.php';
@@ -70,31 +70,22 @@ final class CourseId extends RouteHandler
         {
             LogEngine::writeLog("Inscrição em curso feita! Estudante ID: {$_SESSION['user_id']}. Curso ID: {$this->courseId}. Inscrição ID: {$result['newId']}");
 
-            ob_start();
+            $queueItem = new Queue(
+            [ 
+                'destination_email' => $student->email->unwrapOr(""), 
+                'destination_name' => $student->full_name->unwrapOr(""),
+                'subject' => "Parlaflix - Nova inscrição: {$course->name->unwrapOr('')}"
+            ]);
+
+            $queueItem->fillMessageFromView("message-new-subscription.php", [ 
+                'studentName' =>$student->full_name->unwrapOr("***"),
+                'courseName' => $course->name->unwrapOr("***")
+            ]);
+
+            $queueItem->save($conn);
+
             $this->json([ 'success' => 'Você se inscreveu no curso!' ]);
 
-            $size = ob_get_length();
-            // Disable compression (in case content length is compressed).
-            header("Content-Encoding: none");
-
-            // Set the content length of the response.
-            header("Content-Length: {$size}");
-
-            // Close the connection.
-            header("Connection: close");
-
-            // Flush all output.
-            ob_end_flush();
-            ob_flush();
-            flush();
-
-            // Close current session (if it exists).
-            if (session_id()) 
-                session_write_close();
-
-            SubscriptionEmail::sendEmail($course->name->unwrapOr("***"), $student->email->unwrapOr("***"), $student->full_name->unwrapOr("***"));
-
-            die();
         }
         else
         {
