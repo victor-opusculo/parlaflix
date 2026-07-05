@@ -117,6 +117,17 @@ final class SubscriptionId extends Component
     private bool $isTestCorrect = false;
     private bool $canSendNewSurvey = false;
 
+    private function getPercent(?int $done, ?int $total) : string
+    {
+        $_done = $done ?? 0;
+        $_total = $total ?? 1;
+
+        if ($_total < 1)
+            return "0%";
+
+        return number_format($_done / $_total * 100, 0) . '%';
+    }
+
     protected function markup(): Component|array|null
     {
         return isset($this->subscription) ? component(DefaultPageFrame::class, children:
@@ -146,7 +157,7 @@ final class SubscriptionId extends Component
                                 value: $this->subscription->getOtherProperties()->doneLessonCount ?? 0, 
                                 max: $this->subscription->getOtherProperties()->lessonCount ?? 1
                             ),
-                            tag('span', class: 'my-1', children: text((number_format(($this->subscription->getOtherProperties()->doneLessonCount ?? 0) / ($this->subscription->getOtherProperties()->lessonCount || 1) * 100, 2, ',')) . '%'))
+                            tag('span', class: 'my-1', children: text($this->getPercent($this->subscription->getOtherProperties()->doneLessonCount, $this->subscription->getOtherProperties()->lessonCount)))
                         ]),
                         component(Label::class, labelBold: true, label: "Aulas vistas", children:
                         [

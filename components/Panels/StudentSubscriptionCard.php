@@ -17,6 +17,17 @@ class StudentSubscriptionCard extends Component
     protected Subscription $subscription;
     protected string $detailsUrl;
 
+    private function getPercent(?int $done, ?int $total) : string
+    {
+        $_done = $done ?? 0;
+        $_total = $total ?? 1;
+
+        if ($_total < 1)
+            return "0%";
+
+        return number_format($_done / $_total * 100, 0) . '%';
+    }
+
     protected function markup() : Component|array|null
     {
         return tag('a', class: 'block overflow-clip relative p-2 mx-4 mb-4 h-[300px] min-w-[300px] max-w-[400px] rounded-sm border border-neutral-300 dark:border-neutral-700 hover:brightness-75', 
@@ -39,7 +50,7 @@ class StudentSubscriptionCard extends Component
                         max: $this->subscription->getOtherProperties()->lessonCount ?? 1,
                         value: $this->subscription->getOtherProperties()->doneLessonCount ?? 0,
                     ),
-                    text(number_format((($this->subscription->getOtherProperties()->doneLessonCount ?? 0) / ($this->subscription->getOtherProperties()->lessonCount || 1)) * 100, 0) . '%')
+                    text($this->getPercent($this->subscription->getOtherProperties()->doneLessonCount, $this->subscription->getOtherProperties()->lessonCount))
                 ])
             ])
         ]);
