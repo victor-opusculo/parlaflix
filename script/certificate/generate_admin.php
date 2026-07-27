@@ -21,6 +21,9 @@ $certBgMediaId = null;
 $certBgMedia = null;
 $certBgMedia2Id = null;
 $certBgMedia2 = null;
+
+
+
 $conn = Connection::get();
 try
 {
@@ -45,15 +48,18 @@ if (!Connection::isId($subsId))
     die("ID inválido!");
 
 
-
 session_name('parlaflix_admin_user');
 session_start();
+
+
 
 if (!isset($_SESSION) || $_SESSION['user_type'] !== UserTypes::administrator)
     die("Administrador não logado!");
 
 if (!(new Administrator([ 'id' => $_SESSION['user_id'] ]))->exists($conn))
     die("Administrador não localizado!");
+
+
 
 $subscription = (new Subscription([ 'id' => $subsId, 'student_id' => $_SESSION['user_id'] ]))->getSingleWithProgressData($conn);
 $subscription->fetchCourse($conn);
@@ -64,6 +70,7 @@ $maxScorePossible = $subscription->getOtherProperties()->maxPoints;
 $studentGetter = new Student([ 'id' => $subscription->student_id->unwrapOrElse(fn() => throw new Exception("Aluno não localizado!")) ]);
 $studentGetter->setCryptKey(Connection::getCryptoKey());
 $student = $studentGetter->getSingle($conn);
+
 
 if ($scoredPoints < $subscription->course->min_points_required->unwrap())
     die("Aluno não foi aprovado neste curso!");
@@ -91,7 +98,9 @@ else
 
 $conn->close();
 
+
 $pdf = new CertPDF('L', 'mm', 'A4');
+
 $pdf->setData(  subscriptionDateTime: new DateTime($subscription->datetime->unwrap(), new DateTimeZone("UTC")),
                 endDateTime: $endDateTime,
                 bodyText: $subscription->course->certificate_text->unwrap(),
@@ -106,6 +115,8 @@ $pdf->setData(  subscriptionDateTime: new DateTime($subscription->datetime->unwr
 
 $pdf->drawFrontPage();
 $pdf->drawBackPage();
+
+
 
 header('Content-Type: application/pdf');
 header('Content-Disposition: filename="'. $subscription->course->name->unwrapOr('Curso') .'.pdf"');

@@ -27,7 +27,8 @@
 	{
 	"victor-opusculo/p-comp": "@dev",
         "phpmailer/phpmailer": "^6.9",
-        "setasign/tfpdf": "^1.33"
+        "setasign/tfpdf": "^1.33",
+        "chillerlan/php-qrcode": "^6.0"
     },
 	"autoload": {
         "files":
