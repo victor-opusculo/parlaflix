@@ -13,4 +13,6 @@ $queue = (new Queue)->getAll($conn);
 foreach ($queue as $item)
     $item->sendEmailCron();
 
-new Queue()->clearAll($conn);
+$result = new Queue()->clearAll($conn);
+
+echo $result ? 0 : -1;
