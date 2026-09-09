@@ -51,7 +51,7 @@ final class Queue extends DataEntity
 
     public function clearAll(?mysqli $conn)
     {
-        $conn->query("DELETE FROM {$this->databaseTable} WHERE 1");
+        return $conn->query("TRUNCATE TABLE {$this->databaseTable}");
     }
 
     public function fillMessageFromView(string $view, array $data)
