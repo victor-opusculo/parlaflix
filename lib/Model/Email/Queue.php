@@ -49,9 +49,33 @@ final class Queue extends DataEntity
         return array_map([ $this, 'newInstanceFromDataRowFromDatabase' ], $drs);
     }
 
+    public function getPartial(?mysqli $conn, int $limit) : array
+    {
+        $selector = $this->getGetSingleSqlSelector()
+        ->clearWhereClauses()
+        ->clearValues()
+        ->setOrderBy("id ASC")
+        ->setLimit('0,?')
+        ->addValue('i', $limit);
+
+        $drs = $selector->run($conn, SqlSelector::RETURN_ALL_ASSOC);
+        return array_map([ $this, 'newInstanceFromDataRowFromDatabase' ], $drs);
+    }
+
     public function clearAll(?mysqli $conn)
     {
         return $conn->query("TRUNCATE TABLE {$this->databaseTable}");
+    }
+
+    public function clearPartial(?mysqli $conn, int $limit)
+    {
+        $stmt = $conn->prepare(<<<SQL
+            DELETE FROM {$this->databaseTable} WHERE 1=1 ORDER BY id ASC LIMIT ?
+        SQL);
+
+        $stmt->bind_param('i', $limit);
+        $stmt->execute();
+        return $stmt->affected_rows;
     }
 
     public function fillMessageFromView(string $view, array $data)
@@ -100,6 +124,7 @@ final class Queue extends DataEntity
         $mail->FromName = "Parlaflix - Ensino à Distância da ABEL"; // Nome da conta de email
         // DADOS DO DESTINAT�RIO
         $mail->AddAddress($email, $name); // Define qual conta de email receber� a mensagem
+        $mail->addReplyTo($configs['replyto']);
 
         // Defini��o de HTML/codifica��o
         $mail->IsHTML(true); // Define que o e-mail ser� enviado como HTML

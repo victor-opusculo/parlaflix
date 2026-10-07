@@ -5,14 +5,16 @@ use VictorOpusculo\Parlaflix\Lib\Model\Email\Queue;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
+const MAX_EMAILS_PER_CALL = 12;
+
 $conn = Connection::getTest();
 
 /** @var Queue[] */
-$queue = (new Queue)->getAll($conn);
+$queue = (new Queue)->getPartial($conn, MAX_EMAILS_PER_CALL);
 
 foreach ($queue as $item)
     $item->sendEmailCron();
 
-$result = new Queue()->clearAll($conn);
+$deletedRows = new Queue()->clearPartial($conn, MAX_EMAILS_PER_CALL);
 
-echo $result ? 0 : -1;
+echo $deletedRows === MAX_EMAILS_PER_CALL ? "1 $deletedRows" : "0 $deletedRows";

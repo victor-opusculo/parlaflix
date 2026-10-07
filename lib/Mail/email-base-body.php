@@ -50,10 +50,10 @@ foreach ($_GET as $k => $v)
 				</td>
 			</tr>
 		</table>
+		<p>Mensagem automática. Não responda.</p>
 	</td>
 	</tr>
 	</table>
-
 
 </body>
 </html>

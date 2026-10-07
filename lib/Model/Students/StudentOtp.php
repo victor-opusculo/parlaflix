@@ -67,7 +67,7 @@ class StudentOtp extends DataEntity
     public static function sendEmail(string $otp, string $studentEmail, string $studentName) : void
     {
 
-        $configs = Data::getMailConfigs();
+        $configs = Data::getTransactionalMailConfigs();
         $mail = new PHPMailer();
 
         $mail->Timeout = 30;
@@ -85,6 +85,7 @@ class StudentOtp extends DataEntity
         $mail->FromName = "Parlaflix - Ensino à Distância da ABEL"; // Nome da conta de email
         // DADOS DO DESTINAT�RIO
         $mail->AddAddress($studentEmail, $studentName); // Define qual conta de email receber� a mensagem
+        $mail->addReplyTo($configs['replyto']);
 
         // Defini��o de HTML/codifica��o
         $mail->IsHTML(true); // Define que o e-mail ser� enviado como HTML
