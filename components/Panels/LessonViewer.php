@@ -42,7 +42,7 @@ class LessonViewer extends Component
             ),
             component(Label::class, label: 'Hospedagem de vídeo', labelBold: true, children: text($this->lesson->video_host->unwrapOr(''))),
             component(Label::class, label: 'Vídeo', labelBold: true, lineBreak: true, children:
-                component(VideoRenderer::class, videoHost: $this->lesson->video_host->unwrapOr(''), videoCode: $this->lesson->video_url->unwrapOr(''))
+                component(VideoRendererLite::class, videoHost: $this->lesson->video_host->unwrapOr(''), videoCode: $this->lesson->video_url->unwrapOr(''))
             ),
 
             $this->lesson->presence_method->unwrapOr('') === PresenceMethod::Password->value

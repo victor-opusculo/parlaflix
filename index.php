@@ -46,4 +46,5 @@ URLGenerator::loadConfigs();
 		defer
 		init
 	></script>
+	<script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
 </html>
