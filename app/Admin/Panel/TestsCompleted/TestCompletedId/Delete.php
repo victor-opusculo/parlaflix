@@ -1,5 +1,5 @@
 <?php
-namespace VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestcompletedId;
+namespace VictorOpusculo\Parlaflix\App\Admin\Panel\TestsCompleted\TestCompletedId;
 
 use Exception;
 use VictorOpusculo\Parlaflix\Components\Label;
